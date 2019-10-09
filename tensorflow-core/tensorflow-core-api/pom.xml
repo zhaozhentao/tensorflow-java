@@ -32,6 +32,11 @@
       <optional>true</optional> <!-- for compilation only -->
     </dependency>
     <dependency>
+      <groupId>org.tensorflow</groupId>
+      <artifactId>tensorflow-utils-nio</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
@@ -76,10 +81,6 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.0</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
         <executions>
           <execution>
             <id>default-compile</id>

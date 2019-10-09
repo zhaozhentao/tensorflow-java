@@ -37,7 +37,7 @@ package org.tensorflow;
 public interface Operand<T> {
 
   /**
-   * Returns the symbolic handle of a tensor.
+   * Returns the symbolic handle of the tensor.
    *
    * <p>Inputs to TensorFlow operations are outputs of another TensorFlow operation. This method is
    * used to obtain a symbolic handle that represents the computation of the input.

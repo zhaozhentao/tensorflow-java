@@ -15,6 +15,9 @@ limitations under the License.
 
 package org.tensorflow;
 
+import org.tensorflow.nio.nd.Shape;
+import org.tensorflow.types.family.TType;
+
 /**
  * Base class for {@link Operation} implementations.
  *
@@ -65,7 +68,7 @@ abstract class AbstractOperation implements Operation {
    * @param outputIdx index of the output of this operation
    * @return output tensor shape
    */
-  abstract long[] shape(int outputIdx);
+  abstract Shape shape(int outputIdx);
 
   /**
    * Returns the datatype of the tensor of the {@code outputIdx}th output of this operation.
@@ -73,7 +76,7 @@ abstract class AbstractOperation implements Operation {
    * @param outputIdx index of the output of this operation
    * @return output tensor datatype
    */
-  abstract DataType dtype(int outputIdx);
+  abstract DataType<?> dtype(int outputIdx);
 
   /**
    * Returns the tensor of the {@code outputIdx}th output of this operation.

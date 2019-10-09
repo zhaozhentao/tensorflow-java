@@ -1,5 +1,6 @@
 package org.tensorflow.op;
 
+import org.tensorflow.DataType;
 import org.tensorflow.Operand;
 import org.tensorflow.op.linalg.BandPart;
 import org.tensorflow.op.linalg.BatchCholesky;
@@ -39,6 +40,11 @@ import org.tensorflow.op.linalg.TensorDiag;
 import org.tensorflow.op.linalg.TensorDiagPart;
 import org.tensorflow.op.linalg.Transpose;
 import org.tensorflow.op.linalg.TriangularSolve;
+import org.tensorflow.types.TDouble;
+import org.tensorflow.types.TFloat;
+import org.tensorflow.types.TInt64;
+import org.tensorflow.types.TString;
+import org.tensorflow.types.family.TNumber;
 
 /**
  * An API for building {@code linalg} operations as {@link Op Op}s
@@ -50,20 +56,6 @@ public final class LinalgOps {
 
   LinalgOps(Scope scope) {
     this.scope = scope;
-  }
-
-  /**
-   * Builds an {@link BatchMatrixSolve} operation
-   *
-   * @param matrix 
-   * @param rhs 
-   * @param options carries optional attributes values
-   * @return a new instance of BatchMatrixSolve
-   * @see org.tensorflow.op.linalg.BatchMatrixSolve
-   */
-  public <T extends Number> BatchMatrixSolve<T> batchMatrixSolve(Operand<T> matrix, Operand<T> rhs,
-      BatchMatrixSolve.Options... options) {
-    return BatchMatrixSolve.create(scope, matrix, rhs, options);
   }
 
   /**
@@ -79,16 +71,18 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link ConjugateTranspose} operation
+   * Builds an {@link BatchMatrixSolveLs} operation
    *
-   * @param x 
-   * @param perm 
-   * @return a new instance of ConjugateTranspose
-   * @see org.tensorflow.op.linalg.ConjugateTranspose
+   * @param matrix 
+   * @param rhs 
+   * @param l2Regularizer 
+   * @param options carries optional attributes values
+   * @return a new instance of BatchMatrixSolveLs
+   * @see org.tensorflow.op.linalg.BatchMatrixSolveLs
    */
-  public <T, U extends Number> ConjugateTranspose<T> conjugateTranspose(Operand<T> x,
-      Operand<U> perm) {
-    return ConjugateTranspose.create(scope, x, perm);
+  public <T extends TNumber> BatchMatrixSolveLs<T> batchMatrixSolveLs(Operand<T> matrix,
+      Operand<T> rhs, Operand<TDouble> l2Regularizer, BatchMatrixSolveLs.Options... options) {
+    return BatchMatrixSolveLs.create(scope, matrix, rhs, l2Regularizer, options);
   }
 
   /**
@@ -111,8 +105,8 @@ public final class LinalgOps {
    * @return a new instance of BatchMatrixBandPart
    * @see org.tensorflow.op.linalg.BatchMatrixBandPart
    */
-  public <T> BatchMatrixBandPart<T> batchMatrixBandPart(Operand<T> input, Operand<Long> numLower,
-      Operand<Long> numUpper) {
+  public <T> BatchMatrixBandPart<T> batchMatrixBandPart(Operand<T> input, Operand<TInt64> numLower,
+      Operand<TInt64> numUpper) {
     return BatchMatrixBandPart.create(scope, input, numLower, numUpper);
   }
 
@@ -128,24 +122,16 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link LoadAndRemapMatrix} operation
+   * Builds an {@link BatchMatrixInverse} operation
    *
-   * @param ckptPath Path to the TensorFlow checkpoint (version 2, `TensorBundle`) from
-   * @param oldTensorName Name of the 2-D `Tensor` to load from checkpoint.
-   * @param rowRemapping An int `Tensor` of row remappings (generally created by
-   * @param colRemapping An int `Tensor` of column remappings (generally created by
-   * @param initializingValues A float `Tensor` containing  values to fill in for cells
-   * @param numRows Number of rows (length of the 1st dimension) in the output matrix.
-   * @param numCols Number of columns (length of the 2nd dimension) in the output matrix.
+   * @param input 
    * @param options carries optional attributes values
-   * @return a new instance of LoadAndRemapMatrix
-   * @see org.tensorflow.op.linalg.LoadAndRemapMatrix
+   * @return a new instance of BatchMatrixInverse
+   * @see org.tensorflow.op.linalg.BatchMatrixInverse
    */
-  public LoadAndRemapMatrix loadAndRemapMatrix(Operand<String> ckptPath,
-      Operand<String> oldTensorName, Operand<Long> rowRemapping, Operand<Long> colRemapping,
-      Operand<Float> initializingValues, Long numRows, Long numCols,
-      LoadAndRemapMatrix.Options... options) {
-    return LoadAndRemapMatrix.create(scope, ckptPath, oldTensorName, rowRemapping, colRemapping, initializingValues, numRows, numCols, options);
+  public <T extends TNumber> BatchMatrixInverse<T> batchMatrixInverse(Operand<T> input,
+      BatchMatrixInverse.Options... options) {
+    return BatchMatrixInverse.create(scope, input, options);
   }
 
   /**
@@ -157,6 +143,30 @@ public final class LinalgOps {
    */
   public <T> TensorDiag<T> tensorDiag(Operand<T> diagonal) {
     return TensorDiag.create(scope, diagonal);
+  }
+
+  /**
+   * Builds an {@link Cross} operation
+   *
+   * @param a A tensor containing 3-element vectors.
+   * @param b Another tensor, of same type and shape as `a`.
+   * @return a new instance of Cross
+   * @see org.tensorflow.op.linalg.Cross
+   */
+  public <T extends TNumber> Cross<T> cross(Operand<T> a, Operand<T> b) {
+    return Cross.create(scope, a, b);
+  }
+
+  /**
+   * Builds an {@link SelfAdjointEig} operation
+   *
+   * @param input `Tensor` input of shape `[N, N]`.
+   * @param options carries optional attributes values
+   * @return a new instance of SelfAdjointEig
+   * @see org.tensorflow.op.linalg.SelfAdjointEig
+   */
+  public <T> SelfAdjointEig<T> selfAdjointEig(Operand<T> input, SelfAdjointEig.Options... options) {
+    return SelfAdjointEig.create(scope, input, options);
   }
 
   /**
@@ -174,15 +184,15 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link SelfAdjointEig} operation
+   * Builds an {@link Transpose} operation
    *
-   * @param input `Tensor` input of shape `[N, N]`.
-   * @param options carries optional attributes values
-   * @return a new instance of SelfAdjointEig
-   * @see org.tensorflow.op.linalg.SelfAdjointEig
+   * @param x 
+   * @param perm 
+   * @return a new instance of Transpose
+   * @see org.tensorflow.op.linalg.Transpose
    */
-  public <T> SelfAdjointEig<T> selfAdjointEig(Operand<T> input, SelfAdjointEig.Options... options) {
-    return SelfAdjointEig.create(scope, input, options);
+  public <T, U extends TNumber> Transpose<T> transpose(Operand<T> x, Operand<U> perm) {
+    return Transpose.create(scope, x, perm);
   }
 
   /**
@@ -197,18 +207,6 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link BatchCholeskyGrad} operation
-   *
-   * @param l 
-   * @param grad 
-   * @return a new instance of BatchCholeskyGrad
-   * @see org.tensorflow.op.linalg.BatchCholeskyGrad
-   */
-  public <T extends Number> BatchCholeskyGrad<T> batchCholeskyGrad(Operand<T> l, Operand<T> grad) {
-    return BatchCholeskyGrad.create(scope, l, grad);
-  }
-
-  /**
    * Builds an {@link Cholesky} operation
    *
    * @param input Shape is `[..., M, M]`.
@@ -220,14 +218,14 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link BatchCholesky} operation
+   * Builds an {@link Det} operation
    *
-   * @param input 
-   * @return a new instance of BatchCholesky
-   * @see org.tensorflow.op.linalg.BatchCholesky
+   * @param input Shape is `[..., M, M]`.
+   * @return a new instance of Det
+   * @see org.tensorflow.op.linalg.Det
    */
-  public <T extends Number> BatchCholesky<T> batchCholesky(Operand<T> input) {
-    return BatchCholesky.create(scope, input);
+  public <T> Det<T> det(Operand<T> input) {
+    return Det.create(scope, input);
   }
 
   /**
@@ -243,93 +241,6 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link Det} operation
-   *
-   * @param input Shape is `[..., M, M]`.
-   * @return a new instance of Det
-   * @see org.tensorflow.op.linalg.Det
-   */
-  public <T> Det<T> det(Operand<T> input) {
-    return Det.create(scope, input);
-  }
-
-  /**
-   * Builds an {@link DiagPart} operation
-   *
-   * @param input Rank `k` tensor where `k >= 2`.
-   * @return a new instance of DiagPart
-   * @see org.tensorflow.op.linalg.DiagPart
-   */
-  public <T> DiagPart<T> diagPart(Operand<T> input) {
-    return DiagPart.create(scope, input);
-  }
-
-  /**
-   * Builds an {@link SetDiag} operation
-   *
-   * @param input Rank `k+1`, where `k >= 1`.
-   * @param diagonal Rank `k`, where `k >= 1`.
-   * @return a new instance of SetDiag
-   * @see org.tensorflow.op.linalg.SetDiag
-   */
-  public <T> SetDiag<T> setDiag(Operand<T> input, Operand<T> diagonal) {
-    return SetDiag.create(scope, input, diagonal);
-  }
-
-  /**
-   * Builds an {@link Solve} operation
-   *
-   * @param matrix Shape is `[..., M, M]`.
-   * @param rhs Shape is `[..., M, K]`.
-   * @param options carries optional attributes values
-   * @return a new instance of Solve
-   * @see org.tensorflow.op.linalg.Solve
-   */
-  public <T> Solve<T> solve(Operand<T> matrix, Operand<T> rhs, Solve.Options... options) {
-    return Solve.create(scope, matrix, rhs, options);
-  }
-
-  /**
-   * Builds an {@link MatrixSolveLs} operation
-   *
-   * @param matrix Shape is `[..., M, N]`.
-   * @param rhs Shape is `[..., M, K]`.
-   * @param l2Regularizer Scalar tensor.
-   * @param options carries optional attributes values
-   * @return a new instance of MatrixSolveLs
-   * @see org.tensorflow.op.linalg.MatrixSolveLs
-   */
-  public <T> MatrixSolveLs<T> matrixSolveLs(Operand<T> matrix, Operand<T> rhs,
-      Operand<Double> l2Regularizer, MatrixSolveLs.Options... options) {
-    return MatrixSolveLs.create(scope, matrix, rhs, l2Regularizer, options);
-  }
-
-  /**
-   * Builds an {@link BatchSvd} operation
-   *
-   * @param input 
-   * @param options carries optional attributes values
-   * @return a new instance of BatchSvd
-   * @see org.tensorflow.op.linalg.BatchSvd
-   */
-  public <T> BatchSvd<T> batchSvd(Operand<T> input, BatchSvd.Options... options) {
-    return BatchSvd.create(scope, input, options);
-  }
-
-  /**
-   * Builds an {@link BatchMatrixInverse} operation
-   *
-   * @param input 
-   * @param options carries optional attributes values
-   * @return a new instance of BatchMatrixInverse
-   * @see org.tensorflow.op.linalg.BatchMatrixInverse
-   */
-  public <T extends Number> BatchMatrixInverse<T> batchMatrixInverse(Operand<T> input,
-      BatchMatrixInverse.Options... options) {
-    return BatchMatrixInverse.create(scope, input, options);
-  }
-
-  /**
    * Builds an {@link CholeskyGrad} operation
    *
    * @param l Output of batch Cholesky algorithm l = cholesky(A). Shape is `[..., M, M]`.
@@ -337,47 +248,21 @@ public final class LinalgOps {
    * @return a new instance of CholeskyGrad
    * @see org.tensorflow.op.linalg.CholeskyGrad
    */
-  public <T extends Number> CholeskyGrad<T> choleskyGrad(Operand<T> l, Operand<T> grad) {
+  public <T extends TNumber> CholeskyGrad<T> choleskyGrad(Operand<T> l, Operand<T> grad) {
     return CholeskyGrad.create(scope, l, grad);
   }
 
   /**
-   * Builds an {@link Inv} operation
+   * Builds an {@link BatchSelfAdjointEig} operation
    *
-   * @param input Shape is `[..., M, M]`.
+   * @param input 
    * @param options carries optional attributes values
-   * @return a new instance of Inv
-   * @see org.tensorflow.op.linalg.Inv
+   * @return a new instance of BatchSelfAdjointEig
+   * @see org.tensorflow.op.linalg.BatchSelfAdjointEig
    */
-  public <T> Inv<T> inv(Operand<T> input, Inv.Options... options) {
-    return Inv.create(scope, input, options);
-  }
-
-  /**
-   * Builds an {@link BatchMatrixTriangularSolve} operation
-   *
-   * @param matrix 
-   * @param rhs 
-   * @param options carries optional attributes values
-   * @return a new instance of BatchMatrixTriangularSolve
-   * @see org.tensorflow.op.linalg.BatchMatrixTriangularSolve
-   */
-  public <T extends Number> BatchMatrixTriangularSolve<T> batchMatrixTriangularSolve(
-      Operand<T> matrix, Operand<T> rhs, BatchMatrixTriangularSolve.Options... options) {
-    return BatchMatrixTriangularSolve.create(scope, matrix, rhs, options);
-  }
-
-  /**
-   * Builds an {@link MatMul} operation
-   *
-   * @param a 
-   * @param b 
-   * @param options carries optional attributes values
-   * @return a new instance of MatMul
-   * @see org.tensorflow.op.linalg.MatMul
-   */
-  public <T> MatMul<T> matMul(Operand<T> a, Operand<T> b, MatMul.Options... options) {
-    return MatMul.create(scope, a, b, options);
+  public <T extends TNumber> BatchSelfAdjointEig<T> batchSelfAdjointEig(Operand<T> input,
+      BatchSelfAdjointEig.Options... options) {
+    return BatchSelfAdjointEig.create(scope, input, options);
   }
 
   /**
@@ -396,21 +281,128 @@ public final class LinalgOps {
    * @see org.tensorflow.op.linalg.QuantizedMatMul
    */
   public <V, T, U, W> QuantizedMatMul<V> quantizedMatMul(Operand<T> a, Operand<U> b,
-      Operand<Float> minA, Operand<Float> maxA, Operand<Float> minB, Operand<Float> maxB,
-      Class<V> Toutput, Class<W> Tactivation, QuantizedMatMul.Options... options) {
+      Operand<TFloat> minA, Operand<TFloat> maxA, Operand<TFloat> minB, Operand<TFloat> maxB,
+      DataType<V> Toutput, DataType<W> Tactivation, QuantizedMatMul.Options... options) {
     return QuantizedMatMul.create(scope, a, b, minA, maxA, minB, maxB, Toutput, Tactivation, options);
   }
 
   /**
-   * Builds an {@link Cross} operation
+   * Builds an {@link DiagPart} operation
    *
-   * @param a A tensor containing 3-element vectors.
-   * @param b Another tensor, of same type and shape as `a`.
-   * @return a new instance of Cross
-   * @see org.tensorflow.op.linalg.Cross
+   * @param input Rank `k` tensor where `k >= 2`.
+   * @return a new instance of DiagPart
+   * @see org.tensorflow.op.linalg.DiagPart
    */
-  public <T extends Number> Cross<T> cross(Operand<T> a, Operand<T> b) {
-    return Cross.create(scope, a, b);
+  public <T> DiagPart<T> diagPart(Operand<T> input) {
+    return DiagPart.create(scope, input);
+  }
+
+  /**
+   * Builds an {@link Solve} operation
+   *
+   * @param matrix Shape is `[..., M, M]`.
+   * @param rhs Shape is `[..., M, K]`.
+   * @param options carries optional attributes values
+   * @return a new instance of Solve
+   * @see org.tensorflow.op.linalg.Solve
+   */
+  public <T> Solve<T> solve(Operand<T> matrix, Operand<T> rhs, Solve.Options... options) {
+    return Solve.create(scope, matrix, rhs, options);
+  }
+
+  /**
+   * Builds an {@link SetDiag} operation
+   *
+   * @param input Rank `k+1`, where `k >= 1`.
+   * @param diagonal Rank `k`, where `k >= 1`.
+   * @return a new instance of SetDiag
+   * @see org.tensorflow.op.linalg.SetDiag
+   */
+  public <T> SetDiag<T> setDiag(Operand<T> input, Operand<T> diagonal) {
+    return SetDiag.create(scope, input, diagonal);
+  }
+
+  /**
+   * Builds an {@link LoadAndRemapMatrix} operation
+   *
+   * @param ckptPath Path to the TensorFlow checkpoint (version 2, `TensorBundle`) from
+   * @param oldTensorName Name of the 2-D `Tensor` to load from checkpoint.
+   * @param rowRemapping An int `Tensor` of row remappings (generally created by
+   * @param colRemapping An int `Tensor` of column remappings (generally created by
+   * @param initializingValues A float `Tensor` containing  values to fill in for cells
+   * @param numRows Number of rows (length of the 1st dimension) in the output matrix.
+   * @param numCols Number of columns (length of the 2nd dimension) in the output matrix.
+   * @param options carries optional attributes values
+   * @return a new instance of LoadAndRemapMatrix
+   * @see org.tensorflow.op.linalg.LoadAndRemapMatrix
+   */
+  public LoadAndRemapMatrix loadAndRemapMatrix(Operand<TString> ckptPath,
+      Operand<TString> oldTensorName, Operand<TInt64> rowRemapping, Operand<TInt64> colRemapping,
+      Operand<TFloat> initializingValues, Long numRows, Long numCols,
+      LoadAndRemapMatrix.Options... options) {
+    return LoadAndRemapMatrix.create(scope, ckptPath, oldTensorName, rowRemapping, colRemapping, initializingValues, numRows, numCols, options);
+  }
+
+  /**
+   * Builds an {@link BatchSvd} operation
+   *
+   * @param input 
+   * @param options carries optional attributes values
+   * @return a new instance of BatchSvd
+   * @see org.tensorflow.op.linalg.BatchSvd
+   */
+  public <T> BatchSvd<T> batchSvd(Operand<T> input, BatchSvd.Options... options) {
+    return BatchSvd.create(scope, input, options);
+  }
+
+  /**
+   * Builds an {@link BatchCholesky} operation
+   *
+   * @param input 
+   * @return a new instance of BatchCholesky
+   * @see org.tensorflow.op.linalg.BatchCholesky
+   */
+  public <T extends TNumber> BatchCholesky<T> batchCholesky(Operand<T> input) {
+    return BatchCholesky.create(scope, input);
+  }
+
+  /**
+   * Builds an {@link BatchMatrixSolve} operation
+   *
+   * @param matrix 
+   * @param rhs 
+   * @param options carries optional attributes values
+   * @return a new instance of BatchMatrixSolve
+   * @see org.tensorflow.op.linalg.BatchMatrixSolve
+   */
+  public <T extends TNumber> BatchMatrixSolve<T> batchMatrixSolve(Operand<T> matrix, Operand<T> rhs,
+      BatchMatrixSolve.Options... options) {
+    return BatchMatrixSolve.create(scope, matrix, rhs, options);
+  }
+
+  /**
+   * Builds an {@link Inv} operation
+   *
+   * @param input Shape is `[..., M, M]`.
+   * @param options carries optional attributes values
+   * @return a new instance of Inv
+   * @see org.tensorflow.op.linalg.Inv
+   */
+  public <T> Inv<T> inv(Operand<T> input, Inv.Options... options) {
+    return Inv.create(scope, input, options);
+  }
+
+  /**
+   * Builds an {@link MatMul} operation
+   *
+   * @param a 
+   * @param b 
+   * @param options carries optional attributes values
+   * @return a new instance of MatMul
+   * @see org.tensorflow.op.linalg.MatMul
+   */
+  public <T> MatMul<T> matMul(Operand<T> a, Operand<T> b, MatMul.Options... options) {
+    return MatMul.create(scope, a, b, options);
   }
 
   /**
@@ -425,15 +417,17 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link Transpose} operation
+   * Builds an {@link BandPart} operation
    *
-   * @param x 
-   * @param perm 
-   * @return a new instance of Transpose
-   * @see org.tensorflow.op.linalg.Transpose
+   * @param input Rank `k` tensor.
+   * @param numLower 0-D tensor. Number of subdiagonals to keep. If negative, keep entire
+   * @param numUpper 0-D tensor. Number of superdiagonals to keep. If negative, keep
+   * @return a new instance of BandPart
+   * @see org.tensorflow.op.linalg.BandPart
    */
-  public <T, U extends Number> Transpose<T> transpose(Operand<T> x, Operand<U> perm) {
-    return Transpose.create(scope, x, perm);
+  public <T, U extends TNumber> BandPart<T> bandPart(Operand<T> input, Operand<U> numLower,
+      Operand<U> numUpper) {
+    return BandPart.create(scope, input, numLower, numUpper);
   }
 
   /**
@@ -448,18 +442,30 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link BatchMatrixSolveLs} operation
+   * Builds an {@link MatrixSolveLs} operation
    *
-   * @param matrix 
-   * @param rhs 
-   * @param l2Regularizer 
+   * @param matrix Shape is `[..., M, N]`.
+   * @param rhs Shape is `[..., M, K]`.
+   * @param l2Regularizer Scalar tensor.
    * @param options carries optional attributes values
-   * @return a new instance of BatchMatrixSolveLs
-   * @see org.tensorflow.op.linalg.BatchMatrixSolveLs
+   * @return a new instance of MatrixSolveLs
+   * @see org.tensorflow.op.linalg.MatrixSolveLs
    */
-  public <T extends Number> BatchMatrixSolveLs<T> batchMatrixSolveLs(Operand<T> matrix,
-      Operand<T> rhs, Operand<Double> l2Regularizer, BatchMatrixSolveLs.Options... options) {
-    return BatchMatrixSolveLs.create(scope, matrix, rhs, l2Regularizer, options);
+  public <T> MatrixSolveLs<T> matrixSolveLs(Operand<T> matrix, Operand<T> rhs,
+      Operand<TDouble> l2Regularizer, MatrixSolveLs.Options... options) {
+    return MatrixSolveLs.create(scope, matrix, rhs, l2Regularizer, options);
+  }
+
+  /**
+   * Builds an {@link BatchCholeskyGrad} operation
+   *
+   * @param l 
+   * @param grad 
+   * @return a new instance of BatchCholeskyGrad
+   * @see org.tensorflow.op.linalg.BatchCholeskyGrad
+   */
+  public <T extends TNumber> BatchCholeskyGrad<T> batchCholeskyGrad(Operand<T> l, Operand<T> grad) {
+    return BatchCholeskyGrad.create(scope, l, grad);
   }
 
   /**
@@ -497,30 +503,16 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link BandPart} operation
+   * Builds an {@link ConjugateTranspose} operation
    *
-   * @param input Rank `k` tensor.
-   * @param numLower 0-D tensor. Number of subdiagonals to keep. If negative, keep entire
-   * @param numUpper 0-D tensor. Number of superdiagonals to keep. If negative, keep
-   * @return a new instance of BandPart
-   * @see org.tensorflow.op.linalg.BandPart
+   * @param x 
+   * @param perm 
+   * @return a new instance of ConjugateTranspose
+   * @see org.tensorflow.op.linalg.ConjugateTranspose
    */
-  public <T, U extends Number> BandPart<T> bandPart(Operand<T> input, Operand<U> numLower,
-      Operand<U> numUpper) {
-    return BandPart.create(scope, input, numLower, numUpper);
-  }
-
-  /**
-   * Builds an {@link BatchSelfAdjointEig} operation
-   *
-   * @param input 
-   * @param options carries optional attributes values
-   * @return a new instance of BatchSelfAdjointEig
-   * @see org.tensorflow.op.linalg.BatchSelfAdjointEig
-   */
-  public <T extends Number> BatchSelfAdjointEig<T> batchSelfAdjointEig(Operand<T> input,
-      BatchSelfAdjointEig.Options... options) {
-    return BatchSelfAdjointEig.create(scope, input, options);
+  public <T, U extends TNumber> ConjugateTranspose<T> conjugateTranspose(Operand<T> x,
+      Operand<U> perm) {
+    return ConjugateTranspose.create(scope, x, perm);
   }
 
   /**
@@ -535,5 +527,19 @@ public final class LinalgOps {
   public <T> BatchMatMul<T> batchMatMul(Operand<T> x, Operand<T> y,
       BatchMatMul.Options... options) {
     return BatchMatMul.create(scope, x, y, options);
+  }
+
+  /**
+   * Builds an {@link BatchMatrixTriangularSolve} operation
+   *
+   * @param matrix 
+   * @param rhs 
+   * @param options carries optional attributes values
+   * @return a new instance of BatchMatrixTriangularSolve
+   * @see org.tensorflow.op.linalg.BatchMatrixTriangularSolve
+   */
+  public <T extends TNumber> BatchMatrixTriangularSolve<T> batchMatrixTriangularSolve(
+      Operand<T> matrix, Operand<T> rhs, BatchMatrixTriangularSolve.Options... options) {
+    return BatchMatrixTriangularSolve.create(scope, matrix, rhs, options);
   }
 }
