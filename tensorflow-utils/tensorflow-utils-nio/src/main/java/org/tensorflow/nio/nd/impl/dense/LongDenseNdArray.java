@@ -30,9 +30,20 @@ public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray> im
   }
 
   @Override
+  public long get(long... indices) {
+    return buffer().get(position(indices, true));
+  }
+
+  @Override
   public LongNdArray read(long[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
     return read(DataBuffers.wrap(dst, false).position(offset));
+  }
+
+  @Override
+  public LongNdArray set(long value, long... indices) {
+    buffer().put(position(indices, true), value);
+    return this;
   }
 
   @Override

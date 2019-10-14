@@ -33,10 +33,8 @@ import org.tensorflow.nio.nd.index.Index;
  *
  * <p>Example of usage:
  * <pre>{@code
- *    import static org.tensorflow.nio.StaticApi.*;
- *
  *    // Creates a 3x2x2 matrix (of rank 3)
- *    FloatNdArray matrix3d = ndArrayOfFloats(shape(3, 2, 2));
+ *    FloatNdArray matrix3d = NdArrays.ofFloats(shape(3, 2, 2));
  *
  *    // Access the second 2x2 matrix (of rank 2)
  *    FloatNdArray matrix = matrix3d.at(1);
@@ -126,7 +124,7 @@ public interface NdArray<T> {
    *
    * <p>Elements of any of the dimensions of this array can be retrieved. For example, if the number
    * of indices is equal to the number of dimensions of this array, then a rank-0 (scalar) array is
-   * returned, which value can then be obtained with `array.get()`.
+   * returned, which value can then be obtained with `array.getValue()`.
    *
    * <p>Any changes applied to the returned elements affect the data of this array as well, as there
    * is no copy involved.
@@ -154,9 +152,7 @@ public interface NdArray<T> {
    *
    * <p>Example of usage:
    * <pre>{@code
-   *    import static org.tensorflow.nio.StaticApi.*;
-   *
-   *    NdArray<Float> matrix3d = ndArrayOfFloats(shape(3, 2, 4));  // with [x, y, z] axes
+   *    NdArray<Float> matrix3d = NdArrays.ofFloats(shape(3, 2, 4));  // with [x, y, z] axes
    *
    *    // Iterates values over the 3rd elements on the z axis, (i.e. [x, x, 2])
    *    for (Float values = matrix3d.slice(all(), all(), at(2)).values()) {
@@ -186,12 +182,12 @@ public interface NdArray<T> {
    * <p>To access the scalar element, the number of indices provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
-   *  NdArray<Float> matrix = ndArrayOfFloat(shape(2, 2));  // matrix rank = 2
-   *  matrix.get(0, 1);  // succeeds, returns 0.0f
-   *  matrix.get(0);  // throws IllegalRankException
+   *  NdArray<Float> matrix = NdArrays.ofFloat(shape(2, 2));  // matrix rank = 2
+   *  matrix.getValue(0, 1);  // succeeds, returns 0.0f
+   *  matrix.getValue(0);  // throws IllegalRankException
    *
    *  NdArray<Float> scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.get();  // succeeds, returns 0.0f
+   *  scalar.getValue();  // succeeds, returns 0.0f
    * }</pre>
    *
    * @param indices coordinates of the scalar to resolve
@@ -199,7 +195,7 @@ public interface NdArray<T> {
    * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
    * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
    */
-  T get(long... indices);
+  T getValue(long... indices);
 
   /**
    * Assigns the value of the scalar found at the given coordinates.
@@ -207,12 +203,12 @@ public interface NdArray<T> {
    * <p>To access the scalar element, the number of indices provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
-   *  NdArray<Float> matrix = ndArrayOfFloat(shape(2, 2));  // matrix rank = 2
-   *  matrix.set(10.0f, 0, 1);  // succeeds
-   *  matrix.set(10.0f, 0);  // throws IllegalRankException
+   *  NdArray<Float> matrix = NdArrays.ofFloat(shape(2, 2));  // matrix rank = 2
+   *  matrix.setValue(10.0f, 0, 1);  // succeeds
+   *  matrix.setValue(10.0f, 0);  // throws IllegalRankException
    *
    *  NdArray<Float> scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.set(10.0f);  // succeeds
+   *  scalar.setValue(10.0f);  // succeeds
    * }</pre>
    *
    * @param indices coordinates of the scalar to assign
@@ -220,7 +216,7 @@ public interface NdArray<T> {
    * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
    * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
    */
-  NdArray<T> set(T value, long... indices);
+  NdArray<T> setValue(T value, long... indices);
 
   /**
    * Copy the content of this array to the destination array.

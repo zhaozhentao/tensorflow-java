@@ -30,7 +30,7 @@ public final class Indices {
     if (index.shape().numDimensions() > 0) {
       throw new IllegalArgumentException("Only scalars are accepted as a value index");
     }
-    return new At(index.get().longValue());
+    return new At(index.getValue().longValue());
   }
   
   public static Index all() {

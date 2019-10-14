@@ -26,6 +26,27 @@ import org.tensorflow.nio.nd.index.Index;
 public interface LongNdArray extends NdArray<Long> {
 
   /**
+   * Returns the long value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  LongNdArray matrix = NdArrays.ofLongs(shape(2, 2));  // matrix rank = 2
+   *  matrix.get(0, 1);  // succeeds, returns 0L
+   *  matrix.get(0);  // throws IllegalRankException
+   *
+   *  LongNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  scalar.get();  // succeeds, returns 0L
+   * }</pre>
+   *
+   * @param indices coordinates of the scalar to resolve
+   * @return value of that scalar
+   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   */
+  long get(long... indices);
+
+  /**
    * Reads the content of this N-dimensional array into the destination long array.
    *
    * <p>The size of the destination array must be equal or greater to the {@link #size()} of this array,
@@ -54,6 +75,27 @@ public interface LongNdArray extends NdArray<Long> {
    * @throws IndexOutOfBoundsException if offset is greater than dst length or is negative
    */
   LongNdArray read(long[] dst, int offset);
+
+  /**
+   * Assigns the long value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  LongNdArray matrix = NdArrays.ofLongs(shape(2, 2));  // matrix rank = 2
+   *  matrix.set(10L, 0, 1);  // succeeds
+   *  matrix.set(10L, 0);  // throws IllegalRankException
+   *
+   *  LongNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  scalar.set(10L);  // succeeds
+   * }</pre>
+   *
+   * @param indices coordinates of the scalar to assign
+   * @return this array
+   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   */
+  LongNdArray set(long value, long... indices);
 
   /**
    * Writes the content of this N-dimensional array from the source long array.
@@ -95,7 +137,7 @@ public interface LongNdArray extends NdArray<Long> {
   Iterable<LongNdArray> elements();
 
   @Override
-  LongNdArray set(Long value, long... indices);
+  LongNdArray setValue(Long value, long... indices);
 
   @Override
   LongNdArray copyTo(NdArray<Long> dst);

@@ -40,16 +40,16 @@ public abstract class DoubleNdArrayTestBase extends NdArrayTestBase<Double> {
 
         DoubleNdArray matrix = allocate(Shape.make(3, 4));
         matrix.write(values);
-        assertEquals(Double.valueOf(0.0), matrix.get(0, 0));
-        assertEquals(Double.valueOf(0.3), matrix.get(0, 3));
-        assertEquals(Double.valueOf(0.4), matrix.get(1, 0));
-        assertEquals(Double.valueOf(1.1), matrix.get(2, 3));
+        assertEquals(Double.valueOf(0.0), matrix.getValue(0, 0));
+        assertEquals(Double.valueOf(0.3), matrix.getValue(0, 3));
+        assertEquals(Double.valueOf(0.4), matrix.getValue(1, 0));
+        assertEquals(Double.valueOf(1.1), matrix.getValue(2, 3));
 
         matrix.write(values, 4);
-        assertEquals(Double.valueOf(0.4), matrix.get(0, 0));
-        assertEquals(Double.valueOf(0.7), matrix.get(0, 3));
-        assertEquals(Double.valueOf(0.8), matrix.get(1, 0));
-        assertEquals(Double.valueOf(1.5), matrix.get(2, 3));
+        assertEquals(Double.valueOf(0.4), matrix.getValue(0, 0));
+        assertEquals(Double.valueOf(0.7), matrix.getValue(0, 3));
+        assertEquals(Double.valueOf(0.8), matrix.getValue(1, 0));
+        assertEquals(Double.valueOf(1.5), matrix.getValue(2, 3));
 
         matrix.set(100.5, 1, 0);
         matrix.read(values, 2);

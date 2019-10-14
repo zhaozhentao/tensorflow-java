@@ -34,7 +34,7 @@ class Sequence implements Index {
 
   @Override
   public long mapCoordinate(long coordinate, Dimension dim) {
-    return values.get(coordinate).longValue();
+    return values.getValue(coordinate).longValue();
   }
 
   Sequence(NdArray<? extends Number> values) {

@@ -51,12 +51,12 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
   }
 
   @Override
-  public T get(long... indices) {
+  public T getValue(long... indices) {
     return buffer().get(position(indices, true));
   }
 
   @Override
-  public U set(T value, long... indices) {
+  public U setValue(T value, long... indices) {
     buffer().put(position(indices, true), value);
     return (U)this;
   }

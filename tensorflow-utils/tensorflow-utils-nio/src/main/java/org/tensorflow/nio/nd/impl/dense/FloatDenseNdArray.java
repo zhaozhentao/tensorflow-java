@@ -18,6 +18,7 @@ package org.tensorflow.nio.nd.impl.dense;
 
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.FloatDataBuffer;
+import org.tensorflow.nio.nd.BooleanNdArray;
 import org.tensorflow.nio.nd.DoubleNdArray;
 import org.tensorflow.nio.nd.FloatNdArray;
 import org.tensorflow.nio.nd.Shape;
@@ -30,9 +31,20 @@ public class FloatDenseNdArray extends AbstractDenseNdArray<Float, FloatNdArray>
   }
 
   @Override
+  public float get(long... indices) {
+    return buffer().get(position(indices, true));
+  }
+
+  @Override
   public FloatNdArray read(float[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
     return read(DataBuffers.wrap(dst, false).position(offset));
+  }
+
+  @Override
+  public FloatNdArray set(float value, long... indices) {
+    buffer().put(position(indices, true), value);
+    return this;
   }
 
   @Override

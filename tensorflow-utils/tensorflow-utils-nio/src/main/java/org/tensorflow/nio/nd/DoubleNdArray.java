@@ -26,6 +26,27 @@ import org.tensorflow.nio.nd.index.Index;
 public interface DoubleNdArray extends NdArray<Double> {
 
   /**
+   * Returns the double value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  DoubleNdArray matrix = NdArrays.ofDoubles(shape(2, 2));  // matrix rank = 2
+   *  matrix.get(0, 1);  // succeeds, returns 0.0
+   *  matrix.get(0);  // throws IllegalRankException
+   *
+   *  DoubleNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  scalar.get();  // succeeds, returns 0.0
+   * }</pre>
+   *
+   * @param indices coordinates of the scalar to resolve
+   * @return value of that scalar
+   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   */
+  double get(long... indices);
+
+  /**
    * Reads the content of this N-dimensional array into the destination double array.
    *
    * <p>The size of the destination array must be equal or greater to the {@link #size()} of this array,
@@ -54,6 +75,27 @@ public interface DoubleNdArray extends NdArray<Double> {
    * @throws IndexOutOfBoundsException if offset is greater than dst length or is negative
    */
   DoubleNdArray read(double[] dst, int offset);
+
+  /**
+   * Assigns the double value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  DoubleNdArray matrix = NdArrays.ofDoubles(shape(2, 2));  // matrix rank = 2
+   *  matrix.set(10.0, 0, 1);  // succeeds
+   *  matrix.set(10.0, 0);  // throws IllegalRankException
+   *
+   *  DoubleNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  scalar.set(10.0);  // succeeds
+   * }</pre>
+   *
+   * @param indices coordinates of the scalar to assign
+   * @return this array
+   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   */
+  DoubleNdArray set(double value, long... indices);
 
   /**
    * Writes the content of this N-dimensional array from the source double array.
@@ -95,7 +137,7 @@ public interface DoubleNdArray extends NdArray<Double> {
   Iterable<DoubleNdArray> elements();
 
   @Override
-  DoubleNdArray set(Double value, long... indices);
+  DoubleNdArray setValue(Double value, long... indices);
 
   @Override
   DoubleNdArray copyTo(NdArray<Double> dst);

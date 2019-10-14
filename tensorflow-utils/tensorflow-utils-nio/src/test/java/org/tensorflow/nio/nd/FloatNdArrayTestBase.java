@@ -40,16 +40,16 @@ public abstract class FloatNdArrayTestBase extends NdArrayTestBase<Float> {
 
         FloatNdArray matrix = allocate(Shape.make(3, 4));
         matrix.write(values);
-        assertEquals(Float.valueOf(0.0f), matrix.get(0, 0));
-        assertEquals(Float.valueOf(0.3f), matrix.get(0, 3));
-        assertEquals(Float.valueOf(0.4f), matrix.get(1, 0));
-        assertEquals(Float.valueOf(1.1f), matrix.get(2, 3));
+        assertEquals(Float.valueOf(0.0f), matrix.getValue(0, 0));
+        assertEquals(Float.valueOf(0.3f), matrix.getValue(0, 3));
+        assertEquals(Float.valueOf(0.4f), matrix.getValue(1, 0));
+        assertEquals(Float.valueOf(1.1f), matrix.getValue(2, 3));
 
         matrix.write(values, 4);
-        assertEquals(Float.valueOf(0.4f), matrix.get(0, 0));
-        assertEquals(Float.valueOf(0.7f), matrix.get(0, 3));
-        assertEquals(Float.valueOf(0.8f), matrix.get(1, 0));
-        assertEquals(Float.valueOf(1.5f), matrix.get(2, 3));
+        assertEquals(Float.valueOf(0.4f), matrix.getValue(0, 0));
+        assertEquals(Float.valueOf(0.7f), matrix.getValue(0, 3));
+        assertEquals(Float.valueOf(0.8f), matrix.getValue(1, 0));
+        assertEquals(Float.valueOf(1.5f), matrix.getValue(2, 3));
 
         matrix.set(100.5f, 1, 0);
         matrix.read(values, 2);

@@ -30,9 +30,20 @@ public class DoubleDenseNdArray extends AbstractDenseNdArray<Double, DoubleNdArr
   }
 
   @Override
+  public double get(long... indices) {
+    return buffer().get(position(indices, true));
+  }
+
+  @Override
   public DoubleNdArray read(double[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
     return read(DataBuffers.wrap(dst, false).position(offset));
+  }
+
+  @Override
+  public DoubleNdArray set(double value, long... indices) {
+    buffer().put(position(indices, true), value);
+    return this;
   }
 
   @Override

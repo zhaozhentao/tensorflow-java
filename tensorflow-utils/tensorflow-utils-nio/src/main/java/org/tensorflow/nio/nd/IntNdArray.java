@@ -26,6 +26,27 @@ import org.tensorflow.nio.nd.index.Index;
 public interface IntNdArray extends NdArray<Integer> {
 
   /**
+   * Returns the integer value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  IntNdArray matrix = NdArrays.ofInts(shape(2, 2));  // matrix rank = 2
+   *  matrix.get(0, 1);  // succeeds, returns 0
+   *  matrix.get(0);  // throws IllegalRankException
+   *
+   *  IntNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  scalar.get();  // succeeds, returns 0
+   * }</pre>
+   *
+   * @param indices coordinates of the scalar to resolve
+   * @return value of that scalar
+   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   */
+  int get(long... indices);
+
+  /**
    * Reads the content of this N-dimensional array into the destination int array.
    *
    * <p>The size of the destination array must be equal or greater to the {@link #size()} of this array,
@@ -54,6 +75,27 @@ public interface IntNdArray extends NdArray<Integer> {
    * @throws IndexOutOfBoundsException if offset is greater than dst length or is negative
    */
   IntNdArray read(int[] dst, int offset);
+
+  /**
+   * Assigns the integer value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  IntNdArray matrix = NdArrays.ofInts(shape(2, 2));  // matrix rank = 2
+   *  matrix.set(10, 0, 1);  // succeeds
+   *  matrix.set(10, 0);  // throws IllegalRankException
+   *
+   *  IntNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  scalar.set(10);  // succeeds
+   * }</pre>
+   *
+   * @param indices coordinates of the scalar to assign
+   * @return this array
+   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   */
+  IntNdArray set(int value, long... indices);
 
   /**
    * Writes the content of this N-dimensional array from the source int array.
@@ -95,7 +137,7 @@ public interface IntNdArray extends NdArray<Integer> {
   Iterable<IntNdArray> elements();
 
   @Override
-  IntNdArray set(Integer value, long... indices);
+  IntNdArray setValue(Integer value, long... indices);
 
   @Override
   IntNdArray copyTo(NdArray<Integer> dst);

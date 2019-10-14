@@ -26,6 +26,27 @@ import org.tensorflow.nio.nd.index.Index;
 public interface BooleanNdArray extends NdArray<Boolean> {
 
   /**
+   * Returns the boolean value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  BooleanNdArray matrix = NdArrays.ofBooleans(shape(2, 2));  // matrix rank = 2
+   *  matrix.get(0, 1);  // succeeds, returns false
+   *  matrix.get(0);  // throws IllegalRankException
+   *
+   *  BooleanNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  scalar.get();  // succeeds, returns false
+   * }</pre>
+   *
+   * @param indices coordinates of the scalar to resolve
+   * @return value of that scalar
+   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   */
+  boolean get(long... indices);
+
+  /**
    * Reads the content of this N-dimensional array into the destination boolean array.
    *
    * <p>The size of the destination array must be equal or greater to the {@link #size()} of this array,
@@ -54,6 +75,27 @@ public interface BooleanNdArray extends NdArray<Boolean> {
    * @throws IndexOutOfBoundsException if offset is greater than dst length or is negative
    */
   BooleanNdArray read(boolean[] dst, int offset);
+
+  /**
+   * Assigns the boolean value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  BooleanNdArray matrix = NdArrays.ofBooleans(shape(2, 2));  // matrix rank = 2
+   *  matrix.set(true, 0, 1);  // succeeds
+   *  matrix.set(true, 0);  // throws IllegalRankException
+   *
+   *  BooleanNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  scalar.set(true);  // succeeds
+   * }</pre>
+   *
+   * @param indices coordinates of the scalar to assign
+   * @return this array
+   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   */
+  BooleanNdArray set(boolean value, long... indices);
 
   /**
    * Writes the content of this N-dimensional array from the source boolean array.
@@ -95,7 +137,7 @@ public interface BooleanNdArray extends NdArray<Boolean> {
   Iterable<BooleanNdArray> elements();
 
   @Override
-  BooleanNdArray set(Boolean value, long... indices);
+  BooleanNdArray setValue(Boolean value, long... indices);
 
   @Override
   BooleanNdArray copyTo(NdArray<Boolean> dst);

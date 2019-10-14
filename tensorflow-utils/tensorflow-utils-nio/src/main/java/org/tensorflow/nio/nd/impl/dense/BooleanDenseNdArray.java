@@ -29,6 +29,11 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
   }
 
   @Override
+  public boolean get(long... indices) {
+    return buffer().get(position(indices, true));
+  }
+
+  @Override
   public BooleanNdArray read(boolean[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
     if (isBulkCopyAvailable()) {
@@ -38,6 +43,12 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
     } else {
       slowRead(dst, offset);
     }
+    return this;
+  }
+
+  @Override
+  public BooleanNdArray set(boolean value, long... indices) {
+    buffer().put(position(indices, true), value);
     return this;
   }
 

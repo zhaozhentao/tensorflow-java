@@ -28,11 +28,11 @@ class VectorValueIterator<T> implements ValueIterator<T> {
 
   @Override
   public T next() {
-    return array.get(currentIndex++);
+    return array.getValue(currentIndex++);
   }    
   
   public void next(T value) {
-    array.set(value, currentIndex++);
+    array.setValue(value, currentIndex++);
   }
   
   VectorValueIterator(NdArray<T> array) {
