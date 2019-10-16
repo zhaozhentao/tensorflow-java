@@ -56,7 +56,7 @@ class BulkDataTransfer<R extends AbstractDenseNdArray<?, ?>> {
   private final R array;  // The array we want to copy in bulk
   private final int bulkCopyDimensionIdx;  // The first dimension of this array that can be copied in bulk
   private final long bulkCopySize;  // The number of values that can be copied in a single bulk copy
-  private long totalCopied = 0L; // The number of values copied to far
+  private long totalCopied = 0L; // The number of values copied so far
 
   private BulkDataTransfer(R array, int bulkCopyDimensionIdx, long bulkCopySize) {
     this.array = array;

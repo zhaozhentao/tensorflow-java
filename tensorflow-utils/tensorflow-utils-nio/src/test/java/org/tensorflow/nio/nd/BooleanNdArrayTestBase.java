@@ -41,18 +41,18 @@ public abstract class BooleanNdArrayTestBase extends NdArrayTestBase<Boolean> {
 
         BooleanNdArray matrix = allocate(Shape.make(3, 4));
         matrix.write(values);
-        assertTrue(matrix.getValue(0, 0));
-        assertFalse(matrix.getValue(0, 3));
-        assertTrue(matrix.getValue(1, 0));
-        assertFalse(matrix.getValue(2, 3));
+        assertTrue(matrix.getBoolean(0, 0));
+        assertFalse(matrix.getBoolean(0, 3));
+        assertTrue(matrix.getBoolean(1, 0));
+        assertFalse(matrix.getBoolean(2, 3));
 
         matrix.write(values, 4);
-        assertTrue(matrix.getValue(0, 0));
-        assertTrue(matrix.getValue(0, 3));
-        assertFalse(matrix.getValue(1, 0));
-        assertTrue(matrix.getValue(2, 3));
+        assertTrue(matrix.getBoolean(0, 0));
+        assertTrue(matrix.getBoolean(0, 3));
+        assertFalse(matrix.getBoolean(1, 0));
+        assertTrue(matrix.getBoolean(2, 3));
 
-        matrix.set(true, 1, 0);
+        matrix.setBoolean(true, 1, 0);
         matrix.read(values, 2);
         assertTrue(values[2]);
         assertTrue(values[5]);

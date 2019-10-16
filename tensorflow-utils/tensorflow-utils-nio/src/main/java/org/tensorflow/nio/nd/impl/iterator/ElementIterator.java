@@ -30,7 +30,7 @@ class ElementIterator<T> implements Iterator<NdArray<T>> {
 
   @Override
   public NdArray<T> next() {
-    return array.at(currentIdx++);
+    return array.get(currentIdx++);
   }
 
   ElementIterator(NdArray<T> array) {

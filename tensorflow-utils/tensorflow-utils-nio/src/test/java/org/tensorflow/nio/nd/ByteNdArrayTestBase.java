@@ -40,18 +40,18 @@ public abstract class ByteNdArrayTestBase extends NdArrayTestBase<Byte> {
 
         ByteNdArray matrix = allocate(Shape.make(3, 4));
         matrix.write(values);
-        assertEquals(valueOf(0L), matrix.getValue(0, 0));
-        assertEquals(valueOf(3L), matrix.getValue(0, 3));
-        assertEquals(valueOf(4L), matrix.getValue(1, 0));
-        assertEquals(valueOf(11L), matrix.getValue(2, 3));
+        assertEquals(0, matrix.getByte(0, 0));
+        assertEquals(3, matrix.getByte(0, 3));
+        assertEquals(4, matrix.getByte(1, 0));
+        assertEquals(11, matrix.getByte(2, 3));
 
         matrix.write(values, 4);
-        assertEquals(valueOf(4L), matrix.getValue(0, 0));
-        assertEquals(valueOf(7L), matrix.getValue(0, 3));
-        assertEquals(valueOf(8L), matrix.getValue(1, 0));
-        assertEquals(valueOf(15L), matrix.getValue(2, 3));
+        assertEquals(4, matrix.getByte(0, 0));
+        assertEquals(7, matrix.getByte(0, 3));
+        assertEquals(8, matrix.getByte(1, 0));
+        assertEquals(15, matrix.getByte(2, 3));
 
-        matrix.set((byte)100, 1, 0);
+        matrix.setByte((byte)100, 1, 0);
         matrix.read(values, 2);
         assertEquals(4, values[2]);
         assertEquals(7, values[5]);

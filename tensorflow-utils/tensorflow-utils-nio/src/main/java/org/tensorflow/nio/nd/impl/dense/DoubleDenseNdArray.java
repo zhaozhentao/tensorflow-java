@@ -24,26 +24,26 @@ import org.tensorflow.nio.nd.Shape;
 
 public class DoubleDenseNdArray extends AbstractDenseNdArray<Double, DoubleNdArray> implements DoubleNdArray {
 
-  public static DoubleNdArray wrap(DoubleDataBuffer buffer, Shape shape) {
+  public static DoubleNdArray create(DoubleDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
     return new DoubleDenseNdArray(buffer, shape);
   }
 
   @Override
-  public double get(long... indices) {
+  public double getDouble(long... indices) {
     return buffer().get(position(indices, true));
+  }
+
+  @Override
+  public DoubleNdArray setDouble(double value, long... indices) {
+    buffer().put(position(indices, true), value);
+    return this;
   }
 
   @Override
   public DoubleNdArray read(double[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
     return read(DataBuffers.wrap(dst, false).position(offset));
-  }
-
-  @Override
-  public DoubleNdArray set(double value, long... indices) {
-    buffer().put(position(indices, true), value);
-    return this;
   }
 
   @Override

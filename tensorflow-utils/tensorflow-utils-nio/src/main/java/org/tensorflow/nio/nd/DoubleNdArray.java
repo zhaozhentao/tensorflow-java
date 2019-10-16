@@ -28,23 +28,44 @@ public interface DoubleNdArray extends NdArray<Double> {
   /**
    * Returns the double value of the scalar found at the given coordinates.
    *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
    *  DoubleNdArray matrix = NdArrays.ofDoubles(shape(2, 2));  // matrix rank = 2
-   *  matrix.get(0, 1);  // succeeds, returns 0.0
-   *  matrix.get(0);  // throws IllegalRankException
+   *  matrix.getDouble(0, 1);  // succeeds, returns 0.0
+   *  matrix.getDouble(0);  // throws IllegalRankException
    *
-   *  DoubleNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.get();  // succeeds, returns 0.0
+   *  DoubleNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
+   *  scalar.getDouble();  // succeeds, returns 0.0
    * }</pre>
    *
-   * @param indices coordinates of the scalar to resolve
+   * @param coordinates coordinates of the scalar to resolve
    * @return value of that scalar
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
    */
-  double get(long... indices);
+  double getDouble(long... coordinates);
+
+  /**
+   * Assigns the double value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  DoubleNdArray matrix = NdArrays.ofDoubles(shape(2, 2));  // matrix rank = 2
+   *  matrix.setDouble(10.0, 0, 1);  // succeeds
+   *  matrix.setDouble(10.0, 0);  // throws IllegalRankException
+   *
+   *  DoubleNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
+   *  scalar.setDouble(10.0);  // succeeds
+   * }</pre>
+   *
+   * @param coordinates coordinates of the scalar to assign
+   * @return this array
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
+   */
+  DoubleNdArray setDouble(double value, long... coordinates);
 
   /**
    * Reads the content of this N-dimensional array into the destination double array.
@@ -77,27 +98,6 @@ public interface DoubleNdArray extends NdArray<Double> {
   DoubleNdArray read(double[] dst, int offset);
 
   /**
-   * Assigns the double value of the scalar found at the given coordinates.
-   *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
-   * of dimensions of this array (i.e. its rank). For example:
-   * <pre>{@code
-   *  DoubleNdArray matrix = NdArrays.ofDoubles(shape(2, 2));  // matrix rank = 2
-   *  matrix.set(10.0, 0, 1);  // succeeds
-   *  matrix.set(10.0, 0);  // throws IllegalRankException
-   *
-   *  DoubleNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.set(10.0);  // succeeds
-   * }</pre>
-   *
-   * @param indices coordinates of the scalar to assign
-   * @return this array
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
-   */
-  DoubleNdArray set(double value, long... indices);
-
-  /**
    * Writes the content of this N-dimensional array from the source double array.
    *
    * <p>The size of the source array must be equal or greater to the {@link #size()} of this array,
@@ -128,22 +128,22 @@ public interface DoubleNdArray extends NdArray<Double> {
   DoubleNdArray write(double[] src, int offset);
 
   @Override
-  DoubleNdArray at(long... indices);
-  
+  Iterable<DoubleNdArray> elements();
+
   @Override
   DoubleNdArray slice(Index... indices);
 
   @Override
-  Iterable<DoubleNdArray> elements();
+  DoubleNdArray get(long... coordinates);
 
   @Override
-  DoubleNdArray setValue(Double value, long... indices);
+  DoubleNdArray set(NdArray<Double> src, long... coordinates);
+
+  @Override
+  DoubleNdArray setValue(Double value, long... coordinates);
 
   @Override
   DoubleNdArray copyTo(NdArray<Double> dst);
-
-  @Override
-  DoubleNdArray copyFrom(NdArray<Double> src);
 
   @Override
   DoubleNdArray read(DataBuffer<Double> dst);

@@ -25,26 +25,26 @@ import org.tensorflow.nio.nd.Shape;
 
 public class FloatDenseNdArray extends AbstractDenseNdArray<Float, FloatNdArray> implements FloatNdArray {
 
-  public static FloatNdArray wrap(FloatDataBuffer buffer, Shape shape) {
+  public static FloatNdArray create(FloatDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
     return new FloatDenseNdArray(buffer, shape);
   }
 
   @Override
-  public float get(long... indices) {
+  public float getFloat(long... indices) {
     return buffer().get(position(indices, true));
+  }
+
+  @Override
+  public FloatNdArray setFloat(float value, long... indices) {
+    buffer().put(position(indices, true), value);
+    return this;
   }
 
   @Override
   public FloatNdArray read(float[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
     return read(DataBuffers.wrap(dst, false).position(offset));
-  }
-
-  @Override
-  public FloatNdArray set(float value, long... indices) {
-    buffer().put(position(indices, true), value);
-    return this;
   }
 
   @Override

@@ -27,23 +27,44 @@ public interface ByteNdArray extends NdArray<Byte> {
   /**
    * Returns the byte value of the scalar found at the given coordinates.
    *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
    *  ByteNdArray matrix = NdArrays.ofBytes(shape(2, 2));  // matrix rank = 2
-   *  matrix.get(0, 1);  // succeeds, returns 0
-   *  matrix.get(0);  // throws IllegalRankException
+   *  matrix.getByte(0, 1);  // succeeds, returns 0
+   *  matrix.getByte(0);  // throws IllegalRankException
    *
-   *  ByteNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.get();  // succeeds, returns 0
+   *  ByteNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
+   *  scalar.getByte();  // succeeds, returns 0
    * }</pre>
    *
-   * @param indices coordinates of the scalar to resolve
+   * @param coordinates coordinates of the scalar to resolve
    * @return value of that scalar
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
    */
-  byte get(long... indices);
+  byte getByte(long... coordinates);
+
+  /**
+   * Assigns the byte value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  ByteNdArray matrix = NdArrays.ofBytes(shape(2, 2));  // matrix rank = 2
+   *  matrix.setByte(10, 0, 1);  // succeeds
+   *  matrix.setByte(10, 0);  // throws IllegalRankException
+   *
+   *  ByteNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
+   *  scalar.setByte(10);  // succeeds
+   * }</pre>
+   *
+   * @param coordinates coordinates of the scalar to assign
+   * @return this array
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
+   */
+  ByteNdArray setByte(byte value, long... coordinates);
 
   /**
    * Reads the content of this N-dimensional array into the destination byte array.
@@ -76,27 +97,6 @@ public interface ByteNdArray extends NdArray<Byte> {
   ByteNdArray read(byte[] dst, int offset);
 
   /**
-   * Assigns the byte value of the scalar found at the given coordinates.
-   *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
-   * of dimensions of this array (i.e. its rank). For example:
-   * <pre>{@code
-   *  ByteNdArray matrix = NdArrays.ofBytes(shape(2, 2));  // matrix rank = 2
-   *  matrix.set(10, 0, 1);  // succeeds
-   *  matrix.set(10, 0);  // throws IllegalRankException
-   *
-   *  ByteNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.set(10);  // succeeds
-   * }</pre>
-   *
-   * @param indices coordinates of the scalar to assign
-   * @return this array
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
-   */
-  ByteNdArray set(byte value, long... indices);
-
-  /**
    * Writes the content of this N-dimensional array from the source byte array.
    *
    * <p>The size of the source array must be equal or greater to the {@link #size()} of this array,
@@ -126,25 +126,23 @@ public interface ByteNdArray extends NdArray<Byte> {
    */
   ByteNdArray write(byte[] src, int offset);
 
-  ByteNdArray setByte(byte value, long... indices);
-
   @Override
-  ByteNdArray at(long... indices);
+  Iterable<ByteNdArray> elements();
 
   @Override
   ByteNdArray slice(Index... indices);
 
   @Override
-  Iterable<ByteNdArray> elements();
+  ByteNdArray get(long... coordinates);
 
   @Override
-  ByteNdArray setValue(Byte value, long... indices);
+  ByteNdArray set(NdArray<Byte> src, long... coordinates);
+
+  @Override
+  ByteNdArray setValue(Byte value, long... coordinates);
 
   @Override
   ByteNdArray copyTo(NdArray<Byte> dst);
-
-  @Override
-  ByteNdArray copyFrom(NdArray<Byte> src);
 
   @Override
   ByteNdArray read(DataBuffer<Byte> dst);

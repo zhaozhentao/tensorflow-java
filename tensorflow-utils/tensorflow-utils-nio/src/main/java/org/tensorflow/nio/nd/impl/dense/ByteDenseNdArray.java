@@ -24,14 +24,20 @@ import org.tensorflow.nio.nd.Shape;
 
 public class ByteDenseNdArray extends AbstractDenseNdArray<Byte, ByteNdArray> implements ByteNdArray {
 
-  public static ByteNdArray wrap(ByteDataBuffer buffer, Shape shape) {
+  public static ByteNdArray create(ByteDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
     return new ByteDenseNdArray(buffer, shape);
   }
 
   @Override
-  public byte get(long... indices) {
+  public byte getByte(long... indices) {
     return buffer().get(position(indices, true));
+  }
+
+  @Override
+  public ByteNdArray setByte(byte value, long... indices) {
+    buffer().put(position(indices, true), value);
+    return this;
   }
 
   @Override
@@ -41,21 +47,9 @@ public class ByteDenseNdArray extends AbstractDenseNdArray<Byte, ByteNdArray> im
   }
 
   @Override
-  public ByteNdArray set(byte value, long... indices) {
-    buffer().put(position(indices, true), value);
-    return this;
-  }
-
-  @Override
   public ByteNdArray write(byte[] src, int offset) {
     Validator.putArrayArgs(this, src.length, offset);
     return write(DataBuffers.wrap(src, true).position(offset));
-  }
-
-  @Override
-  public ByteNdArray setByte(byte value, long... indices) {
-    buffer.putByte(position(indices, true), value);
-    return this;
   }
 
   protected ByteDenseNdArray(ByteDataBuffer buffer, Shape shape) {

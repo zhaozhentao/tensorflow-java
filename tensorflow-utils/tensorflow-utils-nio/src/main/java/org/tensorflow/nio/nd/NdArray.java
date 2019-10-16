@@ -28,22 +28,27 @@ import org.tensorflow.nio.nd.index.Index;
  * data in memory.
  *
  * <p>Like {@link DataBuffer}, {@code NdArray} instances support 64-bits indexation so they can be
- * used to map very large data records. They also support special indices that to traverse their
+ * used to map very large data records. They also support special coordinates that to traverse their
  * values in any direction or to select only a subset of them.
  *
  * <p>Example of usage:
  * <pre>{@code
- *    // Creates a 3x2x2 matrix (of rank 3)
- *    FloatNdArray matrix3d = NdArrays.ofFloats(shape(3, 2, 2));
+ *    import static org.tensorflow.nio.StaticApi.*;
+ *
+ *    // Creates a 2x2x2 matrix (of rank 3)
+ *    FloatNdArray matrix3d = ndArrayOfFloats(shape(2, 2, 2));
+ *
+ *    // Initialize sub-matrices data with vectors
+ *    matrix.set(vector(1.0f, 2.0f), 0, 0)
+ *          .set(vector(3.0f, 4.0f), 0, 1)
+ *          .set(vector(5.0f, 6.0f), 1, 0)
+ *          .set(vector(7.0f, 8.0f), 1, 1);
  *
  *    // Access the second 2x2 matrix (of rank 2)
- *    FloatNdArray matrix = matrix3d.at(1);
+ *    FloatNdArray matrix = matrix3d.get(1);
  *
- *    // Initialize second matrix data with an array of floats
- *    matrix.write(new float[] { 1.0f, 2.0f, 3.0f, 4.0f });
- *
- *    // Access directly the float value at (1, 1, 0) from the 3D-matrix
- *    assertEquals(3.0f, matrix3d.get(1, 1, 0));
+ *    // Access directly the float value at (1, 0) from the second matrix
+ *    assertEquals(3.0f, matrix.getFloat(1, 0));
  * }</pre>
  *
  * @param <T> the type of values to be mapped
@@ -68,7 +73,9 @@ public interface NdArray<T> {
    * <p>For example, given a 3x3x2 matrix, the return value will be 18.
    * @return total size of this nd array
    */
-  long size();
+  default long size() {
+    return shape().size();
+  }
 
   /**
    * Returns an iteration of the elements on the first dimension of this N-dimensional array.
@@ -120,26 +127,6 @@ public interface NdArray<T> {
   ValueIterable<T> values();
 
   /**
-   * Returns the N-dimensional element of this array at the given coordinates.
-   *
-   * <p>Elements of any of the dimensions of this array can be retrieved. For example, if the number
-   * of indices is equal to the number of dimensions of this array, then a rank-0 (scalar) array is
-   * returned, which value can then be obtained with `array.getValue()`.
-   *
-   * <p>Any changes applied to the returned elements affect the data of this array as well, as there
-   * is no copy involved.
-   *
-   * <p>Note that invoking this method is equivalent and more efficient to slice this array at
-   * on single element for each indexed dimension, i.e.
-   * {@code array.at(x, y, z) == array.slice(at(x), at(y), at(z))}
-   *
-   * @param indices coordinates of the element to access, none will return this array
-   * @return the element at this index
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   */
-  NdArray<T> at(long... indices);
-
-  /**
    * Creates a multi-dimensional view (or slice) of this array by mapping one or more dimensions
    * to the given index selectors.
    *
@@ -172,14 +159,50 @@ public interface NdArray<T> {
    *
    * @param indices index selectors per dimensions, starting from dimension 0 of this array.
    * @return the element resulting of the index selection
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
    */
   NdArray<T> slice(Index... indices);
 
   /**
+   * Returns the N-dimensional element of this array at the given coordinates.
+   *
+   * <p>Elements of any of the dimensions of this array can be retrieved. For example, if the number
+   * of coordinates is equal to the number of dimensions of this array, then a rank-0 (scalar) array is
+   * returned, which value can then be obtained with `array.getValue()`.
+   *
+   * <p>Any changes applied to the returned elements affect the data of this array as well, as there
+   * is no copy involved.
+   *
+   * <p>Note that invoking this method is equivalent and more efficient to slice this array at
+   * on single element for each indexed dimension, i.e.
+   * {@code array.get(x, y, z) == array.slice(at(x), at(y), at(z))}
+   *
+   * @param coordinates coordinates of the element to access, none will return this array
+   * @return the element at this index
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   */
+  NdArray<T> get(long... coordinates);
+
+  /**
+   * Assigns the value of the N-dimensional element found at the given coordinates.
+   *
+   * <p>The number of coordinates provided can be anywhere between 0 and rank - 1. For example:
+   * <pre>{@code
+   *  NdArray<Float> matrix = NdArrays.ofFloats(shape(2, 2));  // matrix rank = 2
+   *  matrix.set(NdArrays.vector(10.0f, 20.0f), 0);  // succeeds
+   *  matrix.set(NdArrays.scalar(10.0f), 1, 0); // succeeds
+   * }</pre>
+   *
+   * @param coordinates coordinates of the element to assign
+   * @return this array
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   */
+  NdArray<T> set(NdArray<T> src, long... coordinates);
+
+  /**
    * Returns the value of the scalar found at the given coordinates.
    *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
    *  NdArray<Float> matrix = NdArrays.ofFloat(shape(2, 2));  // matrix rank = 2
@@ -190,17 +213,20 @@ public interface NdArray<T> {
    *  scalar.getValue();  // succeeds, returns 0.0f
    * }</pre>
    *
-   * @param indices coordinates of the scalar to resolve
+   * Note: if this array stores values of a primitive type, prefer the usage of the specialized
+   * method in the subclass for that type. For example, {@code floatArray.getFloat(0); }.
+   *
+   * @param coordinates coordinates of the scalar to resolve
    * @return value of that scalar
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
    */
-  T getValue(long... indices);
+  T getValue(long... coordinates);
 
   /**
    * Assigns the value of the scalar found at the given coordinates.
    *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
    *  NdArray<Float> matrix = NdArrays.ofFloat(shape(2, 2));  // matrix rank = 2
@@ -211,12 +237,15 @@ public interface NdArray<T> {
    *  scalar.setValue(10.0f);  // succeeds
    * }</pre>
    *
-   * @param indices coordinates of the scalar to assign
+   * Note: if this array stores values of a primitive type, prefer the usage of the specialized
+   * method in the subclass for that type. For example, {@code floatArray.setFloat(10.0f, 0); }
+   *
+   * @param coordinates coordinates of the scalar to assign
    * @return this array
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
    */
-  NdArray<T> setValue(T value, long... indices);
+  NdArray<T> setValue(T value, long... coordinates);
 
   /**
    * Copy the content of this array to the destination array.
@@ -230,19 +259,6 @@ public interface NdArray<T> {
    * @throws IllegalArgumentException if the shape of {@code dst} is not equal to the shape of this array
    */
   NdArray<T> copyTo(NdArray<T> dst);
-
-  /**
-   * Copy the content of the source array to this array.
-   *
-   * <p>The {@link #shape()} of the source array must be equal to the shape of this array, or an exception is
-   * thrown. After the copy, the content of both arrays can be altered independently, without affecting
-   * each other.
-   *
-   * @param src array from which content is copied to this array
-   * @return this array
-   * @throws IllegalArgumentException if the shape of {@code src} is not equal to the shape of this array
-   */
-  NdArray<T> copyFrom(NdArray<T> src);
 
   /**
    * Read the content of this N-dimensional array into the destination buffer.

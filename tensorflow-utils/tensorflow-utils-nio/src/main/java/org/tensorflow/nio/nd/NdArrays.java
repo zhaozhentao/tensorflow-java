@@ -33,65 +33,123 @@ import org.tensorflow.nio.nd.impl.dense.IntDenseNdArray;
 import org.tensorflow.nio.nd.impl.dense.LongDenseNdArray;
 
 public final class NdArrays {
+
+  // Byte arrays
+
+  public static ByteNdArray scalar(byte value) {
+    return ofBytes(Shape.scalar()).setByte(value);
+  }
+
+  public static ByteNdArray vector(byte... values) {
+    if (values == null) {
+      throw new IllegalArgumentException();
+    }
+    return ofBytes(Shape.make(values.length)).write(values);
+  }
   
   public static ByteNdArray ofBytes(Shape shape) {
     return wrap(DataBuffers.ofBytes(shape.size()), shape);
   }
 
-  public static ByteNdArray wrap(byte[] values, Shape shape) {
-    return wrap(DataBuffers.wrap(values, false), shape);
+  public static ByteNdArray wrap(ByteDataBuffer buffer, Shape shape) {
+    return ByteDenseNdArray.create(buffer, shape);
   }
 
-  public static ByteNdArray wrap(ByteDataBuffer buffer, Shape shape) {
-    return ByteDenseNdArray.wrap(buffer, shape);
+  // Long arrays
+
+  public static LongNdArray scalar(long value) {
+    return ofLongs(Shape.scalar()).setLong(value);
+  }
+
+  public static LongNdArray vector(long... values) {
+    if (values == null) {
+      throw new IllegalArgumentException();
+    }
+    return ofLongs(Shape.make(values.length)).write(values);
   }
 
   public static LongNdArray ofLongs(Shape shape) {
     return wrap(DataBuffers.ofLongs(shape.size()), shape);
   }
-  
-  public static LongNdArray wrap(long[] values, Shape shape) {
-    return wrap(DataBuffers.wrap(values, false), shape);
-  }
 
   public static LongNdArray wrap(LongDataBuffer buffer, Shape shape) {
-    return LongDenseNdArray.wrap(buffer, shape);
+    return LongDenseNdArray.create(buffer, shape);
+  }
+
+  // Int arrays
+
+  public static IntNdArray scalar(int value) {
+    return ofInts(Shape.scalar()).setInt(value);
+  }
+
+  public static IntNdArray vector(int... values) {
+    if (values == null) {
+      throw new IllegalArgumentException();
+    }
+    return ofInts(Shape.make(values.length)).write(values);
   }
 
   public static IntNdArray ofInts(Shape shape) {
     return wrap(DataBuffers.ofIntegers(shape.size()), shape);
   }
 
-  public static IntNdArray wrap(int[] values, Shape shape) {
-    return wrap(DataBuffers.wrap(values, false), shape);
+  public static IntNdArray wrap(IntDataBuffer buffer, Shape shape) {
+    return IntDenseNdArray.create(buffer, shape);
   }
 
-  public static IntNdArray wrap(IntDataBuffer buffer, Shape shape) {
-    return IntDenseNdArray.wrap(buffer, shape);
+  // Float arrays
+
+  public static FloatNdArray scalar(float value) {
+    return ofFloats(Shape.scalar()).setFloat(value);
+  }
+
+  public static FloatNdArray vector(float... values) {
+    if (values == null) {
+      throw new IllegalArgumentException();
+    }
+    return ofFloats(Shape.make(values.length)).write(values);
   }
 
   public static FloatNdArray ofFloats(Shape shape) {
     return wrap(DataBuffers.ofFloats(shape.size()), shape);
   }
 
-  public static FloatNdArray wrap(float[] values, Shape shape) {
-    return wrap(DataBuffers.wrap(values, false), shape);
+  public static FloatNdArray wrap(FloatDataBuffer buffer, Shape shape) {
+    return FloatDenseNdArray.create(buffer, shape);
   }
 
-  public static FloatNdArray wrap(FloatDataBuffer buffer, Shape shape) {
-    return FloatDenseNdArray.wrap(buffer, shape);
+  // Double arrays
+
+  public static DoubleNdArray scalar(double value) {
+    return ofDoubles(Shape.scalar()).setDouble(value);
+  }
+
+  public static DoubleNdArray vector(double... values) {
+    if (values == null) {
+      throw new IllegalArgumentException();
+    }
+    return ofDoubles(Shape.make(values.length)).write(values);
   }
 
   public static DoubleNdArray ofDoubles(Shape shape) {
     return wrap(DataBuffers.ofDoubles(shape.size()), shape);
   }
 
-  public static DoubleNdArray wrap(double[] values, Shape shape) {
-    return wrap(DataBuffers.wrap(values, false), shape);
+  public static DoubleNdArray wrap(DoubleDataBuffer buffer, Shape shape) {
+    return DoubleDenseNdArray.create(buffer, shape);
   }
 
-  public static DoubleNdArray wrap(DoubleDataBuffer buffer, Shape shape) {
-    return DoubleDenseNdArray.wrap(buffer, shape);
+  // Boolean arrays
+
+  public static BooleanNdArray scalar(boolean value) {
+    return ofBooleans(Shape.scalar()).setBoolean(value);
+  }
+
+  public static BooleanNdArray vector(boolean... values) {
+    if (values == null) {
+      throw new IllegalArgumentException();
+    }
+    return ofBooleans(Shape.make(values.length)).write(values);
   }
 
   public static BooleanNdArray ofBooleans(Shape shape) {
@@ -99,15 +157,29 @@ public final class NdArrays {
   }
 
   public static BooleanNdArray wrap(BooleanDataBuffer buffer, Shape shape) {
-    return BooleanDenseNdArray.wrap(buffer, shape);
+    return BooleanDenseNdArray.create(buffer, shape);
+  }
+
+  // Object arrays
+
+  @SuppressWarnings("unchecked")
+  public static <T> NdArray<T> scalar(T value) {
+    if (value == null) {
+      throw new IllegalArgumentException();
+    }
+    return of((Class<T>)value.getClass(), Shape.scalar()).setValue(value);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> NdArray<T> vector(T... values) {
+    if (values == null) {
+      throw new IllegalArgumentException();
+    }
+    return of((Class<T>)values[0].getClass(), Shape.make(values.length)).write(values);
   }
 
   public static <T> NdArray<T> of(Class<T> clazz, Shape shape) {
     return wrap(DataBuffers.of(clazz, shape.size()), shape);
-  }
-
-  public static <T> NdArray<T> wrap(T[] values, Shape shape) {
-    return wrap(DataBuffers.wrap(values, false), shape);
   }
 
   public static <T> NdArray<T> wrap(DataBuffer<T> buffer, Shape shape) {

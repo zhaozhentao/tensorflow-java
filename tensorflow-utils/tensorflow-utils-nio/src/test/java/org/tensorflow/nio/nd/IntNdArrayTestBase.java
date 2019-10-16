@@ -40,18 +40,18 @@ public abstract class IntNdArrayTestBase extends NdArrayTestBase<Integer> {
 
         IntNdArray matrix = allocate(Shape.make(3, 4));
         matrix.write(values);
-        assertEquals(Integer.valueOf(0), matrix.getValue(0, 0));
-        assertEquals(Integer.valueOf(3), matrix.getValue(0, 3));
-        assertEquals(Integer.valueOf(4), matrix.getValue(1, 0));
-        assertEquals(Integer.valueOf(11), matrix.getValue(2, 3));
+        assertEquals(0, matrix.getInt(0, 0));
+        assertEquals(3, matrix.getInt(0, 3));
+        assertEquals(4, matrix.getInt(1, 0));
+        assertEquals(11, matrix.getInt(2, 3));
 
         matrix.write(values, 4);
-        assertEquals(Integer.valueOf(4), matrix.getValue(0, 0));
-        assertEquals(Integer.valueOf(7), matrix.getValue(0, 3));
-        assertEquals(Integer.valueOf(8), matrix.getValue(1, 0));
-        assertEquals(Integer.valueOf(15), matrix.getValue(2, 3));
+        assertEquals(4, matrix.getInt(0, 0));
+        assertEquals(7, matrix.getInt(0, 3));
+        assertEquals(8, matrix.getInt(1, 0));
+        assertEquals(15, matrix.getInt(2, 3));
 
-        matrix.set(100, 1, 0);
+        matrix.setInt(100, 1, 0);
         matrix.read(values, 2);
         assertEquals(4, values[2]);
         assertEquals(7, values[5]);

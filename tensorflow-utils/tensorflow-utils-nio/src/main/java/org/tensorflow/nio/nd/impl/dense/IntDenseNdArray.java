@@ -25,26 +25,26 @@ import org.tensorflow.nio.nd.Shape;
 
 public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray> implements IntNdArray {
 
-  public static IntNdArray wrap(IntDataBuffer buffer, Shape shape) {
+  public static IntNdArray create(IntDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
     return new IntDenseNdArray(buffer, shape);
   }
 
   @Override
-  public int get(long... indices) {
-    return buffer().get(position(indices, true));
+  public int getInt(long... coordinates) {
+    return buffer().get(position(coordinates, true));
+  }
+
+  @Override
+  public IntNdArray setInt(int value, long... coordinates) {
+    buffer().put(position(coordinates, true), value);
+    return this;
   }
 
   @Override
   public IntNdArray read(int[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
     return read(DataBuffers.wrap(dst, false).position(offset));
-  }
-
-  @Override
-  public IntNdArray set(int value, long... indices) {
-    buffer().put(position(indices, true), value);
-    return this;
   }
 
   @Override

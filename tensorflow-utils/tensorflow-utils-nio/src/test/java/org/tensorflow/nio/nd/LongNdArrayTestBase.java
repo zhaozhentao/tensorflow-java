@@ -40,18 +40,18 @@ public abstract class LongNdArrayTestBase extends NdArrayTestBase<Long> {
 
         LongNdArray matrix = allocate(Shape.make(3, 4));
         matrix.write(values);
-        assertEquals(Long.valueOf(0L), matrix.getValue(0, 0));
-        assertEquals(Long.valueOf(3L), matrix.getValue(0, 3));
-        assertEquals(Long.valueOf(4L), matrix.getValue(1, 0));
-        assertEquals(Long.valueOf(11L), matrix.getValue(2, 3));
+        assertEquals(0L, matrix.getLong(0, 0));
+        assertEquals(3L, matrix.getLong(0, 3));
+        assertEquals(4L, matrix.getLong(1, 0));
+        assertEquals(11L, matrix.getLong(2, 3));
 
         matrix.write(values, 4);
-        assertEquals(Long.valueOf(4L), matrix.getValue(0, 0));
-        assertEquals(Long.valueOf(7L), matrix.getValue(0, 3));
-        assertEquals(Long.valueOf(8L), matrix.getValue(1, 0));
-        assertEquals(Long.valueOf(15L), matrix.getValue(2, 3));
+        assertEquals(4L, matrix.getLong(0, 0));
+        assertEquals(7L, matrix.getLong(0, 3));
+        assertEquals(8L, matrix.getLong(1, 0));
+        assertEquals(15L, matrix.getLong(2, 3));
 
-        matrix.set(100L, 1, 0);
+        matrix.setLong(100L, 1, 0);
         matrix.read(values, 2);
         assertEquals(4L, values[2]);
         assertEquals(7L, values[5]);

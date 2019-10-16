@@ -24,26 +24,26 @@ import org.tensorflow.nio.nd.Shape;
 
 public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray> implements LongNdArray {
 
-  public static LongNdArray wrap(LongDataBuffer buffer, Shape shape) {
+  public static LongNdArray create(LongDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
     return new LongDenseNdArray(buffer, shape);
   }
 
   @Override
-  public long get(long... indices) {
+  public long getLong(long... indices) {
     return buffer().get(position(indices, true));
+  }
+
+  @Override
+  public LongNdArray setLong(long value, long... indices) {
+    buffer().put(position(indices, true), value);
+    return this;
   }
 
   @Override
   public LongNdArray read(long[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
     return read(DataBuffers.wrap(dst, false).position(offset));
-  }
-
-  @Override
-  public LongNdArray set(long value, long... indices) {
-    buffer().put(position(indices, true), value);
-    return this;
   }
 
   @Override

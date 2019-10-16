@@ -43,6 +43,12 @@ final class Validator {
     }
   }
 
+  static void copyNdArrayArgs(NdArray<?> ndArray, NdArray<?> otherNdArray) {
+    if (!ndArray.shape().equals(otherNdArray.shape())) {
+      throw new IllegalArgumentException("Can only copy to arrays of the same shape");
+    }
+  }
+
   private static void copyArrayArgs(int arrayLength, int arrayOffset) {
     if (arrayOffset < 0) {
       throw new IndexOutOfBoundsException("Offset must be non-negative");

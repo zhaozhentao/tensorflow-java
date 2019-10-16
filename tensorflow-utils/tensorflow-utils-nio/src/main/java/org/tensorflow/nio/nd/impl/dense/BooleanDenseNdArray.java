@@ -23,20 +23,26 @@ import org.tensorflow.nio.nd.ValueIterator;
 
 public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNdArray> implements BooleanNdArray {
 
-  public static BooleanNdArray wrap(BooleanDataBuffer buffer, Shape shape) {
+  public static BooleanNdArray create(BooleanDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
     return new BooleanDenseNdArray(buffer, shape);
   }
 
   @Override
-  public boolean get(long... indices) {
+  public boolean getBoolean(long... indices) {
     return buffer().get(position(indices, true));
+  }
+
+  @Override
+  public BooleanNdArray setBoolean(boolean value, long... indices) {
+    buffer().put(position(indices, true), value);
+    return this;
   }
 
   @Override
   public BooleanNdArray read(boolean[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
-    if (isBulkCopyAvailable()) {
+    if (isBulkDataTransferPossible()) {
       BulkDataTransfer.create(this).execute((t, e) ->
           e.buffer().get(dst, offset + (int)t.totalCopied(), (int)t.bulkCopySize()).rewind()
       );
@@ -47,15 +53,9 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
   }
 
   @Override
-  public BooleanNdArray set(boolean value, long... indices) {
-    buffer().put(position(indices, true), value);
-    return this;
-  }
-
-  @Override
   public BooleanNdArray write(boolean[] src, int offset) {
     Validator.putArrayArgs(this, src.length, offset);
-    if (isBulkCopyAvailable()) {
+    if (isBulkDataTransferPossible()) {
       BulkDataTransfer.create(this).execute((t, e) ->
           e.buffer().put(src, offset + (int)t.totalCopied(), (int)t.bulkCopySize()).rewind()
       );

@@ -31,11 +31,6 @@ public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArra
   public Shape shape() {
     return shape;
   }
-  
-  @Override
-  public long size() {
-    return shape().size();
-  }
 
   @Override
   public ValueIterable<T> values() {
@@ -53,17 +48,6 @@ public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArra
       throw new IllegalArgumentException("Can only copy to arrays of the same shape");
     }
     for (ValueIterator<T> srcIter = values().iterator(), dstIter = array.values().iterator(); srcIter.hasNext();) {
-      dstIter.next(srcIter.next());
-    }
-    return (U)this;
-  }
-
-  @Override
-  public U copyFrom(NdArray<T> array) {
-    if (!shape().equals(array.shape())) {
-      throw new IllegalArgumentException("Can only copy to arrays of the same shape");
-    }
-    for (ValueIterator<T> srcIter = array.values().iterator(), dstIter = values().iterator(); srcIter.hasNext();) {
       dstIter.next(srcIter.next());
     }
     return (U)this;

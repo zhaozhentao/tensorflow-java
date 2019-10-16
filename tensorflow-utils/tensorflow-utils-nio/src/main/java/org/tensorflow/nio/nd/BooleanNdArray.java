@@ -28,23 +28,44 @@ public interface BooleanNdArray extends NdArray<Boolean> {
   /**
    * Returns the boolean value of the scalar found at the given coordinates.
    *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
    *  BooleanNdArray matrix = NdArrays.ofBooleans(shape(2, 2));  // matrix rank = 2
-   *  matrix.get(0, 1);  // succeeds, returns false
-   *  matrix.get(0);  // throws IllegalRankException
+   *  matrix.getBoolean(0, 1);  // succeeds, returns false
+   *  matrix.getBoolean(0);  // throws IllegalRankException
    *
-   *  BooleanNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.get();  // succeeds, returns false
+   *  BooleanNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
+   *  scalar.getBoolean();  // succeeds, returns false
    * }</pre>
    *
-   * @param indices coordinates of the scalar to resolve
+   * @param coordinates coordinates of the scalar to resolve
    * @return value of that scalar
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
    */
-  boolean get(long... indices);
+  boolean getBoolean(long... coordinates);
+
+  /**
+   * Assigns the boolean value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  BooleanNdArray matrix = NdArrays.ofBooleans(shape(2, 2));  // matrix rank = 2
+   *  matrix.setBoolean(true, 0, 1);  // succeeds
+   *  matrix.setBoolean(true, 0);  // throws IllegalRankException
+   *
+   *  BooleanNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
+   *  scalar.setBoolean(true);  // succeeds
+   * }</pre>
+   *
+   * @param coordinates coordinates of the scalar to assign
+   * @return this array
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
+   */
+  BooleanNdArray setBoolean(boolean value, long... coordinates);
 
   /**
    * Reads the content of this N-dimensional array into the destination boolean array.
@@ -77,27 +98,6 @@ public interface BooleanNdArray extends NdArray<Boolean> {
   BooleanNdArray read(boolean[] dst, int offset);
 
   /**
-   * Assigns the boolean value of the scalar found at the given coordinates.
-   *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
-   * of dimensions of this array (i.e. its rank). For example:
-   * <pre>{@code
-   *  BooleanNdArray matrix = NdArrays.ofBooleans(shape(2, 2));  // matrix rank = 2
-   *  matrix.set(true, 0, 1);  // succeeds
-   *  matrix.set(true, 0);  // throws IllegalRankException
-   *
-   *  BooleanNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.set(true);  // succeeds
-   * }</pre>
-   *
-   * @param indices coordinates of the scalar to assign
-   * @return this array
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
-   */
-  BooleanNdArray set(boolean value, long... indices);
-
-  /**
    * Writes the content of this N-dimensional array from the source boolean array.
    *
    * <p>The size of the source array must be equal or greater to the {@link #size()} of this array,
@@ -128,22 +128,22 @@ public interface BooleanNdArray extends NdArray<Boolean> {
   BooleanNdArray write(boolean[] src, int offset);
 
   @Override
-  BooleanNdArray at(long... indices);
-  
+  Iterable<BooleanNdArray> elements();
+
   @Override
   BooleanNdArray slice(Index... indices);
 
   @Override
-  Iterable<BooleanNdArray> elements();
+  BooleanNdArray get(long... coordinates);
 
   @Override
-  BooleanNdArray setValue(Boolean value, long... indices);
+  BooleanNdArray set(NdArray<Boolean> src, long... coordinates);
+
+  @Override
+  BooleanNdArray setValue(Boolean value, long... coordinates);
 
   @Override
   BooleanNdArray copyTo(NdArray<Boolean> dst);
-
-  @Override
-  BooleanNdArray copyFrom(NdArray<Boolean> src);
 
   @Override
   BooleanNdArray read(DataBuffer<Boolean> dst);

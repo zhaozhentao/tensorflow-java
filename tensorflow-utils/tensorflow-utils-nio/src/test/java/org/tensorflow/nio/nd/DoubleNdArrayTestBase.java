@@ -40,18 +40,18 @@ public abstract class DoubleNdArrayTestBase extends NdArrayTestBase<Double> {
 
         DoubleNdArray matrix = allocate(Shape.make(3, 4));
         matrix.write(values);
-        assertEquals(Double.valueOf(0.0), matrix.getValue(0, 0));
-        assertEquals(Double.valueOf(0.3), matrix.getValue(0, 3));
-        assertEquals(Double.valueOf(0.4), matrix.getValue(1, 0));
-        assertEquals(Double.valueOf(1.1), matrix.getValue(2, 3));
+        assertEquals(0.0, matrix.getDouble(0, 0), 0.0);
+        assertEquals(0.3, matrix.getDouble(0, 3), 0.0);
+        assertEquals(0.4, matrix.getDouble(1, 0), 0.0);
+        assertEquals(1.1, matrix.getDouble(2, 3), 0.0);
 
         matrix.write(values, 4);
-        assertEquals(Double.valueOf(0.4), matrix.getValue(0, 0));
-        assertEquals(Double.valueOf(0.7), matrix.getValue(0, 3));
-        assertEquals(Double.valueOf(0.8), matrix.getValue(1, 0));
-        assertEquals(Double.valueOf(1.5), matrix.getValue(2, 3));
+        assertEquals(0.4, matrix.getDouble(0, 0), 0.0);
+        assertEquals(0.7, matrix.getDouble(0, 3), 0.0);
+        assertEquals(0.8, matrix.getDouble(1, 0), 0.0);
+        assertEquals(1.5, matrix.getDouble(2, 3), 0.0);
 
-        matrix.set(100.5, 1, 0);
+        matrix.setDouble(100.5, 1, 0);
         matrix.read(values, 2);
         assertEquals(0.4, values[2], 0);
         assertEquals(0.7, values[5], 0);

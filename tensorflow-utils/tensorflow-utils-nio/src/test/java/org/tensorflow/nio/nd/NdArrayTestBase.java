@@ -18,6 +18,7 @@ package org.tensorflow.nio.nd;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.tensorflow.nio.nd.NdArrays.*;
 import static org.tensorflow.nio.nd.index.Indices.*;
 
 import java.nio.BufferOverflowException;
@@ -41,10 +42,11 @@ public abstract class NdArrayTestBase<T> {
 
   @Test
   public void shapeAndSizes() {
-    Shape scalarShape = Shape.make();
+    Shape scalarShape = Shape.scalar();
     NdArray<T> scalar = allocate(scalarShape);
     assertEquals(scalarShape, scalar.shape());
     assertEquals(0, scalar.rank());
+    assertEquals(scalarShape, Shape.make());
 
     Shape vectorShape = Shape.make(10);
     NdArray<T> vector = allocate(vectorShape);
@@ -53,7 +55,7 @@ public abstract class NdArrayTestBase<T> {
   }
 
   @Test
-  public void writeAndReadValues() {
+  public void setAndGetValues() {
     NdArray<T> matrix = allocate(Shape.make(5, 4));
     assertEquals(zeroOrNull(), matrix.getValue(3, 3));
 
@@ -83,6 +85,19 @@ public abstract class NdArrayTestBase<T> {
     } catch (IllegalRankException e) {
       // as expected
     }
+
+    NdArray<T> matrix2 = allocate(Shape.make(3, 2))
+        .set(vector(valueOf(1L), valueOf(2L)), 0)
+        .set(vector(valueOf(3L), valueOf(4L)), 1)
+        .setValue(valueOf(5L), 2, 0)
+        .setValue(valueOf(6L), 2, 1);
+
+    assertEquals(valueOf(1L), matrix2.getValue(0, 0));
+    assertEquals(valueOf(2L), matrix2.getValue(0, 1));
+    assertEquals(valueOf(3L), matrix2.getValue(1, 0));
+    assertEquals(valueOf(4L), matrix2.getValue(1, 1));
+    assertEquals(valueOf(5L), matrix2.getValue(2, 0));
+    assertEquals(valueOf(6L), matrix2.getValue(2, 1));
   }
 
   @Test
@@ -150,7 +165,7 @@ public abstract class NdArrayTestBase<T> {
     matrix3d.setValue(val101, 1, 0, 1);
 
     // Vector (1,0,*)
-    NdArray<T> vector10X = matrix3d.at(1, 0);
+    NdArray<T> vector10X = matrix3d.get(1, 0);
     assertEquals(Shape.make(5), vector10X.shape());
     assertEquals(val100, vector10X.getValue(0));
     assertEquals(val101, vector10X.getValue(1));
@@ -211,12 +226,12 @@ public abstract class NdArrayTestBase<T> {
     assertEquals(val102, vector10_1to3.getValue(1));
 
     // Scalar (1,0,0) from vector (1,0,*)
-    NdArray<T> scalar100 = vector10X.at(0);
+    NdArray<T> scalar100 = vector10X.get(0);
     assertEquals(Shape.make(), scalar100.shape());
     assertEquals(val100, scalar100.getValue());
 
     // Slice scalar (1,0,z)
-    LongNdArray z = NdArrays.wrap(new long[] {2L}, Shape.make());
+    LongNdArray z = scalar(2L);
     NdArray<T> scalar102 = matrix3d.slice(at(1), at(0), at(z));
     assertEquals(scalar102.shape(), Shape.make());
     assertEquals(val102, scalar102.getValue());
@@ -253,29 +268,15 @@ public abstract class NdArrayTestBase<T> {
     for (ValueIterator<T> iter = matrixA.values().iterator(); iter.hasNext();) {
       iter.next(valueOf(val++));
     }
-    NdArray<T> matrixB = allocate(Shape.make(3, 5));
-    matrixB.copyFrom(matrixA);
+    NdArray<T> matrixB = allocate(Shape.make(3, 5)).setValue(valueOf(100L), 1, 0);
+    matrixA.copyTo(matrixB);
     assertEquals(valueOf(0L), matrixB.getValue(0, 0));
     assertEquals(valueOf(4L), matrixB.getValue(0, 4));
     assertEquals(valueOf(5L), matrixB.getValue(1, 0));
     assertEquals(valueOf(10L), matrixB.getValue(2, 0));
     assertEquals(valueOf(14L), matrixB.getValue(2, 4));
 
-    matrixB.setValue(valueOf(100L), 1, 0);
-    matrixB.copyTo(matrixA);
-    assertEquals(valueOf(0L), matrixA.getValue(0, 0));
-    assertEquals(valueOf(4L), matrixA.getValue(0, 4));
-    assertEquals(valueOf(100L), matrixA.getValue(1, 0));
-    assertEquals(valueOf(10L), matrixA.getValue(2, 0));
-    assertEquals(valueOf(14L), matrixA.getValue(2, 4));
-
     NdArray<T> matrixC = allocate(Shape.make(3, 4));
-    try {
-      matrixC.copyFrom(matrixA);
-      fail();
-    } catch (IllegalArgumentException e) {
-      // as expected
-    }
     try {
       matrixA.copyTo(matrixC);
       fail();

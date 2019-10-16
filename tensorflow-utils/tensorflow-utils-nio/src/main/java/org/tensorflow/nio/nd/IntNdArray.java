@@ -28,23 +28,44 @@ public interface IntNdArray extends NdArray<Integer> {
   /**
    * Returns the integer value of the scalar found at the given coordinates.
    *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
    *  IntNdArray matrix = NdArrays.ofInts(shape(2, 2));  // matrix rank = 2
-   *  matrix.get(0, 1);  // succeeds, returns 0
-   *  matrix.get(0);  // throws IllegalRankException
+   *  matrix.getInt(0, 1);  // succeeds, returns 0
+   *  matrix.getInt(0);  // throws IllegalRankException
    *
-   *  IntNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.get();  // succeeds, returns 0
+   *  IntNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
+   *  scalar.getInt();  // succeeds, returns 0
    * }</pre>
    *
-   * @param indices coordinates of the scalar to resolve
+   * @param coordinates coordinates of the scalar to resolve
    * @return value of that scalar
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
    */
-  int get(long... indices);
+  int getInt(long... coordinates);
+
+  /**
+   * Assigns the integer value of the scalar found at the given coordinates.
+   *
+   * <p>To access the scalar element, the number of coordinates provided must be equal to the number
+   * of dimensions of this array (i.e. its rank). For example:
+   * <pre>{@code
+   *  IntNdArray matrix = NdArrays.ofInts(shape(2, 2));  // matrix rank = 2
+   *  matrix.setInt(10, 0, 1);  // succeeds
+   *  matrix.setInt(10, 0);  // throws IllegalRankException
+   *
+   *  IntNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
+   *  scalar.setInt(10);  // succeeds
+   * }</pre>
+   *
+   * @param coordinates coordinates of the scalar to assign
+   * @return this array
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
+   */
+  IntNdArray setInt(int value, long... coordinates);
 
   /**
    * Reads the content of this N-dimensional array into the destination int array.
@@ -77,27 +98,6 @@ public interface IntNdArray extends NdArray<Integer> {
   IntNdArray read(int[] dst, int offset);
 
   /**
-   * Assigns the integer value of the scalar found at the given coordinates.
-   *
-   * <p>To access the scalar element, the number of indices provided must be equal to the number
-   * of dimensions of this array (i.e. its rank). For example:
-   * <pre>{@code
-   *  IntNdArray matrix = NdArrays.ofInts(shape(2, 2));  // matrix rank = 2
-   *  matrix.set(10, 0, 1);  // succeeds
-   *  matrix.set(10, 0);  // throws IllegalRankException
-   *
-   *  IntNdArray scalar = matrix.at(0, 1);  // scalar rank = 0
-   *  scalar.set(10);  // succeeds
-   * }</pre>
-   *
-   * @param indices coordinates of the scalar to assign
-   * @return this array
-   * @throws IndexOutOfBoundsException if some indices are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of indices is not sufficient to access a scalar element
-   */
-  IntNdArray set(int value, long... indices);
-
-  /**
    * Writes the content of this N-dimensional array from the source int array.
    *
    * <p>The size of the source array must be equal or greater to the {@link #size()} of this array,
@@ -128,22 +128,22 @@ public interface IntNdArray extends NdArray<Integer> {
   IntNdArray write(int[] src, int offset);
 
   @Override
-  IntNdArray at(long... indices);
-  
+  Iterable<IntNdArray> elements();
+
   @Override
   IntNdArray slice(Index... indices);
 
   @Override
-  Iterable<IntNdArray> elements();
+  IntNdArray get(long... coordinates);
 
   @Override
-  IntNdArray setValue(Integer value, long... indices);
+  IntNdArray set(NdArray<Integer> src, long... coordinates);
+
+  @Override
+  IntNdArray setValue(Integer value, long... coordinates);
 
   @Override
   IntNdArray copyTo(NdArray<Integer> dst);
-
-  @Override
-  IntNdArray copyFrom(NdArray<Integer> src);
 
   @Override
   IntNdArray read(DataBuffer<Integer> dst);

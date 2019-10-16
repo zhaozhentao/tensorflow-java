@@ -30,7 +30,7 @@ import org.tensorflow.nio.nd.index.Index;
 public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends AbstractNdArray<T, U> {
 
   @Override
-  public U at(long... indices) {
+  public U get(long... indices) {
     Shape sliceShape = shape().subshape(indices.length);
     long slicePosition = position(indices, false);
     return allocateSlice(slicePosition, sliceShape);
@@ -62,15 +62,20 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
   }
 
   @Override
-  public U copyTo(NdArray<T> dst) {
-    // TODO Optimize when array is continuous in memory
-    return super.copyTo(dst);
+  public U set(NdArray<T> src, long... coordinates) {
+    src.copyTo(coordinates == null ? this : get(coordinates));
+    return (U)this;
   }
 
   @Override
-  public U copyFrom(NdArray<T> src) {
-    // TODO Optimize when array is continuous in memory
-    return super.copyFrom(src);
+  public U copyTo(NdArray<T> dst) {
+    Validator.copyNdArrayArgs(this, dst);
+    if (isContinuousInMemory()) {
+      dst.write(buffer().duplicate());
+    } else {
+      super.copyTo(dst);
+    }
+    return (U)this;
   }
 
   @Override
@@ -78,7 +83,7 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     if (dst.remaining() < size()) {
       throw new BufferOverflowException();
     }
-    if (isBulkCopyAvailable()) {
+    if (isBulkDataTransferPossible()) {
       BulkDataTransfer.create(this).execute((t, e) ->
           dst.put(e.buffer().withLimit(t.bulkCopySize()))
       );
@@ -93,7 +98,7 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     if (src.remaining() < size()) {
       throw new BufferUnderflowException();
     }
-    if (isBulkCopyAvailable()) {
+    if (isBulkDataTransferPossible()) {
       BulkDataTransfer.create(this).execute((t, e) ->
           e.buffer().put(src.limit(src.position() + t.bulkCopySize())).rewind()
       );
@@ -111,16 +116,6 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
 
   protected abstract U allocateSlice(long position, Shape shape);
 
-  /**
-   * Check if we copy this array data in bulk. Bulk copy is only possible for array of 1-dimension or more and that
-   * the last dimension is not segmented (therefore linear in memory).
-   *
-   * @return true if bulk copy is possible
-   */
-  protected boolean isBulkCopyAvailable() {
-    return shape().numDimensions() > 0 && !shape().dimension(shape().numDimensions() - 1).isSegmented();
-  }
-
   protected long position(long[] indices, boolean scalar) {
     if (indices.length > shape().numDimensions()) {
       throw new IndexOutOfBoundsException();
@@ -137,5 +132,24 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
       throw new IllegalRankException("Not a scalar value");
     }
     return position;
+  }
+
+  /**
+   * Check if we copy this array data in bulk. Bulk copy is only possible for array of 1-dimension or more and that
+   * the last dimension is not segmented (therefore linear in memory).
+   *
+   * @return true if bulk copy is possible
+   */
+  boolean isBulkDataTransferPossible() {
+    return shape().numDimensions() > 0 && !shape().dimension(shape().numDimensions() - 1).isSegmented();
+  }
+
+  private boolean isContinuousInMemory() {
+    for (int i = 0; i < shape().numDimensions(); ++i) {
+      if (shape().dimension(i).isSegmented()) {
+        return false;
+      }
+    }
+    return true;
   }
 }

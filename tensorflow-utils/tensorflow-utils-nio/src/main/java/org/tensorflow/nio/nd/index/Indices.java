@@ -16,6 +16,7 @@
  */
 package org.tensorflow.nio.nd.index;
 
+import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.NdArrays;
 import org.tensorflow.nio.nd.Shape;
@@ -41,7 +42,7 @@ public final class Indices {
     if (indices == null) {
       throw new IllegalArgumentException();
     }
-    return new Sequence(NdArrays.wrap(indices, Shape.make(indices.length)));
+    return new Sequence(NdArrays.wrap(DataBuffers.wrap(indices, true), Shape.make(indices.length)));
   }
   
   public static Index elem(NdArray<? extends Number> indices) {
