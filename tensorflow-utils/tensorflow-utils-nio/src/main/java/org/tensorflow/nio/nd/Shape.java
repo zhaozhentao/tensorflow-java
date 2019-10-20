@@ -75,6 +75,7 @@ public interface Shape {
    *
    * @return -1 if the number of dimensions is unknown, 0 if the shape represents a scalar, 1 for a
    *     vector, 2 for a matrix etc.
+   * @throws IllegalStateException if this shape is unknown or has no dimensions (scalar)
    */
   int numDimensions();
 

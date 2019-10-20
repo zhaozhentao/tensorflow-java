@@ -18,6 +18,7 @@ package org.tensorflow.nio.nd;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.tensorflow.nio.nd.NdArrays.vector;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
@@ -32,6 +33,29 @@ public abstract class DoubleNdArrayTestBase extends NdArrayTestBase<Double> {
     @Override
     protected Double valueOf(Long val) {
         return val.doubleValue();
+    }
+
+    @Test
+    public void iteratePrimitiveElements() {
+        DoubleNdArray matrix3d = allocate(Shape.make(5, 4, 5));
+
+        matrix3d.scalars().forEachIdx((coords, scalar) -> {
+            scalar.setDouble((double)coords[2]);
+        });
+
+        assertEquals(0.0, matrix3d.getDouble(0, 0, 0), 0.0);
+        assertEquals(1.0, matrix3d.getDouble(0, 0, 1), 0.0);
+        assertEquals(4.0, matrix3d.getDouble(0, 0, 4), 0.0);
+        assertEquals(2.0, matrix3d.getDouble(0, 1, 2), 0.0);
+
+        matrix3d.elements(1).forEach(vector -> {
+            vector.set(vector(5.0, 6.0, 7.0, 8.0, 9.0));
+        });
+
+        assertEquals(5, matrix3d.getDouble(0, 0, 0), 0.0);
+        assertEquals(6, matrix3d.getDouble(0, 0, 1), 0.0);
+        assertEquals(9, matrix3d.getDouble(0, 0, 4), 0.0);
+        assertEquals(7, matrix3d.getDouble(0, 1, 2), 0.0);
     }
 
     @Test

@@ -20,6 +20,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static org.tensorflow.nio.nd.NdArrays.vector;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
@@ -33,6 +34,29 @@ public abstract class BooleanNdArrayTestBase extends NdArrayTestBase<Boolean> {
     @Override
     protected Boolean valueOf(Long val) {
         return val > 0;
+    }
+
+    @Test
+    public void iteratePrimitiveElements() {
+        BooleanNdArray matrix3d = allocate(Shape.make(5, 4, 5));
+
+        matrix3d.scalars().forEachIdx((coords, scalar) -> {
+            scalar.setBoolean(coords[2] > 0);
+        });
+
+        assertFalse(matrix3d.getBoolean(0, 0, 0));
+        assertTrue(matrix3d.getBoolean(0, 0, 1));
+        assertTrue(matrix3d.getBoolean(0, 0, 4));
+        assertTrue(matrix3d.getBoolean(0, 1, 2));
+
+        matrix3d.elements(1).forEach(vector -> {
+            vector.set(vector(true, false, true, false, true));
+        });
+
+        assertTrue(matrix3d.getBoolean(0, 0, 0));
+        assertFalse(matrix3d.getBoolean(0, 0, 1));
+        assertTrue(matrix3d.getBoolean(0, 0, 4));
+        assertTrue(matrix3d.getBoolean(0, 1, 2));
     }
 
     @Test

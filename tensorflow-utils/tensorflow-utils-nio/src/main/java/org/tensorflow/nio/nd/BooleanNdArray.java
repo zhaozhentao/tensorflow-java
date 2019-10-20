@@ -128,9 +128,6 @@ public interface BooleanNdArray extends NdArray<Boolean> {
   BooleanNdArray write(boolean[] src, int offset);
 
   @Override
-  Iterable<BooleanNdArray> elements();
-
-  @Override
   BooleanNdArray slice(Index... indices);
 
   @Override
@@ -141,6 +138,12 @@ public interface BooleanNdArray extends NdArray<Boolean> {
 
   @Override
   BooleanNdArray setValue(Boolean value, long... coordinates);
+
+  @Override
+  ElementCursor<BooleanNdArray> elements(int dimensionIdx);
+
+  @Override
+  ElementCursor<BooleanNdArray> scalars();
 
   @Override
   BooleanNdArray copyTo(NdArray<Boolean> dst);

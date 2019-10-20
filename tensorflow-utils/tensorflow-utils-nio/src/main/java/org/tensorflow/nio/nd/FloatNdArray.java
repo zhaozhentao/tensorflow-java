@@ -128,9 +128,6 @@ public interface FloatNdArray extends NdArray<Float> {
   FloatNdArray write(float[] src, int offset);
 
   @Override
-  Iterable<FloatNdArray> elements();
-
-  @Override
   FloatNdArray slice(Index... coordinates);
 
   @Override
@@ -141,6 +138,12 @@ public interface FloatNdArray extends NdArray<Float> {
 
   @Override
   FloatNdArray setValue(Float value, long... indices);
+
+  @Override
+  ElementCursor<FloatNdArray> elements(int dimensionIdx);
+
+  @Override
+  ElementCursor<FloatNdArray> scalars();
 
   @Override
   FloatNdArray copyTo(NdArray<Float> dst);

@@ -128,9 +128,6 @@ public interface LongNdArray extends NdArray<Long> {
   LongNdArray write(long[] src, int offset);
 
   @Override
-  Iterable<LongNdArray> elements();
-
-  @Override
   LongNdArray slice(Index... indices);
 
   @Override
@@ -141,6 +138,12 @@ public interface LongNdArray extends NdArray<Long> {
 
   @Override
   LongNdArray setValue(Long value, long... coordinates);
+
+  @Override
+  ElementCursor<LongNdArray> elements(int dimensionIdx);
+
+  @Override
+  ElementCursor<LongNdArray> scalars();
 
   @Override
   LongNdArray copyTo(NdArray<Long> dst);

@@ -127,9 +127,6 @@ public interface ByteNdArray extends NdArray<Byte> {
   ByteNdArray write(byte[] src, int offset);
 
   @Override
-  Iterable<ByteNdArray> elements();
-
-  @Override
   ByteNdArray slice(Index... indices);
 
   @Override
@@ -140,6 +137,12 @@ public interface ByteNdArray extends NdArray<Byte> {
 
   @Override
   ByteNdArray setValue(Byte value, long... coordinates);
+
+  @Override
+  ElementCursor<ByteNdArray> elements(int dimensionIdx);
+
+  @Override
+  ElementCursor<ByteNdArray> scalars();
 
   @Override
   ByteNdArray copyTo(NdArray<Byte> dst);

@@ -39,7 +39,7 @@ final class Coordinate extends AbstractDimension {
   }
 
   @Override
-  long stride() {
+  public long stride() {
     return stride;
   }
 

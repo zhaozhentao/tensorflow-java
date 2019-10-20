@@ -38,6 +38,7 @@ import org.tensorflow.nio.buffer.impl.logical.LogicalDataBuffer;
 import org.tensorflow.nio.buffer.impl.logical.LongLogicalDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.ArrayDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.BitSetDataBuffer;
+import org.tensorflow.nio.buffer.impl.single.BooleanArrayDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.ByteJdkDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.DoubleJdkDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.FloatJdkDataBuffer;
@@ -301,6 +302,17 @@ public final class DataBuffers {
   public static BooleanDataBuffer ofBooleans(long capacity, BooleanMapper mapper) {
     ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
     return BooleanLogicalDataBuffer.map(physicalBuffer, mapper);
+  }
+
+  /**
+   * Wraps an array of booleans into a data buffer.
+   *
+   * @param array array to wrap
+   * @param readOnly true if the buffer created must be read-only
+   * @return a new buffer
+   */
+  public static BooleanDataBuffer wrap(boolean[] array, boolean readOnly) {
+    return BooleanArrayDataBuffer.wrap(array, readOnly);
   }
 
   public static BooleanDataBuffer join(BooleanDataBuffer... buffers) {

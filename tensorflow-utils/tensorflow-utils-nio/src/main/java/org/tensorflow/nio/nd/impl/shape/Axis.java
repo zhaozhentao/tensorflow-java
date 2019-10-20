@@ -37,7 +37,7 @@ final class Axis extends AbstractDimension {
   }
 
   @Override
-  long stride() {
+  public long stride() {
     return stride;
   }
   

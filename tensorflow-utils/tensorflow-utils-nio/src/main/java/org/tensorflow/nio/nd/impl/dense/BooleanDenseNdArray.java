@@ -17,9 +17,9 @@
 package org.tensorflow.nio.nd.impl.dense;
 
 import org.tensorflow.nio.buffer.BooleanDataBuffer;
+import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.nd.BooleanNdArray;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.ValueIterator;
 
 public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNdArray> implements BooleanNdArray {
 
@@ -42,27 +42,13 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
   @Override
   public BooleanNdArray read(boolean[] dst, int offset) {
     Validator.getArrayArgs(this, dst.length, offset);
-    if (isBulkDataTransferPossible()) {
-      BulkDataTransfer.create(this).execute((t, e) ->
-          e.buffer().get(dst, offset + (int)t.totalCopied(), (int)t.bulkCopySize()).rewind()
-      );
-    } else {
-      slowRead(dst, offset);
-    }
-    return this;
+    return read(DataBuffers.wrap(dst, false).position(offset));
   }
 
   @Override
   public BooleanNdArray write(boolean[] src, int offset) {
     Validator.putArrayArgs(this, src.length, offset);
-    if (isBulkDataTransferPossible()) {
-      BulkDataTransfer.create(this).execute((t, e) ->
-          e.buffer().put(src, offset + (int)t.totalCopied(), (int)t.bulkCopySize()).rewind()
-      );
-    } else {
-      slowWrite(src, offset);
-    }
-    return this;
+    return write(DataBuffers.wrap(src, true).position(offset));
   }
 
   @Override
@@ -78,20 +64,6 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
   protected BooleanDenseNdArray(BooleanDataBuffer buffer, Shape shape) {
     super(shape);
     this.buffer = buffer;
-  }
-
-  private void slowRead(boolean dst[], int offset) {
-    int i = offset;
-    for (Boolean v: values()) {
-      dst[i++] = v;
-    }
-  }
-
-  private void slowWrite(boolean src[], int offset) {
-    int i = offset;
-    for (ValueIterator<Boolean> iter = values().iterator(); iter.hasNext();) {
-      iter.next(src[i++]);
-    }
   }
 
   private BooleanDataBuffer buffer;

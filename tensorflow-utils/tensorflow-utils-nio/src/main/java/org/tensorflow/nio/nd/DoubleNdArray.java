@@ -128,9 +128,6 @@ public interface DoubleNdArray extends NdArray<Double> {
   DoubleNdArray write(double[] src, int offset);
 
   @Override
-  Iterable<DoubleNdArray> elements();
-
-  @Override
   DoubleNdArray slice(Index... indices);
 
   @Override
@@ -141,6 +138,12 @@ public interface DoubleNdArray extends NdArray<Double> {
 
   @Override
   DoubleNdArray setValue(Double value, long... coordinates);
+
+  @Override
+  ElementCursor<DoubleNdArray> elements(int dimensionIdx);
+
+  @Override
+  ElementCursor<DoubleNdArray> scalars();
 
   @Override
   DoubleNdArray copyTo(NdArray<Double> dst);

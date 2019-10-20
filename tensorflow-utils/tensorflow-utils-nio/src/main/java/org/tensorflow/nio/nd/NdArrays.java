@@ -163,7 +163,7 @@ public final class NdArrays {
   // Object arrays
 
   @SuppressWarnings("unchecked")
-  public static <T> NdArray<T> scalar(T value) {
+  public static <T> NdArray<T> scalarOf(T value) {
     if (value == null) {
       throw new IllegalArgumentException();
     }
@@ -171,7 +171,7 @@ public final class NdArrays {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T> NdArray<T> vector(T... values) {
+  public static <T> NdArray<T> vectorOf(T... values) {
     if (values == null) {
       throw new IllegalArgumentException();
     }

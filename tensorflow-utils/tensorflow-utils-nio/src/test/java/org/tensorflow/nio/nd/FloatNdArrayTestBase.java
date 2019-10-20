@@ -18,6 +18,7 @@ package org.tensorflow.nio.nd;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.tensorflow.nio.nd.NdArrays.vector;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
@@ -32,6 +33,29 @@ public abstract class FloatNdArrayTestBase extends NdArrayTestBase<Float> {
     @Override
     protected Float valueOf(Long val) {
         return val.floatValue();
+    }
+
+    @Test
+    public void iteratePrimitiveElements() {
+        FloatNdArray matrix3d = allocate(Shape.make(5, 4, 5));
+
+        matrix3d.scalars().forEachIdx((coords, scalar) -> {
+            scalar.setFloat((float)coords[2]);
+        });
+
+        assertEquals(0.0f, matrix3d.getFloat(0, 0, 0), 0.0f);
+        assertEquals(1.0f, matrix3d.getFloat(0, 0, 1), 0.0f);
+        assertEquals(4.0f, matrix3d.getFloat(0, 0, 4), 0.0f);
+        assertEquals(2.0f, matrix3d.getFloat(0, 1, 2), 0.0f);
+
+        matrix3d.elements(1).forEach(vector -> {
+            vector.set(vector(5.0f, 6.0f, 7.0f, 8.0f, 9.0f));
+        });
+
+        assertEquals(5, matrix3d.getFloat(0, 0, 0), 0.0f);
+        assertEquals(6, matrix3d.getFloat(0, 0, 1), 0.0f);
+        assertEquals(9, matrix3d.getFloat(0, 0, 4), 0.0f);
+        assertEquals(7, matrix3d.getFloat(0, 1, 2), 0.0f);
     }
 
     @Test

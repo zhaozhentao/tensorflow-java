@@ -78,21 +78,7 @@ public interface NdArray<T> {
   }
 
   /**
-   * Returns an iteration of the elements on the first dimension of this N-dimensional array.
-   *
-   * <p>For example, given a {@code n x m} matrix on the {@code [x, y]} axes, the return object can be used
-   * to iterate all {@code y} vectors in the following order:
-   * <pre>
-   * x<sub>0</sub>, x<sub>1</sub>, ..., x<sub>n-1</sub>
-   * </pre>
-  *
-   * @return an iteration of N-dimensional arrays
-   * @throws IllegalRankException if this array is a scalar (rank 0)
-   */
-  Iterable<? extends NdArray<T>> elements();
-
-  /**
-   * Returns an iteration of all values found under this N-dimension array.
+   * Visit all elements of a given dimension.
    *
    * <p>Logically, the N-dimensional array is flatten in a vector of scalars, where scalars of the
    * {@code n - 1} dimension precedes those of the {@code n} dimension, for a total of
@@ -107,24 +93,22 @@ public interface NdArray<T> {
    * <p>The returned iterable can be used for reading, as any other iteration, or for writing
    * by keeping a direct reference to its {@link ValueIterator}
    * <pre>{@code
-   *    Iterable<Float> values = arrayOfFloat.values();
+   *    // Iterate for initializing matrix by vectors
+   *    matrixOfFloats.elements(0).forEach(v -> {
+   *      v.set(vector(1, 2, 3));
+   *    });
    *
-   *    // Iterate values for reading
-   *    for (Float value: values) {
-   *      System.out.println(value);
-   *    }
-   *
-   *    // Iterate values for writing
-   *    float val = 0.0f;
-   *    for (ValueIterator<Float> iter = values.iterator(); iter.hasNext();) {
-   *      iter.next(val++);
-   *    }
+   *    // Iterate for reading each scalar
+   *    vectorOfFloats.scalars().forEach(s -> {
+   *      System.out.println(s.getValue());
+   *    });
    * }</pre>
    *
-   * @return an iteration of values of type {@code T}
-   * @throws IllegalRankException if this array is a scalar (rank 0)
+   * @return this array
    */
-  ValueIterable<T> values();
+  ElementCursor<? extends NdArray<T>> elements(int dimensionIdx);
+
+  ElementCursor<? extends NdArray<T>> scalars();
 
   /**
    * Creates a multi-dimensional view (or slice) of this array by mapping one or more dimensions

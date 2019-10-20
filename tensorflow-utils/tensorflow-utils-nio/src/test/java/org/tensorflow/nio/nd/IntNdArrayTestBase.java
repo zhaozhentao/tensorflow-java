@@ -18,6 +18,7 @@ package org.tensorflow.nio.nd;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.tensorflow.nio.nd.NdArrays.vector;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
@@ -32,6 +33,29 @@ public abstract class IntNdArrayTestBase extends NdArrayTestBase<Integer> {
     @Override
     protected Integer valueOf(Long val) {
         return val.intValue();
+    }
+
+    @Test
+    public void iteratePrimitiveElements() {
+        IntNdArray matrix3d = allocate(Shape.make(5, 4, 5));
+
+        matrix3d.scalars().forEachIdx((coords, scalar) -> {
+            scalar.setInt((int)coords[2]);
+        });
+
+        assertEquals(0, matrix3d.getInt(0, 0, 0));
+        assertEquals(1, matrix3d.getInt(0, 0, 1));
+        assertEquals(4, matrix3d.getInt(0, 0, 4));
+        assertEquals(2, matrix3d.getInt(0, 1, 2));
+
+        matrix3d.elements(1).forEach(vector -> {
+            vector.set(vector(5, 6, 7, 8, 9));
+        });
+
+        assertEquals(5, matrix3d.getInt(0, 0, 0));
+        assertEquals(6, matrix3d.getInt(0, 0, 1));
+        assertEquals(9, matrix3d.getInt(0, 0, 4));
+        assertEquals(7, matrix3d.getInt(0, 1, 2));
     }
 
     @Test

@@ -36,7 +36,7 @@ final class UnknownDimension extends AbstractDimension {
   }
 
   @Override
-  long stride() {
+  public long stride() {
     return 0L;
   }
 

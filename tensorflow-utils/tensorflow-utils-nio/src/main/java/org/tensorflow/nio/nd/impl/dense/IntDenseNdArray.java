@@ -18,8 +18,6 @@ package org.tensorflow.nio.nd.impl.dense;
 
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.IntDataBuffer;
-import org.tensorflow.nio.nd.BooleanNdArray;
-import org.tensorflow.nio.nd.FloatNdArray;
 import org.tensorflow.nio.nd.IntNdArray;
 import org.tensorflow.nio.nd.Shape;
 

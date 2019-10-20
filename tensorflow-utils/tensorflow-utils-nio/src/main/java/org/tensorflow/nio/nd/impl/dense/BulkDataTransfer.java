@@ -49,14 +49,9 @@ class BulkDataTransfer<R extends AbstractDenseNdArray<?, ?>> {
     return bulkCopySize;
   }
 
-  long totalCopied() {
-    return totalCopied;
-  }
-
   private final R array;  // The array we want to copy in bulk
   private final int bulkCopyDimensionIdx;  // The first dimension of this array that can be copied in bulk
   private final long bulkCopySize;  // The number of values that can be copied in a single bulk copy
-  private long totalCopied = 0L; // The number of values copied so far
 
   private BulkDataTransfer(R array, int bulkCopyDimensionIdx, long bulkCopySize) {
     this.array = array;
@@ -67,9 +62,8 @@ class BulkDataTransfer<R extends AbstractDenseNdArray<?, ?>> {
   private void execute(BiConsumer<BulkDataTransfer<R>, R> bulkCopy, R element, int dimensionIdx) {
     if (dimensionIdx == bulkCopyDimensionIdx) {
       bulkCopy.accept(this, element);
-      this.totalCopied += bulkCopySize;
     } else {
-      element.elements().forEach(e -> execute(bulkCopy, (R) e, dimensionIdx + 1));
+      element.elements(0).forEach(e -> execute(bulkCopy, (R) e, dimensionIdx + 1));
     }
   }
 }

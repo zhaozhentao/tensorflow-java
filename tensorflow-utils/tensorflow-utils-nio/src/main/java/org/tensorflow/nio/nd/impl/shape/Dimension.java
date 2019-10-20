@@ -25,4 +25,6 @@ public interface Dimension {
   default long position() { return positionOf(0); }
   
   boolean isSegmented();
+
+  long stride();
 }

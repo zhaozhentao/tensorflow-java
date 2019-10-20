@@ -17,7 +17,6 @@
 package org.tensorflow.nio.nd;
 
 import org.tensorflow.nio.buffer.DataBuffer;
-import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.nd.index.Index;
 
 /**
@@ -128,9 +127,6 @@ public interface IntNdArray extends NdArray<Integer> {
   IntNdArray write(int[] src, int offset);
 
   @Override
-  Iterable<IntNdArray> elements();
-
-  @Override
   IntNdArray slice(Index... indices);
 
   @Override
@@ -141,6 +137,12 @@ public interface IntNdArray extends NdArray<Integer> {
 
   @Override
   IntNdArray setValue(Integer value, long... coordinates);
+
+  @Override
+  ElementCursor<IntNdArray> elements(int dimensionIdx);
+
+  @Override
+  ElementCursor<IntNdArray> scalars();
 
   @Override
   IntNdArray copyTo(NdArray<Integer> dst);

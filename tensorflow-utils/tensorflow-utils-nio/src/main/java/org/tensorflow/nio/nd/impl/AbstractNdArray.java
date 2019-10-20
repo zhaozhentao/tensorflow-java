@@ -18,11 +18,9 @@ package org.tensorflow.nio.nd.impl;
 
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
+import org.tensorflow.nio.nd.ElementCursor;
 import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.iterator.Iterators;
-import org.tensorflow.nio.nd.ValueIterable;
-import org.tensorflow.nio.nd.ValueIterator;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArray<T> {
@@ -33,32 +31,23 @@ public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArra
   }
 
   @Override
-  public ValueIterable<T> values() {
-    return Iterators.valuesOf(this);
+  public ElementCursor<U> elements(int dimensionIdx) {
+    if (dimensionIdx >= shape().numDimensions()) {
+      throw new IllegalArgumentException("Cannot iterate elements in dimension '" + dimensionIdx +
+          "' of array with shape " + shape());
+    }
+    return new DefaultElementCursor<>(dimensionIdx, (U)this);
   }
 
   @Override
-  public Iterable<U> elements() {
-    return (Iterable)(() -> Iterators.elementsOf(this));
-  }
-
-  @Override
-  public U copyTo(NdArray<T> array) {
-    if (!shape().equals(array.shape())) {
-      throw new IllegalArgumentException("Can only copy to arrays of the same shape");
-    }
-    for (ValueIterator<T> srcIter = values().iterator(), dstIter = array.values().iterator(); srcIter.hasNext();) {
-      dstIter.next(srcIter.next());
-    }
-    return (U)this;
+  public ElementCursor<U> scalars() {
+    return rank() == 0 ? new SingleElementCursor<>((U)this) : elements(shape().numDimensions() - 1);
   }
 
   @Override public U read(T[] dst) {
     return (U)read(DataBuffers.wrap(dst, false));
   }
-
-  @Override public U read(T[] dst, int offset) {
-    return (U)read(DataBuffers.wrap(dst, false).position(offset));
+@Override public U read(T[] dst, int offset) { return (U)read(DataBuffers.wrap(dst, false).position(offset));
   }
 
   @Override public U write(T[] src) {
@@ -73,13 +62,26 @@ public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArra
     this.shape = shape;
   }
 
+  protected void slowCopyTo(NdArray<T> array) {
+    if (!shape().equals(array.shape())) {
+      throw new IllegalArgumentException("Can only copy to arrays of the same shape");
+    }
+    scalars().forEachIdx((coords, e) -> array.setValue(e.getValue(), coords));
+  }
+
   protected void slowRead(DataBuffer<T> buffer) {
-    values().iterator().forEachRemaining(buffer::put);
+    if (rank() == 0) {
+      buffer.put(getValue());
+    } else {
+      scalars().forEach(e -> buffer.put(e.getValue()));
+    }
   }
 
   protected void slowWrite(DataBuffer<T> buffer) {
-    for (ValueIterator<T> dstIter = values().iterator(); dstIter.hasNext();) {
-      dstIter.next(buffer.get());
+    if (rank() == 0) {
+      setValue(buffer.get());
+    } else {
+      scalars().forEach(e -> e.setValue(buffer.get()));
     }
   }
 

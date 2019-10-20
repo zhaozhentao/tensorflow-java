@@ -19,6 +19,8 @@ package org.tensorflow.nio.nd.impl.dense;
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.nd.IllegalRankException;
 import org.tensorflow.nio.nd.NdArray;
@@ -28,13 +30,6 @@ import org.tensorflow.nio.nd.index.Index;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends AbstractNdArray<T, U> {
-
-  @Override
-  public U get(long... indices) {
-    Shape sliceShape = shape().subshape(indices.length);
-    long slicePosition = position(indices, false);
-    return allocateSlice(slicePosition, sliceShape);
-  }
 
   @Override
   public U slice(Index... indices) {
@@ -47,6 +42,13 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     if (i > 0) {
       sliceShape = sliceShape.subshape(i);
     }
+    return allocateSlice(slicePosition, sliceShape);
+  }
+
+  @Override
+  public U get(long... indices) {
+    Shape sliceShape = shape().subshape(indices.length);
+    long slicePosition = position(indices, false);
     return allocateSlice(slicePosition, sliceShape);
   }
 
@@ -73,7 +75,7 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     if (isContinuousInMemory()) {
       dst.write(buffer().duplicate());
     } else {
-      super.copyTo(dst);
+      super.slowCopyTo(dst);
     }
     return (U)this;
   }

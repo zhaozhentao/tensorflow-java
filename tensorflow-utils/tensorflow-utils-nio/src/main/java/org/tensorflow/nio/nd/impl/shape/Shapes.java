@@ -35,14 +35,14 @@ public final class Shapes {
 
     // Start from the last dimension, where all elements are continuous
     boolean partiallyKnown = false;
-    for (int i = dimensionSizes.length - 1, positionStep = 1; i >= 0; --i) {
+    for (int i = dimensionSizes.length - 1, stride = 1; i >= 0; --i) {
       if (dimensionSizes[i] == Shape.UNKNOWN_SIZE) {
         dimensions[i] = new UnknownDimension();
         partiallyKnown = true;
       } else {
-        dimensions[i] = new Axis(dimensionSizes[i], positionStep);
+        dimensions[i] = new Axis(dimensionSizes[i], stride);
       }
-      positionStep *= dimensions[i].numElements();
+      stride *= dimensions[i].numElements();
     }
     return partiallyKnown ? new PartiallyKnownShape(dimensions) : new KnownShape(dimensions);
   }
