@@ -17,7 +17,7 @@
 package org.tensorflow.nio.nd.impl.dense;
 
 import java.util.function.BiConsumer;
-import org.tensorflow.nio.nd.impl.shape.Dimension;
+import org.tensorflow.nio.nd.impl.dimension.Dimension;
 
 class BulkDataTransfer<R extends AbstractDenseNdArray<?, ?>> {
 
@@ -28,7 +28,7 @@ class BulkDataTransfer<R extends AbstractDenseNdArray<?, ?>> {
     // Find what are the biggest chunk of data that we can copy in bulk by starting from the last dimension of this array and
     // iterating backward until we hit a dimension that is segmented (if any)
     for (int i = array.shape().numDimensions() - 1; i >= 0; --i) {
-      Dimension dim = array.shape().dimension(i);
+      Dimension dim = array.dimensions().get(i);
       if (dim.isSegmented()) {
         break;
       }

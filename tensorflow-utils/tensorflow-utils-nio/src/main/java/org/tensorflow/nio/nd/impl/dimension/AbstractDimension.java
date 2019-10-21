@@ -14,17 +14,28 @@
  limitations under the License.
  =======================================================================
  */
-package org.tensorflow.nio.nd.impl.shape;
+package org.tensorflow.nio.nd.impl.dimension;
 
-public interface Dimension {
-  
-  long numElements();
-  
-  long positionOf(long coord);
-  
-  default long position() { return positionOf(0); }
-  
-  boolean isSegmented();
+abstract class AbstractDimension implements Dimension {
 
-  long stride();
+  /**
+   * Dimensions are known to be equal if they have the same number of elements
+   */
+  @Override public int hashCode() {
+    return (int)numElements();
+  }
+
+  /**
+   * Dimensions are known to be equal if they have the same number of elements
+   */
+  @Override public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj instanceof Dimension) {
+      Dimension otherDimension = (Dimension) obj;
+      return numElements() == otherDimension.numElements();
+    }
+    return false;
+  }
 }

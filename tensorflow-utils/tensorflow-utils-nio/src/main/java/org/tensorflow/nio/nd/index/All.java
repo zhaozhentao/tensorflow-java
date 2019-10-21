@@ -16,7 +16,7 @@
  */
 package org.tensorflow.nio.nd.index;
 
-import org.tensorflow.nio.nd.impl.shape.Dimension;
+import org.tensorflow.nio.nd.impl.dimension.Dimension;
 
 /**
  * An index that returns all elements of a dimension in the original order.

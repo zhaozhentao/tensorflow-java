@@ -19,12 +19,18 @@ package org.tensorflow.nio.nd.impl.dense;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.Shape;
+import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
 public class DenseNdArray<T> extends AbstractDenseNdArray<T, NdArray<T>> {
 
   public static <T> NdArray<T> wrap(DataBuffer<T> buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new DenseNdArray<>(buffer, shape);
+    return new DenseNdArray<>(buffer, DimensionalSpace.create(shape));
+  }
+
+  protected DenseNdArray(DataBuffer<T> buffer, DimensionalSpace dimensions) {
+    super(dimensions);
+    this.buffer = buffer;
   }
 
   @Override
@@ -33,13 +39,8 @@ public class DenseNdArray<T> extends AbstractDenseNdArray<T, NdArray<T>> {
   }
 
   @Override
-  protected DenseNdArray<T> allocateSlice(long position, Shape shape) {
-    return new DenseNdArray<>(buffer.withPosition(position).slice(), shape);
-  }
-
-  protected DenseNdArray(DataBuffer<T> buffer, Shape shape) {
-    super(shape);
-    this.buffer = buffer;
+  protected DenseNdArray<T> allocateSlice(long position, DimensionalSpace dimensions) {
+    return new DenseNdArray<>(buffer.withPosition(position).slice(), dimensions);
   }
 
   private DataBuffer<T> buffer;

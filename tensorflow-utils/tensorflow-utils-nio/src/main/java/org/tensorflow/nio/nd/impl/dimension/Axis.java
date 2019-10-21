@@ -14,43 +14,43 @@
  limitations under the License.
  =======================================================================
  */
-package org.tensorflow.nio.nd.impl.shape;
+package org.tensorflow.nio.nd.impl.dimension;
 
-import org.tensorflow.nio.nd.Shape;
-
-final class UnknownDimension extends AbstractDimension {
-
+final class Axis extends AbstractDimension {
+  
   @Override
   public long numElements() {
-    return Shape.UNKNOWN_SIZE;
+    return numElements;
   }
   
   @Override
   public long positionOf(long coord) {
-    return coord;
+    if (coord >= numElements) {
+      throw new IndexOutOfBoundsException();
+    }
+    return stride * coord;
   }
-  
+
   @Override
   public boolean isSegmented() {
-    return false;
+    return false;  // all axis are continuous
   }
 
   @Override
   public long stride() {
-    return 0L;
+    return stride;
   }
-
+  
   @Override
   public String toString() {
-    return "Unknown";
+    return String.valueOf(numElements);
   }
 
-  @Override public int hashCode() {
-    return System.identityHashCode(this); // All unknown dimensions are distinct
+  Axis(long numElements, long stride) {
+    this.numElements = numElements;
+    this.stride = stride;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return false; // All unknown dimensions are distinct
-  }
+  private final long numElements;
+  private final long stride;
 }

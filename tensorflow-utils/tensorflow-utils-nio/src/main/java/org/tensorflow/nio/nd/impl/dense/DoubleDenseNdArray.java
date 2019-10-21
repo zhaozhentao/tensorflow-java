@@ -18,15 +18,15 @@ package org.tensorflow.nio.nd.impl.dense;
 
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.DoubleDataBuffer;
-import org.tensorflow.nio.nd.ByteNdArray;
 import org.tensorflow.nio.nd.DoubleNdArray;
 import org.tensorflow.nio.nd.Shape;
+import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
 public class DoubleDenseNdArray extends AbstractDenseNdArray<Double, DoubleNdArray> implements DoubleNdArray {
 
   public static DoubleNdArray create(DoubleDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new DoubleDenseNdArray(buffer, shape);
+    return new DoubleDenseNdArray(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
@@ -52,19 +52,19 @@ public class DoubleDenseNdArray extends AbstractDenseNdArray<Double, DoubleNdArr
     return write(DataBuffers.wrap(src, true).position(offset));
   }
 
+  protected DoubleDenseNdArray(DoubleDataBuffer buffer, DimensionalSpace dimensions) {
+    super(dimensions);
+    this.buffer = buffer;
+  }
+
   @Override
   protected DoubleDataBuffer buffer() {
     return buffer;
   }
 
   @Override
-  protected DoubleDenseNdArray allocateSlice(long position, Shape shape) {
-    return new DoubleDenseNdArray(buffer.withPosition(position).slice(), shape);
-  }
-
-  protected DoubleDenseNdArray(DoubleDataBuffer buffer, Shape shape) {
-    super(shape);
-    this.buffer = buffer;
+  protected DoubleDenseNdArray allocateSlice(long position, DimensionalSpace dimensions) {
+    return new DoubleDenseNdArray(buffer.withPosition(position).slice(), dimensions);
   }
 
   private DoubleDataBuffer buffer;

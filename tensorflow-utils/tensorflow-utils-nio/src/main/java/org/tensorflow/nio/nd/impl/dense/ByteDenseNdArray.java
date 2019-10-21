@@ -18,15 +18,15 @@ package org.tensorflow.nio.nd.impl.dense;
 
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
-import org.tensorflow.nio.nd.BooleanNdArray;
 import org.tensorflow.nio.nd.ByteNdArray;
 import org.tensorflow.nio.nd.Shape;
+import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
 public class ByteDenseNdArray extends AbstractDenseNdArray<Byte, ByteNdArray> implements ByteNdArray {
 
   public static ByteNdArray create(ByteDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new ByteDenseNdArray(buffer, shape);
+    return new ByteDenseNdArray(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
@@ -52,8 +52,8 @@ public class ByteDenseNdArray extends AbstractDenseNdArray<Byte, ByteNdArray> im
     return write(DataBuffers.wrap(src, true).position(offset));
   }
 
-  protected ByteDenseNdArray(ByteDataBuffer buffer, Shape shape) {
-    super(shape);
+  protected ByteDenseNdArray(ByteDataBuffer buffer, DimensionalSpace dimensions) {
+    super(dimensions);
     this.buffer = buffer;
   }
 
@@ -63,8 +63,8 @@ public class ByteDenseNdArray extends AbstractDenseNdArray<Byte, ByteNdArray> im
   }
 
   @Override
-  protected ByteDenseNdArray allocateSlice(long position, Shape shape) {
-    return new ByteDenseNdArray(buffer.withPosition(position).slice(), shape);
+  protected ByteDenseNdArray allocateSlice(long position, DimensionalSpace dimensions) {
+    return new ByteDenseNdArray(buffer.withPosition(position).slice(), dimensions);
   }
 
   private ByteDataBuffer buffer;

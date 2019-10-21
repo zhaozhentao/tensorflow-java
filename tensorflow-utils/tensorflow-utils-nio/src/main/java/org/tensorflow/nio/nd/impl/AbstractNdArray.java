@@ -21,13 +21,14 @@ import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.nd.ElementCursor;
 import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.Shape;
+import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArray<T> {
   
   @Override
   public Shape shape() {
-    return shape;
+    return dimensions.shape();
   }
 
   @Override
@@ -44,10 +45,14 @@ public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArra
     return rank() == 0 ? new SingleElementCursor<>((U)this) : elements(shape().numDimensions() - 1);
   }
 
-  @Override public U read(T[] dst) {
+  @Override
+  public U read(T[] dst) {
     return (U)read(DataBuffers.wrap(dst, false));
   }
-@Override public U read(T[] dst, int offset) { return (U)read(DataBuffers.wrap(dst, false).position(offset));
+
+  @Override
+  public U read(T[] dst, int offset) {
+    return (U)read(DataBuffers.wrap(dst, false).position(offset));
   }
 
   @Override public U write(T[] src) {
@@ -58,8 +63,12 @@ public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArra
     return (U)write(DataBuffers.wrap(src, false).position(offset));
   }
 
-  protected AbstractNdArray(Shape shape) {
-    this.shape = shape;
+  public DimensionalSpace dimensions() {
+    return dimensions;
+  }
+
+  protected AbstractNdArray(DimensionalSpace dimensions) {
+    this.dimensions = dimensions;
   }
 
   protected void slowCopyTo(NdArray<T> array) {
@@ -85,5 +94,5 @@ public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArra
     }
   }
 
-  private final Shape shape;
+  private final DimensionalSpace dimensions;
 }

@@ -20,12 +20,13 @@ import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.IntDataBuffer;
 import org.tensorflow.nio.nd.IntNdArray;
 import org.tensorflow.nio.nd.Shape;
+import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
 public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray> implements IntNdArray {
 
   public static IntNdArray create(IntDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new IntDenseNdArray(buffer, shape);
+    return new IntDenseNdArray(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
@@ -51,19 +52,19 @@ public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray> i
     return write(DataBuffers.wrap(src, true).position(offset));
   }
 
+  protected IntDenseNdArray(IntDataBuffer buffer, DimensionalSpace dimensions) {
+    super(dimensions);
+    this.buffer = buffer;
+  }
+
   @Override
   protected IntDataBuffer buffer() {
     return buffer;
   }
 
   @Override
-  protected IntDenseNdArray allocateSlice(long position, Shape shape) {
-    return new IntDenseNdArray(buffer.withPosition(position).slice(), shape);
-  }
-
-  protected IntDenseNdArray(IntDataBuffer buffer, Shape shape) {
-    super(shape);
-    this.buffer = buffer;
+  protected IntDenseNdArray allocateSlice(long position, DimensionalSpace dimensions) {
+    return new IntDenseNdArray(buffer.withPosition(position).slice(), dimensions);
   }
 
   private IntDataBuffer buffer;

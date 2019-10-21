@@ -1,12 +1,12 @@
 /*
  Copyright 2019 The TensorFlow Authors. All Rights Reserved.
-
+ 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
-
+ 
      http://www.apache.org/licenses/LICENSE-2.0
-
+ 
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,45 +14,48 @@
  limitations under the License.
  =======================================================================
  */
-package org.tensorflow.nio.nd.impl.shape;
+package org.tensorflow.nio.nd.impl.dimension;
 
-final class Coordinate extends AbstractDimension {
-  
+import org.tensorflow.nio.nd.index.Index;
+
+final class IndexedDimension extends AbstractDimension {
+
   @Override
   public long numElements() {
-    return 0;
+    return numElements;
   }
   
   @Override
   public long positionOf(long coord) {
-    throw new IndexOutOfBoundsException();
+    if (coord >= numElements()) {
+      throw new IndexOutOfBoundsException();
+    }
+    return originalDimension.positionOf(index.mapCoordinate(coord, originalDimension));
   }
-
-  @Override
-  public long position() {
-    return coord * stride;
-  }
-
+  
   @Override
   public boolean isSegmented() {
-    return true;  // a coordinate is a segment to a dimension
+    // TODO for now we consider all indexed dimensions as segmented but might depend on the actual index
+    return true;
   }
 
   @Override
   public long stride() {
-    return stride;
+    return originalDimension.stride();
   }
 
   @Override
   public String toString() {
-    return "(" + coord + ")";
+    return String.valueOf(numElements());
   }
 
-  Coordinate(long coord, AbstractDimension targetDimension) {
-    this.coord = coord;
-    this.stride = targetDimension.stride();
+  IndexedDimension(Index index, Dimension originalDimension) {
+    this.index = index;
+    this.originalDimension = originalDimension;
+    this.numElements = index.numElements(originalDimension);
   }
 
-  private final long coord;
-  private final long stride;
+  private final Index index;
+  private final Dimension originalDimension;
+  private final long numElements;
 }

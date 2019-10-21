@@ -176,7 +176,7 @@ public abstract class NdArrayTestBase<T> {
 
     // Vector (*,0,0)
     NdArray<T> vectorX00 = matrix3d.slice(all(), at(0), at(0));
-    assertEquals(Shape.make(5, 0, 0), vectorX00.shape());
+    assertEquals(Shape.make(5), vectorX00.shape());
     assertEquals(val100, vectorX00.getValue(1));
     T val200 = valueOf(200L);
     vectorX00.setValue(val200, 2);

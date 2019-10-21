@@ -17,23 +17,21 @@
 
 package org.tensorflow.nio.nd;
 
-import org.tensorflow.nio.nd.impl.shape.Dimension;
-import org.tensorflow.nio.nd.impl.shape.Shapes;
-import org.tensorflow.nio.nd.index.Index;
+import java.util.Arrays;
 
 /** The possibly partially known shape of a tensor produced by an operation. */
-public interface Shape {
+public final class Shape {
 
-  long UNKNOWN_SIZE = -1L;
+  public static long UNKNOWN_SIZE = -1L;
 
   /** Create a Shape representing an unknown number of dimensions. */
-  static Shape unknown() {
-    return Shapes.unknown();
+  public static Shape unknown() {
+    return new Shape(null);
   }
 
   /** Create a Shape representing a scalar value. */
-  static Shape scalar() {
-    return Shapes.scalar();
+  public static Shape scalar() {
+    return new Shape(new long[0]);
   }
 
   /**
@@ -57,33 +55,70 @@ public interface Shape {
    * Shape batch = Shape.create(-1, 4);
    * }</pre>
    */
-  static Shape make(long... dimensionSizes) {
-    if (dimensionSizes == null) {
-      return Shapes.scalar();
-    }
-    return Shapes.make(dimensionSizes);
+  public static Shape make(long... dimensionSizes) {
+    return new Shape(dimensionSizes);
   }
 
-  Shape mapTo(Index[] indices);
+  public long size() {
+    return size;
+  }
 
-  long size();
+  public long size(int i) {
+    return dimensionSizes != null ? dimensionSizes[i] : UNKNOWN_SIZE;
+  }
 
-  long size(int i);
+  public int numDimensions() {
+    return dimensionSizes != null ? dimensionSizes.length : -1;
+  }
 
-  /**
-   * Number of dimensions represented by this shape.
-   *
-   * @return -1 if the number of dimensions is unknown, 0 if the shape represents a scalar, 1 for a
-   *     vector, 2 for a matrix etc.
-   * @throws IllegalStateException if this shape is unknown or has no dimensions (scalar)
-   */
-  int numDimensions();
+  public boolean hasUnknownDimension() {
+    if (dimensionSizes == null) {
+      return true;
+    }
+    for (int i = 0; i < dimensionSizes.length; ++i) {
+      if (dimensionSizes[i] < 0) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-  Dimension dimension(int i);
+  public long[] asArray() {
+    return dimensionSizes;
+  }
 
-  boolean hasUnknownDimension();
+  @Override
+  public int hashCode() {
+    return dimensionSizes != null ? Arrays.hashCode(dimensionSizes) : super.hashCode();
+  }
 
-  Shape subshape(int dimensionStart);
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    // Shapes are equivalent if all of their dimensions are equals
+    if (obj instanceof Shape) {
+      Shape otherShape = (Shape)obj;
+      if (otherShape.hasUnknownDimension()) {
+        return false;
+      }
+      return Arrays.equals(dimensionSizes, otherShape.dimensionSizes);
+    }
+    return false;
+  }
 
-  long[] asArray();
+  /** Succinct description of the shape meant for debugging. */
+  @Override
+  public String toString() {
+    return Arrays.toString(dimensionSizes);
+  }
+
+  private Shape(long[] dimensionSizes) {
+    this.dimensionSizes = dimensionSizes;
+    this.size = Arrays.stream(dimensionSizes).reduce(1L, Math::multiplyExact);
+  }
+
+  private final long size;
+  private final long[] dimensionSizes;
 }

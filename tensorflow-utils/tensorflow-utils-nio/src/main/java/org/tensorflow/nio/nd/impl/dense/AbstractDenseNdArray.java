@@ -19,13 +19,11 @@ package org.tensorflow.nio.nd.impl.dense;
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.nd.IllegalRankException;
 import org.tensorflow.nio.nd.NdArray;
-import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.impl.AbstractNdArray;
+import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 import org.tensorflow.nio.nd.index.Index;
 
 @SuppressWarnings("unchecked")
@@ -33,23 +31,26 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
 
   @Override
   public U slice(Index... indices) {
-    Shape sliceShape = shape().mapTo(indices);
+    DimensionalSpace sliceDimensions = dimensions().mapTo(indices);
+
+    // Skip all leading dimensions that are a single point (i.e. a coordinate)
     long slicePosition = 0L;
     int i = 0;
-    while (i < sliceShape.numDimensions() && sliceShape.dimension(i).numElements() == 0) {
-      slicePosition += sliceShape.dimension(i++).position();
+    while (i < sliceDimensions.size() && sliceDimensions.get(i).isSinglePoint()) {
+      slicePosition += sliceDimensions.get(i++).position();
     }
     if (i > 0) {
-      sliceShape = sliceShape.subshape(i);
+      sliceDimensions = sliceDimensions.truncateFrom(i);
     }
-    return allocateSlice(slicePosition, sliceShape);
+
+    return allocateSlice(slicePosition, sliceDimensions);
   }
 
   @Override
   public U get(long... indices) {
-    Shape sliceShape = shape().subshape(indices.length);
+    DimensionalSpace sliceDimensions = dimensions().truncateFrom(indices.length);
     long slicePosition = position(indices, false);
-    return allocateSlice(slicePosition, sliceShape);
+    return allocateSlice(slicePosition, sliceDimensions);
   }
 
   @Override
@@ -65,7 +66,7 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
 
   @Override
   public U set(NdArray<T> src, long... coordinates) {
-    src.copyTo(coordinates == null ? this : get(coordinates));
+    src.copyTo((coordinates == null || coordinates.length == 0) ? this : get(coordinates));
     return (U)this;
   }
 
@@ -110,13 +111,13 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     return (U)this;
   }
 
-  AbstractDenseNdArray(Shape shape) {
-    super(shape);
+  AbstractDenseNdArray(DimensionalSpace dimensions) {
+    super(dimensions);
   }
 
   protected abstract DataBuffer<T> buffer();
 
-  protected abstract U allocateSlice(long position, Shape shape);
+  protected abstract U allocateSlice(long position, DimensionalSpace dimensions);
 
   protected long position(long[] indices, boolean scalar) {
     if (indices.length > shape().numDimensions()) {
@@ -125,10 +126,10 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     long position = 0L;
     int i = 0;
     for (; i < indices.length; ++i) {
-      position += shape().dimension(i).positionOf(indices[i]);
+      position += dimensions().get(i).positionOf(indices[i]);
     }
-    while (i < shape().numDimensions() && shape().dimension(i).numElements() == 0) {
-      position += shape().dimension(i++).position();
+    while (i < dimensions().size() && dimensions().get(i).isSinglePoint()) {
+      position += dimensions().get(i++).position();
     }
     if (scalar && i < shape().numDimensions()) {
       throw new IllegalRankException("Not a scalar value");
@@ -143,12 +144,12 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
    * @return true if bulk copy is possible
    */
   boolean isBulkDataTransferPossible() {
-    return shape().numDimensions() > 0 && !shape().dimension(shape().numDimensions() - 1).isSegmented();
+    return dimensions().size() > 0 && !dimensions().get(shape().numDimensions() - 1).isSegmented();
   }
 
   private boolean isContinuousInMemory() {
     for (int i = 0; i < shape().numDimensions(); ++i) {
-      if (shape().dimension(i).isSegmented()) {
+      if (dimensions().get(i).isSegmented()) {
         return false;
       }
     }

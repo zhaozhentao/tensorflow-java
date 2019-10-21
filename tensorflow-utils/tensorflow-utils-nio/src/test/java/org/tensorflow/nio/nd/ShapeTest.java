@@ -48,41 +48,6 @@ public class ShapeTest {
         } catch (IndexOutOfBoundsException e) {
             // as expected
         }
-        assertNotNull(shape.dimension(0));
-        assertNotNull(shape.dimension(1));
-        assertNotNull(shape.dimension(2));
-        try {
-            shape.dimension(3);
-            fail();
-        } catch (IndexOutOfBoundsException e) {
-            // as expected
-        }
-        try {
-            shape.dimension(-1);
-            fail();
-        } catch (IndexOutOfBoundsException e) {
-            // as expected
-        }
-        Shape subshape = shape.subshape(1);
-        assertEquals(2, subshape.numDimensions());
-        assertEquals(4, subshape.size(0));
-        assertEquals(5, subshape.size(1));
-        assertArrayEquals(new long[] {4, 5}, subshape.asArray());
-        assertEquals(20, subshape.size());
-        try {
-            subshape.size(2);
-            fail();
-        } catch (IndexOutOfBoundsException e) {
-            //as expected
-        }
-        assertSame(shape.dimension(1), subshape.dimension(0));
-        assertSame(shape.dimension(2), subshape.dimension(1));
-        try {
-            subshape.dimension(3);
-            fail();
-        } catch (IndexOutOfBoundsException e) {
-            //as expected
-        }
     }
 
     @Test

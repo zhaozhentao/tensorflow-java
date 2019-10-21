@@ -14,32 +14,31 @@
  limitations under the License.
  =======================================================================
  */
-package org.tensorflow.nio.nd.index;
+package org.tensorflow.nio.nd.impl.dimension;
 
-import org.tensorflow.nio.nd.impl.dimension.Dimension;
+import org.tensorflow.nio.nd.index.Index;
 
-/**
- * An index that returns only elements on a given dimension up to a
- * specific coordinate.
- *
- * <p>For example, given a vector with {@code n} elements on the {@code x} axis, and {@code n > k},
- * {@code to(k)} returns x<sub>0</sub>, x<sub>1</sub>, ..., x<sub>k</sub>
- */
-class To implements Index {
+public interface Dimension {
 
-  @Override
-  public long numElements(Dimension dim) {
-    return end;
+  default Dimension withIndex(Index index) {
+    return new IndexedDimension(index, this);
   }
 
-  @Override
-  public long mapCoordinate(long coordinate, Dimension dim) {
-    return coordinate;
+  default Dimension withCoordinate(long coord) {
+    return new Coordinate(coord, this);
   }
 
-  To(long end) {
-    this.end = end;
-  }
+  long numElements();
+  
+  long positionOf(long coord);
+  
+  default long position() { return positionOf(0); }
 
-  private long end;
+  long stride();
+
+  boolean isSegmented();
+
+  default boolean isSinglePoint() {
+    return numElements() == 0;
+  }
 }

@@ -17,7 +17,7 @@
 package org.tensorflow.nio.nd.index;
 
 import org.tensorflow.nio.nd.NdArray;
-import org.tensorflow.nio.nd.impl.shape.Dimension;
+import org.tensorflow.nio.nd.impl.dimension.Dimension;
 
 /**
  * An index that returns only specific elements on a given dimension.

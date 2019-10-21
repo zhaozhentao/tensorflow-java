@@ -20,12 +20,13 @@ import org.tensorflow.nio.buffer.BooleanDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.nd.BooleanNdArray;
 import org.tensorflow.nio.nd.Shape;
+import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
 public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNdArray> implements BooleanNdArray {
 
   public static BooleanNdArray create(BooleanDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new BooleanDenseNdArray(buffer, shape);
+    return new BooleanDenseNdArray(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
@@ -57,12 +58,12 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
   }
 
   @Override
-  protected BooleanDenseNdArray allocateSlice(long position, Shape shape) {
-    return new BooleanDenseNdArray(buffer.withPosition(position).slice(), shape);
+  protected BooleanDenseNdArray allocateSlice(long position, DimensionalSpace dimensions) {
+    return new BooleanDenseNdArray(buffer.withPosition(position).slice(), dimensions);
   }
 
-  protected BooleanDenseNdArray(BooleanDataBuffer buffer, Shape shape) {
-    super(shape);
+  protected BooleanDenseNdArray(BooleanDataBuffer buffer, DimensionalSpace dimensions) {
+    super(dimensions);
     this.buffer = buffer;
   }
 
