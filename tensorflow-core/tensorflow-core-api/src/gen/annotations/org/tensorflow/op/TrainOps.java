@@ -191,6 +191,20 @@ public final class TrainOps {
   }
 
   /**
+   * Builds an {@link AccumulatorApplyGradient} operation
+   *
+   * @param handle The handle to a accumulator.
+   * @param localStep The local_step value at which the gradient was computed.
+   * @param gradient A tensor of the gradient to be accumulated.
+   * @return a new instance of AccumulatorApplyGradient
+   * @see org.tensorflow.op.train.AccumulatorApplyGradient
+   */
+  public <T> AccumulatorApplyGradient accumulatorApplyGradient(Operand<TString> handle,
+      Operand<TInt64> localStep, Operand<T> gradient) {
+    return AccumulatorApplyGradient.create(scope, handle, localStep, gradient);
+  }
+
+  /**
    * Builds an {@link ResourceSparseApplyFtrl} operation
    *
    * @param var Should be from a Variable().
@@ -212,20 +226,6 @@ public final class TrainOps {
       Operand<T> l1, Operand<T> l2, Operand<T> l2Shrinkage, Operand<T> lrPower,
       ResourceSparseApplyFtrl.Options... options) {
     return ResourceSparseApplyFtrl.create(scope, var, accum, linear, grad, indices, lr, l1, l2, l2Shrinkage, lrPower, options);
-  }
-
-  /**
-   * Builds an {@link AccumulatorApplyGradient} operation
-   *
-   * @param handle The handle to a accumulator.
-   * @param localStep The local_step value at which the gradient was computed.
-   * @param gradient A tensor of the gradient to be accumulated.
-   * @return a new instance of AccumulatorApplyGradient
-   * @see org.tensorflow.op.train.AccumulatorApplyGradient
-   */
-  public <T> AccumulatorApplyGradient accumulatorApplyGradient(Operand<TString> handle,
-      Operand<TInt64> localStep, Operand<T> gradient) {
-    return AccumulatorApplyGradient.create(scope, handle, localStep, gradient);
   }
 
   /**
@@ -574,6 +574,28 @@ public final class TrainOps {
   }
 
   /**
+   * Builds an {@link ApplyFtrl} operation
+   *
+   * @param var Should be from a Variable().
+   * @param accum Should be from a Variable().
+   * @param linear Should be from a Variable().
+   * @param grad The gradient.
+   * @param lr Scaling factor. Must be a scalar.
+   * @param l1 L1 regulariation. Must be a scalar.
+   * @param l2 L2 shrinkage regulariation. Must be a scalar.
+   * @param l2Shrinkage 
+   * @param lrPower Scaling factor. Must be a scalar.
+   * @param options carries optional attributes values
+   * @return a new instance of ApplyFtrl
+   * @see org.tensorflow.op.train.ApplyFtrl
+   */
+  public <T> ApplyFtrl<T> applyFtrl(Operand<T> var, Operand<T> accum, Operand<T> linear,
+      Operand<T> grad, Operand<T> lr, Operand<T> l1, Operand<T> l2, Operand<T> l2Shrinkage,
+      Operand<T> lrPower, ApplyFtrl.Options... options) {
+    return ApplyFtrl.create(scope, var, accum, linear, grad, lr, l1, l2, l2Shrinkage, lrPower, options);
+  }
+
+  /**
    * Builds an {@link ResourceApplyMomentum} operation
    *
    * @param var Should be from a Variable().
@@ -602,28 +624,6 @@ public final class TrainOps {
   public AccumulatorSetGlobalStep accumulatorSetGlobalStep(Operand<TString> handle,
       Operand<TInt64> newGlobalStep) {
     return AccumulatorSetGlobalStep.create(scope, handle, newGlobalStep);
-  }
-
-  /**
-   * Builds an {@link ApplyFtrl} operation
-   *
-   * @param var Should be from a Variable().
-   * @param accum Should be from a Variable().
-   * @param linear Should be from a Variable().
-   * @param grad The gradient.
-   * @param lr Scaling factor. Must be a scalar.
-   * @param l1 L1 regulariation. Must be a scalar.
-   * @param l2 L2 shrinkage regulariation. Must be a scalar.
-   * @param l2Shrinkage 
-   * @param lrPower Scaling factor. Must be a scalar.
-   * @param options carries optional attributes values
-   * @return a new instance of ApplyFtrl
-   * @see org.tensorflow.op.train.ApplyFtrl
-   */
-  public <T> ApplyFtrl<T> applyFtrl(Operand<T> var, Operand<T> accum, Operand<T> linear,
-      Operand<T> grad, Operand<T> lr, Operand<T> l1, Operand<T> l2, Operand<T> l2Shrinkage,
-      Operand<T> lrPower, ApplyFtrl.Options... options) {
-    return ApplyFtrl.create(scope, var, accum, linear, grad, lr, l1, l2, l2Shrinkage, lrPower, options);
   }
 
   /**
@@ -667,6 +667,19 @@ public final class TrainOps {
   }
 
   /**
+   * Builds an {@link PreventGradient} operation
+   *
+   * @param input any tensor.
+   * @param options carries optional attributes values
+   * @return a new instance of PreventGradient
+   * @see org.tensorflow.op.train.PreventGradient
+   */
+  public <T> PreventGradient<T> preventGradient(Operand<T> input,
+      PreventGradient.Options... options) {
+    return PreventGradient.create(scope, input, options);
+  }
+
+  /**
    * Builds an {@link ResourceApplyAdadelta} operation
    *
    * @param var Should be from a Variable().
@@ -684,19 +697,6 @@ public final class TrainOps {
       Operand<?> accumUpdate, Operand<T> lr, Operand<T> rho, Operand<T> epsilon, Operand<T> grad,
       ResourceApplyAdadelta.Options... options) {
     return ResourceApplyAdadelta.create(scope, var, accum, accumUpdate, lr, rho, epsilon, grad, options);
-  }
-
-  /**
-   * Builds an {@link PreventGradient} operation
-   *
-   * @param input any tensor.
-   * @param options carries optional attributes values
-   * @return a new instance of PreventGradient
-   * @see org.tensorflow.op.train.PreventGradient
-   */
-  public <T> PreventGradient<T> preventGradient(Operand<T> input,
-      PreventGradient.Options... options) {
-    return PreventGradient.create(scope, input, options);
   }
 
   /**
@@ -1048,6 +1048,20 @@ public final class TrainOps {
   }
 
   /**
+   * Builds an {@link ConditionalAccumulator} operation
+   *
+   * @param dtype The type of the value being accumulated.
+   * @param shape The shape of the values, can be [], in which case shape is unknown.
+   * @param options carries optional attributes values
+   * @return a new instance of ConditionalAccumulator
+   * @see org.tensorflow.op.train.ConditionalAccumulator
+   */
+  public <T> ConditionalAccumulator conditionalAccumulator(DataType<T> dtype, Shape shape,
+      ConditionalAccumulator.Options... options) {
+    return ConditionalAccumulator.create(scope, dtype, shape, options);
+  }
+
+  /**
    * Builds an {@link SparseApplyFtrl} operation
    *
    * @param var Should be from a Variable().
@@ -1072,17 +1086,14 @@ public final class TrainOps {
   }
 
   /**
-   * Builds an {@link ConditionalAccumulator} operation
+   * Builds an {@link SdcaFprint} operation
    *
-   * @param dtype The type of the value being accumulated.
-   * @param shape The shape of the values, can be [], in which case shape is unknown.
-   * @param options carries optional attributes values
-   * @return a new instance of ConditionalAccumulator
-   * @see org.tensorflow.op.train.ConditionalAccumulator
+   * @param input vector of strings to compute fingerprints on.
+   * @return a new instance of SdcaFprint
+   * @see org.tensorflow.op.train.SdcaFprint
    */
-  public <T> ConditionalAccumulator conditionalAccumulator(DataType<T> dtype, Shape shape,
-      ConditionalAccumulator.Options... options) {
-    return ConditionalAccumulator.create(scope, dtype, shape, options);
+  public SdcaFprint sdcaFprint(Operand<TString> input) {
+    return SdcaFprint.create(scope, input);
   }
 
   /**
@@ -1109,14 +1120,22 @@ public final class TrainOps {
   }
 
   /**
-   * Builds an {@link SdcaFprint} operation
+   * Builds an {@link SparseApplyProximalGradientDescent} operation
    *
-   * @param input vector of strings to compute fingerprints on.
-   * @return a new instance of SdcaFprint
-   * @see org.tensorflow.op.train.SdcaFprint
+   * @param var Should be from a Variable().
+   * @param alpha Scaling factor. Must be a scalar.
+   * @param l1 L1 regularization. Must be a scalar.
+   * @param l2 L2 regularization. Must be a scalar.
+   * @param grad The gradient.
+   * @param indices A vector of indices into the first dimension of var and accum.
+   * @param options carries optional attributes values
+   * @return a new instance of SparseApplyProximalGradientDescent
+   * @see org.tensorflow.op.train.SparseApplyProximalGradientDescent
    */
-  public SdcaFprint sdcaFprint(Operand<TString> input) {
-    return SdcaFprint.create(scope, input);
+  public <T, U extends TNumber> SparseApplyProximalGradientDescent<T> sparseApplyProximalGradientDescent(
+      Operand<T> var, Operand<T> alpha, Operand<T> l1, Operand<T> l2, Operand<T> grad,
+      Operand<U> indices, SparseApplyProximalGradientDescent.Options... options) {
+    return SparseApplyProximalGradientDescent.create(scope, var, alpha, l1, l2, grad, indices, options);
   }
 
   /**
@@ -1138,25 +1157,6 @@ public final class TrainOps {
       Operand<T> gradientSquaredAccumulator, Operand<T> grad, Operand<T> lr, Operand<T> l1,
       Operand<T> l2, Operand<TInt64> globalStep, ApplyAdagradDa.Options... options) {
     return ApplyAdagradDa.create(scope, var, gradientAccumulator, gradientSquaredAccumulator, grad, lr, l1, l2, globalStep, options);
-  }
-
-  /**
-   * Builds an {@link SparseApplyProximalGradientDescent} operation
-   *
-   * @param var Should be from a Variable().
-   * @param alpha Scaling factor. Must be a scalar.
-   * @param l1 L1 regularization. Must be a scalar.
-   * @param l2 L2 regularization. Must be a scalar.
-   * @param grad The gradient.
-   * @param indices A vector of indices into the first dimension of var and accum.
-   * @param options carries optional attributes values
-   * @return a new instance of SparseApplyProximalGradientDescent
-   * @see org.tensorflow.op.train.SparseApplyProximalGradientDescent
-   */
-  public <T, U extends TNumber> SparseApplyProximalGradientDescent<T> sparseApplyProximalGradientDescent(
-      Operand<T> var, Operand<T> alpha, Operand<T> l1, Operand<T> l2, Operand<T> grad,
-      Operand<U> indices, SparseApplyProximalGradientDescent.Options... options) {
-    return SparseApplyProximalGradientDescent.create(scope, var, alpha, l1, l2, grad, indices, options);
   }
 
   /**

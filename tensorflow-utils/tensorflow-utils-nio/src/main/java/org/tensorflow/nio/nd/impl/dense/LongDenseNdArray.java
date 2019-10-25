@@ -16,13 +16,15 @@
  */
 package org.tensorflow.nio.nd.impl.dense;
 
+import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.LongDataBuffer;
 import org.tensorflow.nio.nd.LongNdArray;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
-public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray> implements LongNdArray {
+public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray>
+    implements LongNdArray {
 
   public static LongNdArray create(LongDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
@@ -31,12 +33,12 @@ public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray> im
 
   @Override
   public long getLong(long... indices) {
-    return buffer().get(position(indices, true));
+    return buffer().getLong(positionOf(indices, true));
   }
 
   @Override
   public LongNdArray setLong(long value, long... indices) {
-    buffer().put(position(indices, true), value);
+    buffer().putLong(positionOf(indices, true), value);
     return this;
   }
 
@@ -53,19 +55,16 @@ public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray> im
   }
 
   protected LongDenseNdArray(LongDataBuffer buffer, DimensionalSpace dimensions) {
-    super(dimensions);
-    this.buffer = buffer;
+    super(buffer, dimensions);
   }
 
   @Override
   protected LongDataBuffer buffer() {
-    return buffer;
+    return super.buffer();
   }
 
   @Override
-  protected LongDenseNdArray allocateSlice(long position, DimensionalSpace dimensions) {
-    return new LongDenseNdArray(buffer.withPosition(position).slice(), dimensions);
+  LongDenseNdArray allocate(DataBuffer<Long> buffer, DimensionalSpace dimensions) {
+    return new LongDenseNdArray((LongDataBuffer)buffer, dimensions);
   }
-
-  private LongDataBuffer buffer;
 }

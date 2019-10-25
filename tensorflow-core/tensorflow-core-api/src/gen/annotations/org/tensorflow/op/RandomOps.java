@@ -78,20 +78,6 @@ public final class RandomOps {
   }
 
   /**
-   * Builds an {@link RandomPoisson} operation
-   *
-   * @param shape 1-D integer tensor. Shape of independent samples to draw from each
-   * @param rate A tensor in which each scalar is a "rate" parameter describing the
-   * @param options carries optional attributes values
-   * @return a new instance of RandomPoisson
-   * @see org.tensorflow.op.random.RandomPoisson
-   */
-  public <T extends TNumber, U extends TNumber> RandomPoisson<TInt64> randomPoisson(
-      Operand<T> shape, Operand<U> rate, RandomPoisson.Options... options) {
-    return RandomPoisson.create(scope, shape, rate, options);
-  }
-
-  /**
    * Builds an {@link ParameterizedTruncatedNormal} operation
    *
    * @param shape The shape of the output tensor. Batches are indexed by the 0th dimension.
@@ -114,14 +100,13 @@ public final class RandomOps {
    *
    * @param shape 1-D integer tensor. Shape of independent samples to draw from each
    * @param rate A tensor in which each scalar is a "rate" parameter describing the
-   * @param dtype 
    * @param options carries optional attributes values
    * @return a new instance of RandomPoisson
    * @see org.tensorflow.op.random.RandomPoisson
    */
-  public <V extends TNumber, T extends TNumber, U extends TNumber> RandomPoisson<V> randomPoisson(
-      Operand<T> shape, Operand<U> rate, DataType<V> dtype, RandomPoisson.Options... options) {
-    return RandomPoisson.create(scope, shape, rate, dtype, options);
+  public <T extends TNumber, U extends TNumber> RandomPoisson<TInt64> randomPoisson(
+      Operand<T> shape, Operand<U> rate, RandomPoisson.Options... options) {
+    return RandomPoisson.create(scope, shape, rate, options);
   }
 
   /**
@@ -141,16 +126,31 @@ public final class RandomOps {
   }
 
   /**
-   * Builds an {@link StatelessTruncatedNormal} operation
+   * Builds an {@link RandomPoisson} operation
+   *
+   * @param shape 1-D integer tensor. Shape of independent samples to draw from each
+   * @param rate A tensor in which each scalar is a "rate" parameter describing the
+   * @param dtype 
+   * @param options carries optional attributes values
+   * @return a new instance of RandomPoisson
+   * @see org.tensorflow.op.random.RandomPoisson
+   */
+  public <V extends TNumber, T extends TNumber, U extends TNumber> RandomPoisson<V> randomPoisson(
+      Operand<T> shape, Operand<U> rate, DataType<V> dtype, RandomPoisson.Options... options) {
+    return RandomPoisson.create(scope, shape, rate, dtype, options);
+  }
+
+  /**
+   * Builds an {@link StatelessRandomNormal} operation
    *
    * @param shape The shape of the output tensor.
    * @param seed 2 seeds (shape [2]).
-   * @return a new instance of StatelessTruncatedNormal
-   * @see org.tensorflow.op.random.StatelessTruncatedNormal
+   * @return a new instance of StatelessRandomNormal
+   * @see org.tensorflow.op.random.StatelessRandomNormal
    */
-  public <T extends TNumber, U extends TNumber> StatelessTruncatedNormal<TFloat> statelessTruncatedNormal(
+  public <T extends TNumber, U extends TNumber> StatelessRandomNormal<TFloat> statelessRandomNormal(
       Operand<T> shape, Operand<U> seed) {
-    return StatelessTruncatedNormal.create(scope, shape, seed);
+    return StatelessRandomNormal.create(scope, shape, seed);
   }
 
   /**
@@ -171,16 +171,16 @@ public final class RandomOps {
   }
 
   /**
-   * Builds an {@link StatelessRandomNormal} operation
+   * Builds an {@link StatelessTruncatedNormal} operation
    *
    * @param shape The shape of the output tensor.
    * @param seed 2 seeds (shape [2]).
-   * @return a new instance of StatelessRandomNormal
-   * @see org.tensorflow.op.random.StatelessRandomNormal
+   * @return a new instance of StatelessTruncatedNormal
+   * @see org.tensorflow.op.random.StatelessTruncatedNormal
    */
-  public <T extends TNumber, U extends TNumber> StatelessRandomNormal<TFloat> statelessRandomNormal(
+  public <T extends TNumber, U extends TNumber> StatelessTruncatedNormal<TFloat> statelessTruncatedNormal(
       Operand<T> shape, Operand<U> seed) {
-    return StatelessRandomNormal.create(scope, shape, seed);
+    return StatelessTruncatedNormal.create(scope, shape, seed);
   }
 
   /**
@@ -231,17 +231,18 @@ public final class RandomOps {
   }
 
   /**
-   * Builds an {@link StatelessTruncatedNormal} operation
+   * Builds an {@link Multinomial} operation
    *
-   * @param shape The shape of the output tensor.
-   * @param seed 2 seeds (shape [2]).
-   * @param dtype The type of the output.
-   * @return a new instance of StatelessTruncatedNormal
-   * @see org.tensorflow.op.random.StatelessTruncatedNormal
+   * @param logits 2-D Tensor with shape `[batch_size, num_classes]`.  Each slice `[i, :]`
+   * @param numSamples 0-D.  Number of independent samples to draw for each row slice.
+   * @param outputDtype 
+   * @param options carries optional attributes values
+   * @return a new instance of Multinomial
+   * @see org.tensorflow.op.random.Multinomial
    */
-  public <V extends TNumber, T extends TNumber, U extends TNumber> StatelessTruncatedNormal<V> statelessTruncatedNormal(
-      Operand<T> shape, Operand<U> seed, DataType<V> dtype) {
-    return StatelessTruncatedNormal.create(scope, shape, seed, dtype);
+  public <U extends TNumber, T extends TNumber> Multinomial<U> multinomial(Operand<T> logits,
+      Operand<TInt32> numSamples, DataType<U> outputDtype, Multinomial.Options... options) {
+    return Multinomial.create(scope, logits, numSamples, outputDtype, options);
   }
 
   /**
@@ -259,18 +260,17 @@ public final class RandomOps {
   }
 
   /**
-   * Builds an {@link Multinomial} operation
+   * Builds an {@link StatelessTruncatedNormal} operation
    *
-   * @param logits 2-D Tensor with shape `[batch_size, num_classes]`.  Each slice `[i, :]`
-   * @param numSamples 0-D.  Number of independent samples to draw for each row slice.
-   * @param outputDtype 
-   * @param options carries optional attributes values
-   * @return a new instance of Multinomial
-   * @see org.tensorflow.op.random.Multinomial
+   * @param shape The shape of the output tensor.
+   * @param seed 2 seeds (shape [2]).
+   * @param dtype The type of the output.
+   * @return a new instance of StatelessTruncatedNormal
+   * @see org.tensorflow.op.random.StatelessTruncatedNormal
    */
-  public <U extends TNumber, T extends TNumber> Multinomial<U> multinomial(Operand<T> logits,
-      Operand<TInt32> numSamples, DataType<U> outputDtype, Multinomial.Options... options) {
-    return Multinomial.create(scope, logits, numSamples, outputDtype, options);
+  public <V extends TNumber, T extends TNumber, U extends TNumber> StatelessTruncatedNormal<V> statelessTruncatedNormal(
+      Operand<T> shape, Operand<U> seed, DataType<V> dtype) {
+    return StatelessTruncatedNormal.create(scope, shape, seed, dtype);
   }
 
   /**

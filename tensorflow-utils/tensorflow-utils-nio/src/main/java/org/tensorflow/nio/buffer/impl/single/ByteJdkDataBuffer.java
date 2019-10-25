@@ -87,12 +87,12 @@ public final class ByteJdkDataBuffer extends AbstractJdkDataBuffer<Byte, ByteDat
   }
   
   @Override
-  public Byte get() {
+  public byte getByte() {
     return buf.get();
   }
 
   @Override
-  public Byte get(long index) {
+  public byte getByte(long index) {
     return buf.get((int)index);
   }
 
@@ -108,13 +108,13 @@ public final class ByteJdkDataBuffer extends AbstractJdkDataBuffer<Byte, ByteDat
   }
 
   @Override
-  public ByteDataBuffer put(Byte value) {
+  public ByteDataBuffer putByte(byte value) {
     buf.put(value);
     return this;
   }
 
   @Override
-  public ByteDataBuffer put(long index, Byte value) {
+  public ByteDataBuffer putByte(long index, byte value) {
     buf.put((int)index, value);
     return this;
   }
@@ -132,12 +132,6 @@ public final class ByteJdkDataBuffer extends AbstractJdkDataBuffer<Byte, ByteDat
       return this;
     }
     return super.put(src);
-  }
-
-  @Override
-  public ByteDataBuffer putByte(long index, byte value) {
-    buf.put((int)index, value);
-    return this;
   }
 
   @Override

@@ -134,6 +134,18 @@ public final class MathOps {
   }
 
   /**
+   * Builds an {@link Polygamma} operation
+   *
+   * @param a 
+   * @param x 
+   * @return a new instance of Polygamma
+   * @see org.tensorflow.op.math.Polygamma
+   */
+  public <T extends TNumber> Polygamma<T> polygamma(Operand<T> a, Operand<T> x) {
+    return Polygamma.create(scope, a, x);
+  }
+
+  /**
    * Builds an {@link Bincount} operation
    *
    * @param arr int32 `Tensor`.
@@ -145,18 +157,6 @@ public final class MathOps {
   public <T extends TNumber> Bincount<T> bincount(Operand<TInt32> arr, Operand<TInt32> size,
       Operand<T> weights) {
     return Bincount.create(scope, arr, size, weights);
-  }
-
-  /**
-   * Builds an {@link Polygamma} operation
-   *
-   * @param a 
-   * @param x 
-   * @return a new instance of Polygamma
-   * @see org.tensorflow.op.math.Polygamma
-   */
-  public <T extends TNumber> Polygamma<T> polygamma(Operand<T> a, Operand<T> x) {
-    return Polygamma.create(scope, a, x);
   }
 
   /**
@@ -292,17 +292,6 @@ public final class MathOps {
   }
 
   /**
-   * Builds an {@link Ceil} operation
-   *
-   * @param x 
-   * @return a new instance of Ceil
-   * @see org.tensorflow.op.math.Ceil
-   */
-  public <T extends TNumber> Ceil<T> ceil(Operand<T> x) {
-    return Ceil.create(scope, x);
-  }
-
-  /**
    * Builds an {@link Mul} operation
    *
    * @param x 
@@ -315,14 +304,14 @@ public final class MathOps {
   }
 
   /**
-   * Builds an {@link Neg} operation
+   * Builds an {@link Ceil} operation
    *
    * @param x 
-   * @return a new instance of Neg
-   * @see org.tensorflow.op.math.Neg
+   * @return a new instance of Ceil
+   * @see org.tensorflow.op.math.Ceil
    */
-  public <T> Neg<T> neg(Operand<T> x) {
-    return Neg.create(scope, x);
+  public <T extends TNumber> Ceil<T> ceil(Operand<T> x) {
+    return Ceil.create(scope, x);
   }
 
   /**
@@ -335,6 +324,17 @@ public final class MathOps {
    */
   public <T extends TNumber> Atan2<T> atan2(Operand<T> y, Operand<T> x) {
     return Atan2.create(scope, y, x);
+  }
+
+  /**
+   * Builds an {@link Neg} operation
+   *
+   * @param x 
+   * @return a new instance of Neg
+   * @see org.tensorflow.op.math.Neg
+   */
+  public <T> Neg<T> neg(Operand<T> x) {
+    return Neg.create(scope, x);
   }
 
   /**
@@ -443,17 +443,6 @@ public final class MathOps {
   }
 
   /**
-   * Builds an {@link Sqrt} operation
-   *
-   * @param x 
-   * @return a new instance of Sqrt
-   * @see org.tensorflow.op.math.Sqrt
-   */
-  public <T> Sqrt<T> sqrt(Operand<T> x) {
-    return Sqrt.create(scope, x);
-  }
-
-  /**
    * Builds an {@link LogicalNot} operation
    *
    * @param x 
@@ -462,6 +451,17 @@ public final class MathOps {
    */
   public LogicalNot logicalNot(Operand<TBool> x) {
     return LogicalNot.create(scope, x);
+  }
+
+  /**
+   * Builds an {@link Sqrt} operation
+   *
+   * @param x 
+   * @return a new instance of Sqrt
+   * @see org.tensorflow.op.math.Sqrt
+   */
+  public <T> Sqrt<T> sqrt(Operand<T> x) {
+    return Sqrt.create(scope, x);
   }
 
   /**
@@ -856,6 +856,17 @@ public final class MathOps {
   }
 
   /**
+   * Builds an {@link Lgamma} operation
+   *
+   * @param x 
+   * @return a new instance of Lgamma
+   * @see org.tensorflow.op.math.Lgamma
+   */
+  public <T extends TNumber> Lgamma<T> lgamma(Operand<T> x) {
+    return Lgamma.create(scope, x);
+  }
+
+  /**
    * Builds an {@link Sub} operation
    *
    * @param x 
@@ -865,17 +876,6 @@ public final class MathOps {
    */
   public <T> Sub<T> sub(Operand<T> x, Operand<T> y) {
     return Sub.create(scope, x, y);
-  }
-
-  /**
-   * Builds an {@link Lgamma} operation
-   *
-   * @param x 
-   * @return a new instance of Lgamma
-   * @see org.tensorflow.op.math.Lgamma
-   */
-  public <T extends TNumber> Lgamma<T> lgamma(Operand<T> x) {
-    return Lgamma.create(scope, x);
   }
 
   /**
@@ -901,17 +901,6 @@ public final class MathOps {
   }
 
   /**
-   * Builds an {@link Round} operation
-   *
-   * @param x 
-   * @return a new instance of Round
-   * @see org.tensorflow.op.math.Round
-   */
-  public <T> Round<T> round(Operand<T> x) {
-    return Round.create(scope, x);
-  }
-
-  /**
    * Builds an {@link Asin} operation
    *
    * @param x 
@@ -920,6 +909,17 @@ public final class MathOps {
    */
   public <T> Asin<T> asin(Operand<T> x) {
     return Asin.create(scope, x);
+  }
+
+  /**
+   * Builds an {@link Round} operation
+   *
+   * @param x 
+   * @return a new instance of Round
+   * @see org.tensorflow.op.math.Round
+   */
+  public <T> Round<T> round(Operand<T> x) {
+    return Round.create(scope, x);
   }
 
   /**
@@ -970,18 +970,6 @@ public final class MathOps {
   }
 
   /**
-   * Builds an {@link Pow} operation
-   *
-   * @param x 
-   * @param y 
-   * @return a new instance of Pow
-   * @see org.tensorflow.op.math.Pow
-   */
-  public <T> Pow<T> pow(Operand<T> x, Operand<T> y) {
-    return Pow.create(scope, x, y);
-  }
-
-  /**
    * Builds an {@link UnsortedSegmentMax} operation
    *
    * @param data 
@@ -996,6 +984,18 @@ public final class MathOps {
   }
 
   /**
+   * Builds an {@link Pow} operation
+   *
+   * @param x 
+   * @param y 
+   * @return a new instance of Pow
+   * @see org.tensorflow.op.math.Pow
+   */
+  public <T> Pow<T> pow(Operand<T> x, Operand<T> y) {
+    return Pow.create(scope, x, y);
+  }
+
+  /**
    * Builds an {@link Imag} operation
    *
    * @param input 
@@ -1007,17 +1007,6 @@ public final class MathOps {
   }
 
   /**
-   * Builds an {@link InvertPermutation} operation
-   *
-   * @param x 1-D.
-   * @return a new instance of InvertPermutation
-   * @see org.tensorflow.op.math.InvertPermutation
-   */
-  public <T extends TNumber> InvertPermutation<T> invertPermutation(Operand<T> x) {
-    return InvertPermutation.create(scope, x);
-  }
-
-  /**
    * Builds an {@link IsFinite} operation
    *
    * @param x 
@@ -1026,6 +1015,17 @@ public final class MathOps {
    */
   public <T extends TNumber> IsFinite isFinite(Operand<T> x) {
     return IsFinite.create(scope, x);
+  }
+
+  /**
+   * Builds an {@link InvertPermutation} operation
+   *
+   * @param x 1-D.
+   * @return a new instance of InvertPermutation
+   * @see org.tensorflow.op.math.InvertPermutation
+   */
+  public <T extends TNumber> InvertPermutation<T> invertPermutation(Operand<T> x) {
+    return InvertPermutation.create(scope, x);
   }
 
   /**
@@ -1191,6 +1191,17 @@ public final class MathOps {
   }
 
   /**
+   * Builds an {@link Conj} operation
+   *
+   * @param input 
+   * @return a new instance of Conj
+   * @see org.tensorflow.op.math.Conj
+   */
+  public <T> Conj<T> conj(Operand<T> input) {
+    return Conj.create(scope, input);
+  }
+
+  /**
    * Builds an {@link ArgMax} operation
    *
    * @param input 
@@ -1202,17 +1213,6 @@ public final class MathOps {
   public <V extends TNumber, T, U extends TNumber> ArgMax<V> argMax(Operand<T> input,
       Operand<U> dimension, DataType<V> outputType) {
     return ArgMax.create(scope, input, dimension, outputType);
-  }
-
-  /**
-   * Builds an {@link Conj} operation
-   *
-   * @param input 
-   * @return a new instance of Conj
-   * @see org.tensorflow.op.math.Conj
-   */
-  public <T> Conj<T> conj(Operand<T> input) {
-    return Conj.create(scope, input);
   }
 
   /**
@@ -1239,18 +1239,6 @@ public final class MathOps {
   }
 
   /**
-   * Builds an {@link ArgMin} operation
-   *
-   * @param input 
-   * @param dimension int32 or int64, must be in the range `[-rank(input), rank(input))`.
-   * @return a new instance of ArgMin
-   * @see org.tensorflow.op.math.ArgMin
-   */
-  public <T, U extends TNumber> ArgMin<TInt64> argMin(Operand<T> input, Operand<U> dimension) {
-    return ArgMin.create(scope, input, dimension);
-  }
-
-  /**
    * Builds an {@link Add} operation
    *
    * @param x 
@@ -1263,13 +1251,15 @@ public final class MathOps {
   }
 
   /**
-   * Builds an {@link Fact} operation
+   * Builds an {@link ArgMin} operation
    *
-   * @return a new instance of Fact
-   * @see org.tensorflow.op.math.Fact
+   * @param input 
+   * @param dimension int32 or int64, must be in the range `[-rank(input), rank(input))`.
+   * @return a new instance of ArgMin
+   * @see org.tensorflow.op.math.ArgMin
    */
-  public Fact fact() {
-    return Fact.create(scope);
+  public <T, U extends TNumber> ArgMin<TInt64> argMin(Operand<T> input, Operand<U> dimension) {
+    return ArgMin.create(scope, input, dimension);
   }
 
   /**
@@ -1281,6 +1271,16 @@ public final class MathOps {
    */
   public <T> Cos<T> cos(Operand<T> x) {
     return Cos.create(scope, x);
+  }
+
+  /**
+   * Builds an {@link Fact} operation
+   *
+   * @return a new instance of Fact
+   * @see org.tensorflow.op.math.Fact
+   */
+  public Fact fact() {
+    return Fact.create(scope);
   }
 
   /**

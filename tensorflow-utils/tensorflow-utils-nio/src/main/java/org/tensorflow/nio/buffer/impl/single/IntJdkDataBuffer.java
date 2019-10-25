@@ -72,12 +72,12 @@ public final class IntJdkDataBuffer extends AbstractJdkDataBuffer<Integer, IntDa
   }
 
   @Override
-  public Integer get() {
+  public int getInt() {
     return buf.get();
   }
 
   @Override
-  public Integer get(long index) {
+  public int getInt(long index) {
     return buf.get((int)index);
   }
 
@@ -88,13 +88,13 @@ public final class IntJdkDataBuffer extends AbstractJdkDataBuffer<Integer, IntDa
   }
 
   @Override
-  public IntDataBuffer put(Integer value) {
+  public IntDataBuffer putInt(int value) {
     buf.put(value);
     return this;
   }
 
   @Override
-  public IntDataBuffer put(long index, Integer value) {
+  public IntDataBuffer putInt(long index, int value) {
     buf.put((int)index, value);
     return this;
   }

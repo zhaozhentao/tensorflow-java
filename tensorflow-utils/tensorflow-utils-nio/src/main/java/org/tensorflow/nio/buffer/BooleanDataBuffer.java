@@ -19,32 +19,16 @@ package org.tensorflow.nio.buffer;
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 import java.nio.ReadOnlyBufferException;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import org.tensorflow.nio.buffer.impl.view.BooleanDataBufferView;
-import org.tensorflow.nio.buffer.impl.view.IntDataBufferView;
+import org.tensorflow.nio.buffer.slice.BooleanDataBufferSlice;
 
 /**
  * A {@link DataBuffer} of booleans.
  */
 public interface BooleanDataBuffer extends DataBuffer<Boolean> {
 
-  interface BooleanMapper extends ValueMapper<Boolean> {
+  boolean getBoolean();
 
-    void writeBoolean(ByteDataBuffer physicalBuffer, boolean value);
-
-    boolean readBoolean(ByteDataBuffer physicalBuffer);
-
-    @Override
-    default void writeValue(ByteDataBuffer physicalBuffer, Boolean value) {
-      writeBoolean(physicalBuffer, value);
-    }
-
-    @Override
-    default Boolean readValue(ByteDataBuffer physicalBuffer) {
-      return readBoolean(physicalBuffer);
-    }
-  }
+  boolean getBoolean(long index);
 
   /**
    * Relative bulk <i>get</i> method, using boolean arrays.
@@ -80,6 +64,10 @@ public interface BooleanDataBuffer extends DataBuffer<Boolean> {
    * @throws IndexOutOfBoundsException if the preconditions on the offset and length parameters do not hold
    */
   BooleanDataBuffer get(boolean[] dst, int offset, int length);
+
+  BooleanDataBuffer putBoolean(boolean value);
+
+  BooleanDataBuffer putBoolean(long index, boolean value);
 
   /**
    * Relative bulk <i>put</i> method, using boolean arrays.
@@ -139,10 +127,24 @@ public interface BooleanDataBuffer extends DataBuffer<Boolean> {
   BooleanDataBuffer rewind();
 
   @Override
-  BooleanDataBuffer put(Boolean value);
+  default Boolean get() {
+    return getBoolean();
+  }
 
   @Override
-  BooleanDataBuffer put(long index, Boolean value);
+  default Boolean get(long index) {
+    return getBoolean(index);
+  }
+
+  @Override
+  default BooleanDataBuffer put(Boolean value) {
+    return putBoolean(value);
+  }
+
+  @Override
+  default BooleanDataBuffer put(long index, Boolean value) {
+    return putBoolean(index, value);
+  }
 
   @Override
   BooleanDataBuffer put(DataBuffer<Boolean> src);
@@ -152,6 +154,11 @@ public interface BooleanDataBuffer extends DataBuffer<Boolean> {
 
   @Override
   default BooleanDataBuffer slice() {
-    return new BooleanDataBufferView(duplicate(), position(), limit());
+    return mutableSlice();
+  }
+
+  @Override
+  default BooleanDataBufferSlice mutableSlice() {
+    return new BooleanDataBufferSlice(this);
   }
 }

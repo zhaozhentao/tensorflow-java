@@ -3,6 +3,7 @@ package org.tensorflow.types;
 import com.google.common.base.Charsets;
 import java.nio.ByteBuffer;
 import java.nio.ReadOnlyBufferException;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
@@ -12,43 +13,42 @@ import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.LongDataBuffer;
 import org.tensorflow.nio.buffer.impl.AbstractBasicDataBuffer;
 import org.tensorflow.nio.buffer.impl.Validator;
-import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.NdArrays;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.dense.DenseNdArray;
+import org.tensorflow.nio.nd.impl.ObjectNdArray;
 import org.tensorflow.types.family.TType;
 
-public interface TString extends NdArray<String>, TType {
+public interface TString extends org.tensorflow.nio.nd.NdArray, TType {
 
   DataType<TString> DTYPE = DataType.create("STRING", 7, -1, TStringImpl::map);
 
   static Tensor<TString> scalar(String value) {
-    return copyOf(NdArrays.of(String.class, Shape.scalar()).set(value));
+    return copyOf(NdArrays.of(String.class, Shape.scalar()).setValue(value));
   }
 
   static Tensor<TString> vector(String... values) {
     return copyOf(NdArrays.of(String.class, Shape.make(values.length)).write(values));
   }
 
-  static Tensor<TString> copyOf(NdArray<String> src) {
+  static Tensor<TString> copyOf(org.tensorflow.nio.nd.NdArray src) {
     return TStringImpl.createTensor(src);
   }
 }
 
-class TStringImpl extends DenseNdArray<String> implements TString {
+class TStringImpl extends ObjectNdArray<String> implements TString {
 
-  static Tensor<TString> createTensor(NdArray<String> src) {
+  static Tensor<TString> createTensor(org.tensorflow.nio.nd.NdArray src) {
 
     // First, compute the capacity of the tensor to create
-    long capacity = src.size() * 8;  // add space to store 64-bits offsets
-    for (String value: src.values()) {
-      byte[] bytes = value.getBytes(Charsets.UTF_8);
-      capacity += bytes.length + varintLength(bytes.length);  // add space to store value + length
-    }
+    AtomicLong capacity = new AtomicLong(src.size() * 8);  // add space to store 64-bits offsets
+    src.scalars().forEach(e -> {
+      byte[] bytes = e.getValue().getBytes(Charsets.UTF_8);
+      capacity.addAndGet(bytes.length + varintLength(bytes.length));  // add space to store value + length
+    });
 
     // Allocate the tensor of the right capacity and init its data from source array
-    Tensor<TString> tensor = Tensor.allocate(TString.DTYPE, src.shape(), capacity);
-    ((TStringImpl)tensor.data()).buffer().init(src.values());
+    Tensor<TString> tensor = Tensor.allocate(TString.DTYPE, src.shape(), capacity.get());
+    ((TStringImpl)tensor.data()).buffer().init(src);
     return tensor;
   }
 
@@ -131,13 +131,14 @@ class TStringBuffer extends AbstractBasicDataBuffer<String, DataBuffer<String>> 
     return new TStringBuffer(offsets, data, position(), limit());
   }
 
-  void init(Iterable<String> values) {
-    for (String value: values) {
+  void init(org.tensorflow.nio.nd.NdArray src) {
+    src.scalars().forEach(e -> {
+      String value = e.getValue();
       long offset = data.position();
       offsets.put(offset);
       encodeVarint(data, value.length());
       data.put(value.getBytes(Charsets.UTF_8));
-    }
+    });
     offsets.rewind();
     data.rewind();
   }

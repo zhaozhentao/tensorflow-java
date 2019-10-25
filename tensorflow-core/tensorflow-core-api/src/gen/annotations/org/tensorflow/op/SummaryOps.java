@@ -66,6 +66,20 @@ public final class SummaryOps {
   }
 
   /**
+   * Builds an {@link TensorSummary} operation
+   *
+   * @param tag A string attached to this summary. Used for organization in TensorBoard.
+   * @param tensor A tensor to serialize.
+   * @param serializedSummaryMetadata A serialized SummaryMetadata proto. Contains plugin
+   * @return a new instance of TensorSummary
+   * @see org.tensorflow.op.summary.TensorSummary
+   */
+  public <T> TensorSummary tensorSummary(Operand<TString> tag, Operand<T> tensor,
+      Operand<TString> serializedSummaryMetadata) {
+    return TensorSummary.create(scope, tag, tensor, serializedSummaryMetadata);
+  }
+
+  /**
    * Builds an {@link ScalarSummary} operation
    *
    * @param tags Tags for the summary.
@@ -86,19 +100,5 @@ public final class SummaryOps {
    */
   public MergeSummary mergeSummary(Iterable<Operand<TString>> inputs) {
     return MergeSummary.create(scope, inputs);
-  }
-
-  /**
-   * Builds an {@link TensorSummary} operation
-   *
-   * @param tag A string attached to this summary. Used for organization in TensorBoard.
-   * @param tensor A tensor to serialize.
-   * @param serializedSummaryMetadata A serialized SummaryMetadata proto. Contains plugin
-   * @return a new instance of TensorSummary
-   * @see org.tensorflow.op.summary.TensorSummary
-   */
-  public <T> TensorSummary tensorSummary(Operand<TString> tag, Operand<T> tensor,
-      Operand<TString> serializedSummaryMetadata) {
-    return TensorSummary.create(scope, tag, tensor, serializedSummaryMetadata);
   }
 }

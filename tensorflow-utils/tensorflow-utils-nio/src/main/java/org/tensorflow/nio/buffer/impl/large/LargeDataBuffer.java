@@ -38,15 +38,11 @@ public final class LargeDataBuffer<T> extends AbstractLargeDataBuffer<T, DataBuf
   }
 
   @Override
-  protected LargeDataBuffer<T> instantiate(DataBuffer<T>[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    return new LargeDataBuffer<>(buffers, readOnly, capacity, limit, currentBufferIndex);
+  protected LargeDataBuffer<T> instantiate(DataBuffer<T>[] buffers, boolean readOnly) {
+    return new LargeDataBuffer<>(buffers, readOnly);
   }
 
   private LargeDataBuffer(DataBuffer<T>[] buffers, boolean readOnly) {
     super(buffers, readOnly);
-  }
-
-  private LargeDataBuffer(DataBuffer<T>[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    super(buffers, readOnly, capacity, limit, currentBufferIndex);
   }
 }

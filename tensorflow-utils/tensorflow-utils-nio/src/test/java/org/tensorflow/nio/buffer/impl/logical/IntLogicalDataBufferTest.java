@@ -3,7 +3,7 @@ package org.tensorflow.nio.buffer.impl.logical;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.IntDataBuffer;
-import org.tensorflow.nio.buffer.IntDataBuffer.IntMapper;
+import org.tensorflow.nio.buffer.converter.IntDataConverter;
 import org.tensorflow.nio.buffer.IntDataBufferTestBase;
 import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
 
@@ -11,7 +11,7 @@ public class IntLogicalDataBufferTest extends IntDataBufferTestBase {
 
   @Override
   protected IntDataBuffer allocate(long capacity) {
-    return DataBuffers.ofIntegers(capacity, new TestIntMapper());
+    return DataBuffers.ofInts(capacity, new TestIntMapper());
   }
 
   @Override
@@ -19,7 +19,7 @@ public class IntLogicalDataBufferTest extends IntDataBufferTestBase {
     return ByteLargeDataBuffer.MAX_CAPACITY;
   }
 
-  private static class TestIntMapper implements IntMapper {
+  private static class TestIntMapper implements IntDataConverter {
 
     @Override
     public void writeInt(ByteDataBuffer physicalBuffer, int value) {

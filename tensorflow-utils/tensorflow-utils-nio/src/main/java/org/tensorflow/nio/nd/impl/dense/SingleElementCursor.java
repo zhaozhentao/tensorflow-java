@@ -1,4 +1,4 @@
-package org.tensorflow.nio.nd.impl;
+package org.tensorflow.nio.nd.impl.dense;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -6,21 +6,21 @@ import org.tensorflow.nio.nd.ElementCursor;
 import org.tensorflow.nio.nd.IllegalRankException;
 import org.tensorflow.nio.nd.NdArray;
 
-class SingleElementCursor<T extends NdArray<?>> implements ElementCursor<T> {
+class SingleElementCursor<U extends NdArray<?>> implements ElementCursor<U> {
 
   @Override
-  public void forEach(Consumer<T> consumer) {
+  public void forEach(Consumer<U> consumer) {
     consumer.accept(array);
   }
 
   @Override
-  public void forEachIdx(BiConsumer<long[], T> consumer) {
+  public void forEachIdx(BiConsumer<long[], U> consumer) {
     throw new IllegalRankException("Single element has no coordinates to iterate on, use forEach()");
   }
 
-  SingleElementCursor(T array) {
+  SingleElementCursor(U array) {
     this.array = array;
   }
 
-  private final T array;
+  private final U array;
 }

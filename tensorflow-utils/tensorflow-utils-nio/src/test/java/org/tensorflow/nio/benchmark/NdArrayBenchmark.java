@@ -32,14 +32,21 @@ import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.tensorflow.nio.nd.FloatNdArray;
 import org.tensorflow.nio.nd.NdArrays;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.index.Indices;
 
+import static org.tensorflow.nio.nd.index.Indices.*;
+
 @Fork(value = 1, jvmArgs = {"-Xms4G", "-Xmx4G"})
 @BenchmarkMode(Mode.AverageTime)
+@Warmup(iterations = 3)
 @Measurement(iterations = 5)
 @State(Scope.Benchmark)
 public class NdArrayBenchmark {
@@ -76,25 +83,57 @@ public class NdArrayBenchmark {
 	}
 
 	@Benchmark
-	public void slicing() {
-		array.elements(0).forEach(batch ->
-			batch.slice(Indices.all(), Indices.at(0))
-		);
+  @Measurement(batchSize = 1500 * 916)
+	public void getElementAtIndex() {
+	  pixels.get(0);
 	}
 
 	@Benchmark
-	public void writeByChannel() {
+	public void iteratingAllPixels() {
+		pixels.elements(0).forEach(pixel -> {});
+	}
+
+	@Benchmark
+	public void writeAllChannels() {
 	  array.elements(0).forEach(batch ->
 			batch.set(channels)
 		);
 	}
 
 	@Benchmark
-	public void writeByPixelBySlice() {
+	@Measurement(batchSize = 1500 * 916)
+	public void writeOnePixelBySlicing() {
+		array.slice(at(0), all(), at(0)).set(pixels.get(0));
+	}
+
+	@Benchmark
+	public void writeAllPixelsBySlicing() {
 		array.elements(0).forEach(batch ->
 				pixels.elements(0).forEachIdx((coords, pixel) ->
-            batch.slice(Indices.all(), Indices.at(coords[0])).set(pixel)
+            batch.slice(all(), at(coords[0])).set(pixel)
 				)
+		);
+	}
+
+	@Benchmark
+	@Measurement(batchSize = 1500 * 916)
+	public void writeOnePixelsByIndex() {
+		array
+				.setFloat(pixels.getFloat(0, 0), 0, 0, 0)
+				.setFloat(pixels.getFloat(0, 1), 0, 1, 0)
+				.setFloat(pixels.getFloat(0, 2), 0, 2, 0);
+	}
+
+	@Benchmark
+	public void writeAllPixelsByIndex() {
+		array.elements(0).forEach(batch ->
+				pixels.elements(0).forEachIdx((coords, pixel) -> {
+				  long pixelIndex = coords[0];
+					batch
+							.setFloat(pixel.getFloat(0), 0, pixelIndex)
+							.setFloat(pixel.getFloat(1), 1, pixelIndex)
+							.setFloat(pixel.getFloat(2), 2, pixelIndex);
+				})
 		);
 	}
 

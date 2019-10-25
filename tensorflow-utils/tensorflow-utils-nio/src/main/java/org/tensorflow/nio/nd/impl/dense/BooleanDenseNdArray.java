@@ -17,12 +17,14 @@
 package org.tensorflow.nio.nd.impl.dense;
 
 import org.tensorflow.nio.buffer.BooleanDataBuffer;
+import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.nd.BooleanNdArray;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
-public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNdArray> implements BooleanNdArray {
+public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNdArray>
+    implements BooleanNdArray {
 
   public static BooleanNdArray create(BooleanDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
@@ -31,12 +33,12 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
 
   @Override
   public boolean getBoolean(long... indices) {
-    return buffer().get(position(indices, true));
+    return buffer().getBoolean(positionOf(indices, true));
   }
 
   @Override
   public BooleanNdArray setBoolean(boolean value, long... indices) {
-    buffer().put(position(indices, true), value);
+    buffer().putBoolean(positionOf(indices, true), value);
     return this;
   }
 
@@ -52,20 +54,17 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
     return write(DataBuffers.wrap(src, true).position(offset));
   }
 
+  protected BooleanDenseNdArray(BooleanDataBuffer buffer, DimensionalSpace dimensions) {
+    super(buffer, dimensions);
+  }
+
   @Override
   protected BooleanDataBuffer buffer() {
-    return buffer;
+    return super.buffer();
   }
 
   @Override
-  protected BooleanDenseNdArray allocateSlice(long position, DimensionalSpace dimensions) {
-    return new BooleanDenseNdArray(buffer.withPosition(position).slice(), dimensions);
+  BooleanDenseNdArray allocate(DataBuffer<Boolean> buffer, DimensionalSpace dimensions) {
+    return new BooleanDenseNdArray((BooleanDataBuffer)buffer, dimensions);
   }
-
-  protected BooleanDenseNdArray(BooleanDataBuffer buffer, DimensionalSpace dimensions) {
-    super(dimensions);
-    this.buffer = buffer;
-  }
-
-  private BooleanDataBuffer buffer;
 }

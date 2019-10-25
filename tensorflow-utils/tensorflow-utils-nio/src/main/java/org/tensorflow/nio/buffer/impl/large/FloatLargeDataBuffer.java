@@ -16,6 +16,7 @@
  */
 package org.tensorflow.nio.buffer.impl.large;
 
+import java.nio.ReadOnlyBufferException;
 import org.tensorflow.nio.buffer.FloatDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.FloatJdkDataBuffer;
 
@@ -37,9 +38,39 @@ public final class FloatLargeDataBuffer extends AbstractLargeDataBuffer<Float, F
   }
 
   @Override
+  public float getFloat() {
+    float value = currentBuffer().getFloat();
+    onPositionIncrement();
+    return value;
+  }
+
+  @Override
+  public float getFloat(long index) {
+    Validator.getArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    return buffer(bufferIdx).getFloat(indexInBuffer(bufferIdx, index));
+  }
+
+  @Override
   public FloatDataBuffer get(float[] dst, int offset, int length) {
     Validator.getArrayArgs(this, dst.length, offset, length);
     copyArray(offset, length, (b, o, l) -> ((FloatDataBuffer)b).get(dst, o, l));
+    return this;
+  }
+
+  @Override
+  public FloatDataBuffer putFloat(float value) {
+    Validator.put(this);
+    currentBuffer().putFloat(value);
+    onPositionIncrement();
+    return this;
+  }
+
+  @Override
+  public FloatDataBuffer putFloat(long index, float value) {
+    Validator.putArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    buffer(bufferIdx).putFloat(indexInBuffer(bufferIdx, index), value);
     return this;
   }
 
@@ -51,15 +82,11 @@ public final class FloatLargeDataBuffer extends AbstractLargeDataBuffer<Float, F
   }
 
   @Override
-  protected FloatLargeDataBuffer instantiate(FloatDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    return new FloatLargeDataBuffer(buffers, readOnly, capacity, limit, currentBufferIndex);
+  protected FloatLargeDataBuffer instantiate(FloatDataBuffer[] buffers, boolean readOnly) {
+    return new FloatLargeDataBuffer(buffers, readOnly);
   }
 
   private FloatLargeDataBuffer(FloatDataBuffer[] buffers, boolean readOnly) {
     super(buffers, readOnly);
-  }
-
-  private FloatLargeDataBuffer(FloatDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    super(buffers, readOnly, capacity, limit, currentBufferIndex);
   }
 }

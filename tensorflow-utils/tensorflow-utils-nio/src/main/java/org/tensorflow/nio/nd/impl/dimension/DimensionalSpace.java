@@ -18,6 +18,7 @@
 package org.tensorflow.nio.nd.impl.dimension;
 
 import java.util.Arrays;
+import org.tensorflow.nio.nd.IllegalRankException;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.index.Index;
 
@@ -58,6 +59,9 @@ public class DimensionalSpace {
   }
 
   public Shape shape() {
+    if (shape == null) {
+      shape = computeShape(dimensions);
+    }
     return shape;
   }
 
@@ -69,6 +73,24 @@ public class DimensionalSpace {
     return dimensions[i];
   }
 
+  public long positionOf(long[] coords, boolean isValue) {
+    if (coords.length > shape.numDimensions()) {
+      throw new IndexOutOfBoundsException();
+    }
+    long position = 0L;
+    int i = 0;
+    for (; i < coords.length; ++i) {
+      position += dimensions[i].positionOf(coords[i]);
+    }
+    while (i < dimensions.length && dimensions[i].isSinglePoint()) {
+      position += dimensions[i++].position();
+    }
+    if (isValue && i < shape.numDimensions()) {
+      throw new IllegalRankException("Not a scalar value");
+    }
+    return position;
+  }
+
   /** Succinct description of the shape meant for debugging. */
   @Override
   public String toString() {
@@ -76,7 +98,7 @@ public class DimensionalSpace {
   }
 
   private DimensionalSpace(Dimension[] dimensions) {
-    this(dimensions, computeShape(dimensions));
+    this(dimensions, null);
   }
 
   private DimensionalSpace(Dimension[] dimensions, Shape shape) {
@@ -85,13 +107,17 @@ public class DimensionalSpace {
   }
 
   private final Dimension[] dimensions;
-  private final Shape shape;
+  private Shape shape;
 
   private static Shape computeShape(Dimension[] dimensions) {
-    return Shape.make(Arrays.stream(dimensions)
-        .filter(d -> !d.isSinglePoint())  // ignore dimensions with no elements (i.e. Coordinate)
-        .mapToLong(Dimension::numElements)
-        .toArray()
-    );
+    long[] shapeDimSizes = new long[dimensions.length];
+    int numShapeDims = 0;
+    for (Dimension dimension : dimensions) {
+      if (!dimension.isSinglePoint()) {
+        shapeDimSizes[numShapeDims++] = dimension.numElements();
+      }
+    }
+    // TODO instead of truncating the shape dims, have a different constructor accepting a length
+    return Shape.make(Arrays.copyOf(shapeDimSizes, numShapeDims));
   }
 }

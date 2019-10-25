@@ -22,13 +22,12 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 
-import java.util.Arrays;
-import org.tensorflow.nio.buffer.BooleanDataBuffer.BooleanMapper;
-import org.tensorflow.nio.buffer.DataBuffer.ValueMapper;
-import org.tensorflow.nio.buffer.DoubleDataBuffer.DoubleMapper;
-import org.tensorflow.nio.buffer.FloatDataBuffer.FloatMapper;
-import org.tensorflow.nio.buffer.IntDataBuffer.IntMapper;
-import org.tensorflow.nio.buffer.LongDataBuffer.LongMapper;
+import org.tensorflow.nio.buffer.converter.BooleanDataConverter;
+import org.tensorflow.nio.buffer.converter.DataConverter;
+import org.tensorflow.nio.buffer.converter.DoubleDataConverter;
+import org.tensorflow.nio.buffer.converter.FloatDataConverter;
+import org.tensorflow.nio.buffer.converter.IntDataConverter;
+import org.tensorflow.nio.buffer.converter.LongDataConverter;
 import org.tensorflow.nio.buffer.impl.large.BooleanLargeDataBuffer;
 import org.tensorflow.nio.buffer.impl.logical.BooleanLogicalDataBuffer;
 import org.tensorflow.nio.buffer.impl.logical.DoubleLogicalDataBuffer;
@@ -111,7 +110,7 @@ public final class DataBuffers {
     return LongJdkDataBuffer.allocate(capacity);
   }
 
-  public static LongDataBuffer ofLongs(long capacity, LongMapper mapper) {
+  public static LongDataBuffer ofLongs(long capacity, LongDataConverter mapper) {
     ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
     return LongLogicalDataBuffer.map(physicalBuffer, mapper);
   }
@@ -151,14 +150,14 @@ public final class DataBuffers {
    * @param capacity capacity of the buffer to allocate
    * @return a new buffer
    */
-  public static IntDataBuffer ofIntegers(long capacity) {
+  public static IntDataBuffer ofInts(long capacity) {
     if (capacity > IntJdkDataBuffer.MAX_CAPACITY) {
       return IntLargeDataBuffer.allocate(capacity);
     }
     return IntJdkDataBuffer.allocate(capacity);
   }
 
-  public static IntDataBuffer ofIntegers(long capacity, IntMapper mapper) {
+  public static IntDataBuffer ofInts(long capacity, IntDataConverter mapper) {
     ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
     return IntLogicalDataBuffer.map(physicalBuffer, mapper);
   }
@@ -205,7 +204,7 @@ public final class DataBuffers {
     return DoubleJdkDataBuffer.allocate(capacity);
   }
 
-  public static DoubleDataBuffer ofDoubles(long capacity, DoubleMapper mapper) {
+  public static DoubleDataBuffer ofDoubles(long capacity, DoubleDataConverter mapper) {
     ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
     return DoubleLogicalDataBuffer.map(physicalBuffer, mapper);
   }
@@ -252,7 +251,7 @@ public final class DataBuffers {
     return FloatJdkDataBuffer.allocate(capacity);
   }
 
-  public static FloatDataBuffer ofFloats(long capacity, FloatMapper mapper) {
+  public static FloatDataBuffer ofFloats(long capacity, FloatDataConverter mapper) {
     ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
     return FloatLogicalDataBuffer.map(physicalBuffer, mapper);
   }
@@ -299,7 +298,7 @@ public final class DataBuffers {
     return BitSetDataBuffer.allocate(capacity);
   }
 
-  public static BooleanDataBuffer ofBooleans(long capacity, BooleanMapper mapper) {
+  public static BooleanDataBuffer ofBooleans(long capacity, BooleanDataConverter mapper) {
     ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
     return BooleanLogicalDataBuffer.map(physicalBuffer, mapper);
   }
@@ -336,7 +335,7 @@ public final class DataBuffers {
     return ArrayDataBuffer.allocate(clazz, capacity);
   }
 
-  public static <T> DataBuffer<T> of(long capacity, ValueMapper<T> mapper) {
+  public static <T> DataBuffer<T> of(long capacity, DataConverter<T> mapper) {
     ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
     return LogicalDataBuffer.map(physicalBuffer, mapper);
   }

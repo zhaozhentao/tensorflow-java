@@ -22,29 +22,12 @@ import java.nio.ReadOnlyBufferException;
 import java.util.stream.LongStream;
 
 import java.util.stream.Stream;
-import org.tensorflow.nio.buffer.impl.view.LongDataBufferView;
+import org.tensorflow.nio.buffer.slice.LongDataBufferSlice;
 
 /**
  * A {@link DataBuffer} of longs.
  */
 public interface LongDataBuffer extends DataBuffer<Long> {
-
-  interface LongMapper extends ValueMapper<Long> {
-
-    void writeLong(ByteDataBuffer physicalBuffer, long value);
-
-    long readLong(ByteDataBuffer physicalBuffer);
-
-    @Override
-    default void writeValue(ByteDataBuffer physicalBuffer, Long value) {
-      writeLong(physicalBuffer, value);
-    }
-
-    @Override
-    default Long readValue(ByteDataBuffer physicalBuffer) {
-      return readLong(physicalBuffer);
-    }
-  }
 
   /**
    * Retrieve values of this buffer as a stream of longs <i>(optional operation)</i>.
@@ -53,6 +36,10 @@ public interface LongDataBuffer extends DataBuffer<Long> {
    * @throws UnsupportedOperationException if streaming is not supported by this buffer
    */
   LongStream longStream();
+
+  long getLong();
+
+  long getLong(long index);
   
   /**
    * Relative bulk <i>get</i> method, using long arrays.
@@ -88,6 +75,10 @@ public interface LongDataBuffer extends DataBuffer<Long> {
    * @throws IndexOutOfBoundsException if the preconditions on the offset and length parameters do not hold
    */
   LongDataBuffer get(long[] dst, int offset, int length);
+
+  LongDataBuffer putLong(long value);
+
+  LongDataBuffer putLong(long index, long value);
 
   /**
    * Relative bulk <i>put</i> method, using long arrays.
@@ -152,10 +143,24 @@ public interface LongDataBuffer extends DataBuffer<Long> {
   }
 
   @Override
-  LongDataBuffer put(Long value);
+  default Long get() {
+    return getLong();
+  }
 
   @Override
-  LongDataBuffer put(long index, Long value);
+  default Long get(long index) {
+    return getLong(index);
+  }
+
+  @Override
+  default LongDataBuffer put(Long value) {
+    return putLong(value);
+  }
+
+  @Override
+  default LongDataBuffer put(long index, Long value) {
+    return putLong(index, value);
+  }
 
   @Override
   LongDataBuffer put(DataBuffer<Long> src);
@@ -165,6 +170,11 @@ public interface LongDataBuffer extends DataBuffer<Long> {
 
   @Override
   default LongDataBuffer slice() {
-    return new LongDataBufferView(duplicate(), position(), limit());
+    return mutableSlice();
+  }
+
+  @Override
+  default LongDataBufferSlice mutableSlice() {
+    return new LongDataBufferSlice(this);
   }
 }

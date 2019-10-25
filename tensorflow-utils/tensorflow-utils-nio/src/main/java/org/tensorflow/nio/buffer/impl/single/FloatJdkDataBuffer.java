@@ -70,12 +70,12 @@ public final class FloatJdkDataBuffer extends AbstractJdkDataBuffer<Float, Float
   }
 
   @Override
-  public Float get() {
+  public float getFloat() {
     return buf.get();
   }
 
   @Override
-  public Float get(long index) {
+  public float getFloat(long index) {
     return buf.get((int)index);
   }
 
@@ -91,13 +91,13 @@ public final class FloatJdkDataBuffer extends AbstractJdkDataBuffer<Float, Float
   }
 
   @Override
-  public FloatDataBuffer put(Float value) {
+  public FloatDataBuffer putFloat(float value) {
     buf.put(value);
     return this;
   }
 
   @Override
-  public FloatDataBuffer put(long index, Float value) {
+  public FloatDataBuffer putFloat(long index, float value) {
     buf.put((int)index, value);
     return this;
   }

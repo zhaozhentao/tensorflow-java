@@ -31,7 +31,7 @@ interface StaticApi {
   }
 
   static IntDataBuffer bufferOfInts(long capacity) {
-    return DataBuffers.ofIntegers(capacity);
+    return DataBuffers.ofInts(capacity);
   }
 
   static LongDataBuffer bufferOfLongs(long capacity) {

@@ -5,18 +5,17 @@ import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
 import org.tensorflow.nio.buffer.IntDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.IntJdkDataBuffer;
-import org.tensorflow.nio.nd.IntNdArray;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.dense.IntDenseNdArray;
+import org.tensorflow.nio.nd.impl.IntNdArray;
 import org.tensorflow.types.family.TNumber;
 
-public interface TInt32 extends IntNdArray, TNumber {
+public interface TInt32 extends org.tensorflow.nio.nd.IntNdArray, TNumber {
 
   DataType<TInt32> DTYPE = DataType.create("INT32", 3, 4, TInt32Impl::map);
 
   static Tensor<TInt32> scalar(int value) {
     Tensor<TInt32> t = tensorOfShape(Shape.scalar());
-    t.data().set(value);
+    t.data().setInt(value);
     return t;
   }
 
@@ -31,7 +30,7 @@ public interface TInt32 extends IntNdArray, TNumber {
   }
 }
 
-class TInt32Impl extends IntDenseNdArray implements TInt32 {
+class TInt32Impl extends IntNdArray implements TInt32 {
 
   static TInt32 map(ByteBuffer[] tensorBuffers, Shape shape) {
     IntDataBuffer buffer = BufferUtils.toIntDataBuffer(tensorBuffers, b ->

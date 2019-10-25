@@ -251,6 +251,19 @@ public final class NnOps {
   }
 
   /**
+   * Builds an {@link SparseSoftmaxCrossEntropyWithLogits} operation
+   *
+   * @param features batch_size x num_classes matrix
+   * @param labels batch_size vector with values in [0, num_classes).
+   * @return a new instance of SparseSoftmaxCrossEntropyWithLogits
+   * @see org.tensorflow.op.nn.SparseSoftmaxCrossEntropyWithLogits
+   */
+  public <T extends TNumber, U extends TNumber> SparseSoftmaxCrossEntropyWithLogits<T> sparseSoftmaxCrossEntropyWithLogits(
+      Operand<T> features, Operand<U> labels) {
+    return SparseSoftmaxCrossEntropyWithLogits.create(scope, features, labels);
+  }
+
+  /**
    * Builds an {@link FractionalAvgPool} operation
    *
    * @param value 4-D with shape `[batch, height, width, channels]`.
@@ -262,19 +275,6 @@ public final class NnOps {
   public <T extends TNumber> FractionalAvgPool<T> fractionalAvgPool(Operand<T> value,
       List<Float> poolingRatio, FractionalAvgPool.Options... options) {
     return FractionalAvgPool.create(scope, value, poolingRatio, options);
-  }
-
-  /**
-   * Builds an {@link SparseSoftmaxCrossEntropyWithLogits} operation
-   *
-   * @param features batch_size x num_classes matrix
-   * @param labels batch_size vector with values in [0, num_classes).
-   * @return a new instance of SparseSoftmaxCrossEntropyWithLogits
-   * @see org.tensorflow.op.nn.SparseSoftmaxCrossEntropyWithLogits
-   */
-  public <T extends TNumber, U extends TNumber> SparseSoftmaxCrossEntropyWithLogits<T> sparseSoftmaxCrossEntropyWithLogits(
-      Operand<T> features, Operand<U> labels) {
-    return SparseSoftmaxCrossEntropyWithLogits.create(scope, features, labels);
   }
 
   /**
@@ -295,20 +295,6 @@ public final class NnOps {
   }
 
   /**
-   * Builds an {@link NthElement} operation
-   *
-   * @param input 1-D or higher with last dimension at least `n+1`.
-   * @param n 0-D. Position of sorted vector to select along the last dimension (along
-   * @param options carries optional attributes values
-   * @return a new instance of NthElement
-   * @see org.tensorflow.op.nn.NthElement
-   */
-  public <T extends TNumber> NthElement<T> nthElement(Operand<T> input, Operand<TInt32> n,
-      NthElement.Options... options) {
-    return NthElement.create(scope, input, n, options);
-  }
-
-  /**
    * Builds an {@link QuantizedRelu} operation
    *
    * @param features 
@@ -321,6 +307,20 @@ public final class NnOps {
   public <U, T> QuantizedRelu<U> quantizedRelu(Operand<T> features, Operand<TFloat> minFeatures,
       Operand<TFloat> maxFeatures, DataType<U> outType) {
     return QuantizedRelu.create(scope, features, minFeatures, maxFeatures, outType);
+  }
+
+  /**
+   * Builds an {@link NthElement} operation
+   *
+   * @param input 1-D or higher with last dimension at least `n+1`.
+   * @param n 0-D. Position of sorted vector to select along the last dimension (along
+   * @param options carries optional attributes values
+   * @return a new instance of NthElement
+   * @see org.tensorflow.op.nn.NthElement
+   */
+  public <T extends TNumber> NthElement<T> nthElement(Operand<T> input, Operand<TInt32> n,
+      NthElement.Options... options) {
+    return NthElement.create(scope, input, n, options);
   }
 
   /**
@@ -738,24 +738,6 @@ public final class NnOps {
   }
 
   /**
-   * Builds an {@link Conv3dBackpropFilter} operation
-   *
-   * @param input Shape `[batch, depth, rows, cols, in_channels]`.
-   * @param filterSizes An integer vector representing the tensor shape of `filter`,
-   * @param outBackprop Backprop signal of shape `[batch, out_depth, out_rows, out_cols,
-   * @param strides 1-D tensor of length 5. The stride of the sliding window for each
-   * @param padding The type of padding algorithm to use.
-   * @param options carries optional attributes values
-   * @return a new instance of Conv3dBackpropFilter
-   * @see org.tensorflow.op.nn.Conv3dBackpropFilter
-   */
-  public <T extends TNumber> Conv3dBackpropFilter<T> conv3dBackpropFilter(Operand<T> input,
-      Operand<TInt32> filterSizes, Operand<T> outBackprop, List<Long> strides, String padding,
-      Conv3dBackpropFilter.Options... options) {
-    return Conv3dBackpropFilter.create(scope, input, filterSizes, outBackprop, strides, padding, options);
-  }
-
-  /**
    * Builds an {@link BatchNormWithGlobalNormalization} operation
    *
    * @param t A 4D input Tensor.
@@ -772,6 +754,24 @@ public final class NnOps {
       Operand<T> m, Operand<T> v, Operand<T> beta, Operand<T> gamma, Float varianceEpsilon,
       Boolean scaleAfterNormalization) {
     return BatchNormWithGlobalNormalization.create(scope, t, m, v, beta, gamma, varianceEpsilon, scaleAfterNormalization);
+  }
+
+  /**
+   * Builds an {@link Conv3dBackpropFilter} operation
+   *
+   * @param input Shape `[batch, depth, rows, cols, in_channels]`.
+   * @param filterSizes An integer vector representing the tensor shape of `filter`,
+   * @param outBackprop Backprop signal of shape `[batch, out_depth, out_rows, out_cols,
+   * @param strides 1-D tensor of length 5. The stride of the sliding window for each
+   * @param padding The type of padding algorithm to use.
+   * @param options carries optional attributes values
+   * @return a new instance of Conv3dBackpropFilter
+   * @see org.tensorflow.op.nn.Conv3dBackpropFilter
+   */
+  public <T extends TNumber> Conv3dBackpropFilter<T> conv3dBackpropFilter(Operand<T> input,
+      Operand<TInt32> filterSizes, Operand<T> outBackprop, List<Long> strides, String padding,
+      Conv3dBackpropFilter.Options... options) {
+    return Conv3dBackpropFilter.create(scope, input, filterSizes, outBackprop, strides, padding, options);
   }
 
   /**
@@ -837,6 +837,18 @@ public final class NnOps {
   }
 
   /**
+   * Builds an {@link BiasAddGrad} operation
+   *
+   * @param outBackprop Any number of dimensions.
+   * @param options carries optional attributes values
+   * @return a new instance of BiasAddGrad
+   * @see org.tensorflow.op.nn.BiasAddGrad
+   */
+  public <T> BiasAddGrad<T> biasAddGrad(Operand<T> outBackprop, BiasAddGrad.Options... options) {
+    return BiasAddGrad.create(scope, outBackprop, options);
+  }
+
+  /**
    * Builds an {@link QuantizedInstanceNorm} operation
    *
    * @param x A 4D input Tensor.
@@ -849,18 +861,6 @@ public final class NnOps {
   public <T> QuantizedInstanceNorm<T> quantizedInstanceNorm(Operand<T> x, Operand<TFloat> xMin,
       Operand<TFloat> xMax, QuantizedInstanceNorm.Options... options) {
     return QuantizedInstanceNorm.create(scope, x, xMin, xMax, options);
-  }
-
-  /**
-   * Builds an {@link BiasAddGrad} operation
-   *
-   * @param outBackprop Any number of dimensions.
-   * @param options carries optional attributes values
-   * @return a new instance of BiasAddGrad
-   * @see org.tensorflow.op.nn.BiasAddGrad
-   */
-  public <T> BiasAddGrad<T> biasAddGrad(Operand<T> outBackprop, BiasAddGrad.Options... options) {
-    return BiasAddGrad.create(scope, outBackprop, options);
   }
 
   /**
@@ -1052,17 +1052,6 @@ public final class NnOps {
   }
 
   /**
-   * Builds an {@link Elu} operation
-   *
-   * @param features 
-   * @return a new instance of Elu
-   * @see org.tensorflow.op.nn.Elu
-   */
-  public <T extends TNumber> Elu<T> elu(Operand<T> features) {
-    return Elu.create(scope, features);
-  }
-
-  /**
    * Builds an {@link Dilation2d} operation
    *
    * @param input 4-D with shape `[batch, in_height, in_width, depth]`.
@@ -1076,6 +1065,17 @@ public final class NnOps {
   public <T extends TNumber> Dilation2d<T> dilation2d(Operand<T> input, Operand<T> filter,
       List<Long> strides, List<Long> rates, String padding) {
     return Dilation2d.create(scope, input, filter, strides, rates, padding);
+  }
+
+  /**
+   * Builds an {@link Elu} operation
+   *
+   * @param features 
+   * @return a new instance of Elu
+   * @see org.tensorflow.op.nn.Elu
+   */
+  public <T extends TNumber> Elu<T> elu(Operand<T> features) {
+    return Elu.create(scope, features);
   }
 
   /**
@@ -1209,6 +1209,19 @@ public final class NnOps {
   }
 
   /**
+   * Builds an {@link BiasAdd} operation
+   *
+   * @param value Any number of dimensions.
+   * @param bias 1-D with size the last dimension of `value`.
+   * @param options carries optional attributes values
+   * @return a new instance of BiasAdd
+   * @see org.tensorflow.op.nn.BiasAdd
+   */
+  public <T> BiasAdd<T> biasAdd(Operand<T> value, Operand<T> bias, BiasAdd.Options... options) {
+    return BiasAdd.create(scope, value, bias, options);
+  }
+
+  /**
    * Builds an {@link SpaceToBatch} operation
    *
    * @param input 4-D with shape `[batch, height, width, depth]`.
@@ -1220,18 +1233,5 @@ public final class NnOps {
   public <T, U extends TNumber> SpaceToBatch<T> spaceToBatch(Operand<T> input, Operand<U> paddings,
       Long blockSize) {
     return SpaceToBatch.create(scope, input, paddings, blockSize);
-  }
-
-  /**
-   * Builds an {@link BiasAdd} operation
-   *
-   * @param value Any number of dimensions.
-   * @param bias 1-D with size the last dimension of `value`.
-   * @param options carries optional attributes values
-   * @return a new instance of BiasAdd
-   * @see org.tensorflow.op.nn.BiasAdd
-   */
-  public <T> BiasAdd<T> biasAdd(Operand<T> value, Operand<T> bias, BiasAdd.Options... options) {
-    return BiasAdd.create(scope, value, bias, options);
   }
 }

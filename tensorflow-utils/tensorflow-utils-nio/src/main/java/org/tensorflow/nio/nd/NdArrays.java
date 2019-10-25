@@ -90,7 +90,7 @@ public final class NdArrays {
   }
 
   public static IntNdArray ofInts(Shape shape) {
-    return wrap(DataBuffers.ofIntegers(shape.size()), shape);
+    return wrap(DataBuffers.ofInts(shape.size()), shape);
   }
 
   public static IntNdArray wrap(IntDataBuffer buffer, Shape shape) {

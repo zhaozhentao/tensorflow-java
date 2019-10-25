@@ -20,30 +20,16 @@ import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 import java.nio.ReadOnlyBufferException;
 
-import java.util.stream.Stream;
-import org.tensorflow.nio.buffer.impl.view.FloatDataBufferView;
+import org.tensorflow.nio.buffer.slice.FloatDataBufferSlice;
 
 /**
  * A {@link DataBuffer} of floats.
  */
 public interface FloatDataBuffer extends DataBuffer<Float> {
 
-  interface FloatMapper extends ValueMapper<Float> {
+  float getFloat();
 
-    void writeFloat(ByteDataBuffer physicalBuffer, float value);
-
-    float readFloat(ByteDataBuffer physicalBuffer);
-
-    @Override
-    default void writeValue(ByteDataBuffer physicalBuffer, Float value) {
-      writeFloat(physicalBuffer, value);
-    }
-
-    @Override
-    default Float readValue(ByteDataBuffer physicalBuffer) {
-      return readFloat(physicalBuffer);
-    }
-  }
+  float getFloat(long index);
 
   /**
    * Relative bulk <i>get</i> method, using float arrays.
@@ -79,6 +65,10 @@ public interface FloatDataBuffer extends DataBuffer<Float> {
    * @throws IndexOutOfBoundsException if the preconditions on the offset and length parameters do not hold
    */
   FloatDataBuffer get(float[] dst, int offset, int length);
+
+  FloatDataBuffer putFloat(float value);
+
+  FloatDataBuffer putFloat(long index, float value);
 
   /**
    * Relative bulk <i>put</i> method, using float arrays.
@@ -138,10 +128,24 @@ public interface FloatDataBuffer extends DataBuffer<Float> {
   FloatDataBuffer rewind();
 
   @Override
-  FloatDataBuffer put(Float value);
+  default Float get() {
+    return getFloat();
+  }
 
   @Override
-  FloatDataBuffer put(long index, Float value);
+  default Float get(long index) {
+    return getFloat(index);
+  }
+
+  @Override
+  default FloatDataBuffer put(Float value) {
+    return putFloat(value);
+  }
+
+  @Override
+  default FloatDataBuffer put(long index, Float value) {
+    return putFloat(index, value);
+  }
 
   @Override
   FloatDataBuffer put(DataBuffer<Float> src);
@@ -151,6 +155,11 @@ public interface FloatDataBuffer extends DataBuffer<Float> {
 
   @Override
   default FloatDataBuffer slice() {
-    return new FloatDataBufferView(duplicate(), position(), limit());
+    return mutableSlice();
+  }
+
+  @Override
+  default FloatDataBufferSlice mutableSlice() {
+    return new FloatDataBufferSlice(this);
   }
 }

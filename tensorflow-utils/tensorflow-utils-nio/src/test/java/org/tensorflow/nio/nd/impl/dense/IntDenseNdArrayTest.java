@@ -30,6 +30,6 @@ public class IntDenseNdArrayTest extends IntNdArrayTestBase {
   }
 
   @Override protected DataBuffer<Integer> allocateBuffer(long capacity) {
-    return DataBuffers.ofIntegers(capacity);
+    return DataBuffers.ofInts(capacity);
   }
 }

@@ -199,20 +199,6 @@ public final class SparseOps {
   }
 
   /**
-   * Builds an {@link SparseConditionalAccumulator} operation
-   *
-   * @param dtype The type of the value being accumulated.
-   * @param shape The shape of the values.
-   * @param options carries optional attributes values
-   * @return a new instance of SparseConditionalAccumulator
-   * @see org.tensorflow.op.sparse.SparseConditionalAccumulator
-   */
-  public <T> SparseConditionalAccumulator sparseConditionalAccumulator(DataType<T> dtype,
-      Shape shape, SparseConditionalAccumulator.Options... options) {
-    return SparseConditionalAccumulator.create(scope, dtype, shape, options);
-  }
-
-  /**
    * Builds an {@link SparseToDense} operation
    *
    * @param sparseIndices 0-D, 1-D, or 2-D.  `sparse_indices[i]` contains the complete
@@ -227,6 +213,20 @@ public final class SparseOps {
       Operand<T> outputShape, Operand<U> sparseValues, Operand<U> defaultValue,
       SparseToDense.Options... options) {
     return SparseToDense.create(scope, sparseIndices, outputShape, sparseValues, defaultValue, options);
+  }
+
+  /**
+   * Builds an {@link SparseConditionalAccumulator} operation
+   *
+   * @param dtype The type of the value being accumulated.
+   * @param shape The shape of the values.
+   * @param options carries optional attributes values
+   * @return a new instance of SparseConditionalAccumulator
+   * @see org.tensorflow.op.sparse.SparseConditionalAccumulator
+   */
+  public <T> SparseConditionalAccumulator sparseConditionalAccumulator(DataType<T> dtype,
+      Shape shape, SparseConditionalAccumulator.Options... options) {
+    return SparseConditionalAccumulator.create(scope, dtype, shape, options);
   }
 
   /**
@@ -294,6 +294,24 @@ public final class SparseOps {
   }
 
   /**
+   * Builds an {@link DenseToSparseSetOperation} operation
+   *
+   * @param set1 `Tensor` with rank `n`. 1st `n-1` dimensions must be the same as `set2`.
+   * @param set2Indices 2D `Tensor`, indices of a `SparseTensor`. Must be in row-major
+   * @param set2Values 1D `Tensor`, values of a `SparseTensor`. Must be in row-major
+   * @param set2Shape 1D `Tensor`, shape of a `SparseTensor`. `set2_shape[0...n-1]` must
+   * @param setOperation 
+   * @param options carries optional attributes values
+   * @return a new instance of DenseToSparseSetOperation
+   * @see org.tensorflow.op.sparse.DenseToSparseSetOperation
+   */
+  public <T> DenseToSparseSetOperation<T> denseToSparseSetOperation(Operand<T> set1,
+      Operand<TInt64> set2Indices, Operand<T> set2Values, Operand<TInt64> set2Shape,
+      String setOperation, DenseToSparseSetOperation.Options... options) {
+    return DenseToSparseSetOperation.create(scope, set1, set2Indices, set2Values, set2Shape, setOperation, options);
+  }
+
+  /**
    * Builds an {@link SparseReduceSumSparse} operation
    *
    * @param inputIndices 2-D.  `N x R` matrix with the indices of non-empty values in a
@@ -311,21 +329,18 @@ public final class SparseOps {
   }
 
   /**
-   * Builds an {@link DenseToSparseSetOperation} operation
+   * Builds an {@link SparseConcat} operation
    *
-   * @param set1 `Tensor` with rank `n`. 1st `n-1` dimensions must be the same as `set2`.
-   * @param set2Indices 2D `Tensor`, indices of a `SparseTensor`. Must be in row-major
-   * @param set2Values 1D `Tensor`, values of a `SparseTensor`. Must be in row-major
-   * @param set2Shape 1D `Tensor`, shape of a `SparseTensor`. `set2_shape[0...n-1]` must
-   * @param setOperation 
-   * @param options carries optional attributes values
-   * @return a new instance of DenseToSparseSetOperation
-   * @see org.tensorflow.op.sparse.DenseToSparseSetOperation
+   * @param indices 2-D.  Indices of each input `SparseTensor`.
+   * @param values 1-D.  Non-empty values of each `SparseTensor`.
+   * @param shapes 1-D.  Shapes of each `SparseTensor`.
+   * @param concatDim Dimension to concatenate along. Must be in range [-rank, rank),
+   * @return a new instance of SparseConcat
+   * @see org.tensorflow.op.sparse.SparseConcat
    */
-  public <T> DenseToSparseSetOperation<T> denseToSparseSetOperation(Operand<T> set1,
-      Operand<TInt64> set2Indices, Operand<T> set2Values, Operand<TInt64> set2Shape,
-      String setOperation, DenseToSparseSetOperation.Options... options) {
-    return DenseToSparseSetOperation.create(scope, set1, set2Indices, set2Values, set2Shape, setOperation, options);
+  public <T> SparseConcat<T> sparseConcat(Iterable<Operand<TInt64>> indices,
+      Iterable<Operand<T>> values, Iterable<Operand<TInt64>> shapes, Long concatDim) {
+    return SparseConcat.create(scope, indices, values, shapes, concatDim);
   }
 
   /**
@@ -358,21 +373,6 @@ public final class SparseOps {
   public SparseReshape sparseReshape(Operand<TInt64> inputIndices, Operand<TInt64> inputShape,
       Operand<TInt64> newShape) {
     return SparseReshape.create(scope, inputIndices, inputShape, newShape);
-  }
-
-  /**
-   * Builds an {@link SparseConcat} operation
-   *
-   * @param indices 2-D.  Indices of each input `SparseTensor`.
-   * @param values 1-D.  Non-empty values of each `SparseTensor`.
-   * @param shapes 1-D.  Shapes of each `SparseTensor`.
-   * @param concatDim Dimension to concatenate along. Must be in range [-rank, rank),
-   * @return a new instance of SparseConcat
-   * @see org.tensorflow.op.sparse.SparseConcat
-   */
-  public <T> SparseConcat<T> sparseConcat(Iterable<Operand<TInt64>> indices,
-      Iterable<Operand<T>> values, Iterable<Operand<TInt64>> shapes, Long concatDim) {
-    return SparseConcat.create(scope, indices, values, shapes, concatDim);
   }
 
   /**
@@ -589,21 +589,6 @@ public final class SparseOps {
   }
 
   /**
-   * Builds an {@link SparseSegmentSumWithNumSegments} operation
-   *
-   * @param data 
-   * @param indices A 1-D tensor. Has same rank as `segment_ids`.
-   * @param segmentIds A 1-D tensor. Values should be sorted and can be repeated.
-   * @param numSegments Should equal the number of distinct segment IDs.
-   * @return a new instance of SparseSegmentSumWithNumSegments
-   * @see org.tensorflow.op.sparse.SparseSegmentSumWithNumSegments
-   */
-  public <T extends TNumber, U extends TNumber, V extends TNumber> SparseSegmentSumWithNumSegments<T> sparseSegmentSumWithNumSegments(
-      Operand<T> data, Operand<U> indices, Operand<TInt32> segmentIds, Operand<V> numSegments) {
-    return SparseSegmentSumWithNumSegments.create(scope, data, indices, segmentIds, numSegments);
-  }
-
-  /**
    * Builds an {@link SparseReduceMaxSparse} operation
    *
    * @param inputIndices 2-D.  `N x R` matrix with the indices of non-empty values in a
@@ -618,6 +603,21 @@ public final class SparseOps {
       Operand<TInt64> inputIndices, Operand<T> inputValues, Operand<TInt64> inputShape,
       Operand<TInt32> reductionAxes, SparseReduceMaxSparse.Options... options) {
     return SparseReduceMaxSparse.create(scope, inputIndices, inputValues, inputShape, reductionAxes, options);
+  }
+
+  /**
+   * Builds an {@link SparseSegmentSumWithNumSegments} operation
+   *
+   * @param data 
+   * @param indices A 1-D tensor. Has same rank as `segment_ids`.
+   * @param segmentIds A 1-D tensor. Values should be sorted and can be repeated.
+   * @param numSegments Should equal the number of distinct segment IDs.
+   * @return a new instance of SparseSegmentSumWithNumSegments
+   * @see org.tensorflow.op.sparse.SparseSegmentSumWithNumSegments
+   */
+  public <T extends TNumber, U extends TNumber, V extends TNumber> SparseSegmentSumWithNumSegments<T> sparseSegmentSumWithNumSegments(
+      Operand<T> data, Operand<U> indices, Operand<TInt32> segmentIds, Operand<V> numSegments) {
+    return SparseSegmentSumWithNumSegments.create(scope, data, indices, segmentIds, numSegments);
   }
 
   /**

@@ -16,13 +16,16 @@
  */
 package org.tensorflow.nio.nd.impl.dense;
 
+import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.FloatDataBuffer;
+import org.tensorflow.nio.buffer.LongDataBuffer;
 import org.tensorflow.nio.nd.FloatNdArray;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
-public class FloatDenseNdArray extends AbstractDenseNdArray<Float, FloatNdArray> implements FloatNdArray {
+public class FloatDenseNdArray extends AbstractDenseNdArray<Float, FloatNdArray>
+    implements FloatNdArray {
 
   public static FloatNdArray create(FloatDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
@@ -31,12 +34,12 @@ public class FloatDenseNdArray extends AbstractDenseNdArray<Float, FloatNdArray>
 
   @Override
   public float getFloat(long... indices) {
-    return buffer().get(position(indices, true));
+    return buffer().getFloat(positionOf(indices, true));
   }
 
   @Override
   public FloatNdArray setFloat(float value, long... indices) {
-    buffer().put(position(indices, true), value);
+    buffer().putFloat(positionOf(indices, true), value);
     return this;
   }
 
@@ -53,18 +56,16 @@ public class FloatDenseNdArray extends AbstractDenseNdArray<Float, FloatNdArray>
   }
 
   protected FloatDenseNdArray(FloatDataBuffer buffer, DimensionalSpace dimensions) {
-    super(dimensions);
-    this.buffer = buffer;
+    super(buffer, dimensions);
   }
 
   @Override
   protected FloatDataBuffer buffer() {
-    return buffer;
+    return super.buffer();
   }
 
-  protected FloatDenseNdArray allocateSlice(long position, DimensionalSpace dimensions) {
-    return new FloatDenseNdArray(buffer.withPosition(position).slice(), dimensions);
+  @Override
+  FloatDenseNdArray allocate(DataBuffer<Float> buffer, DimensionalSpace dimensions) {
+    return new FloatDenseNdArray((FloatDataBuffer)buffer, dimensions);
   }
-
-  private FloatDataBuffer buffer;
 }

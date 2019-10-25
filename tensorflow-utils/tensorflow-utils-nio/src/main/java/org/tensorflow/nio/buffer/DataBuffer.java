@@ -22,7 +22,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ReadOnlyBufferException;
 import java.util.stream.Stream;
 
-import org.tensorflow.nio.buffer.impl.view.DataBufferView;
+import org.tensorflow.nio.buffer.slice.DataBufferSlice;
 
 /**
  * A container of data of a specific type.
@@ -42,15 +42,6 @@ import org.tensorflow.nio.buffer.impl.view.DataBufferView;
  * @param <T> type of data stored in this buffer
  */
 public interface DataBuffer<T> {
-
-  interface ValueMapper<T> {
-
-    void writeValue(ByteDataBuffer physicalBuffer, T value);
-
-    T readValue(ByteDataBuffer physicalBuffer);
-
-    int sizeInBytes();
-  }
 
   /**
    * Size of the buffer, in elements.
@@ -251,6 +242,10 @@ public interface DataBuffer<T> {
    * @return the new buffer
    */
   default DataBuffer<T> slice() {
-    return new DataBufferView<>(duplicate(), position(), limit());
+    return mutableSlice();
+  }
+
+  default DataBufferSlice<T> mutableSlice() {
+    return new DataBufferSlice<>(this);
   }
 }

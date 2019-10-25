@@ -16,9 +16,16 @@
  */
 package org.tensorflow.nio.buffer.impl.large;
 
+import java.nio.ReadOnlyBufferException;
 import org.tensorflow.nio.buffer.DataBuffer;
 
 class Validator extends org.tensorflow.nio.buffer.impl.Validator {
+
+  static <T> void put(DataBuffer<T> buffer) {
+    if (buffer.isReadOnly()) {
+      throw new ReadOnlyBufferException();
+    }
+  }
 
   static <T> boolean joinBuffers(DataBuffer<T>[] buffers) {
     if (buffers == null || buffers.length == 0) {

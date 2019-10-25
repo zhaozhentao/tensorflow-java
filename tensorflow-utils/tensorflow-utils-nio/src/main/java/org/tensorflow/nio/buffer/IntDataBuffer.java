@@ -22,29 +22,12 @@ import java.nio.ReadOnlyBufferException;
 import java.util.stream.IntStream;
 
 import java.util.stream.Stream;
-import org.tensorflow.nio.buffer.impl.view.IntDataBufferView;
+import org.tensorflow.nio.buffer.slice.IntDataBufferSlice;
 
 /**
  * A {@link DataBuffer} of integers.
  */
 public interface IntDataBuffer extends DataBuffer<Integer> {
-
-  interface IntMapper extends ValueMapper<Integer> {
-
-    void writeInt(ByteDataBuffer physicalBuffer, int value);
-
-    int readInt(ByteDataBuffer physicalBuffer);
-
-    @Override
-    default void writeValue(ByteDataBuffer physicalBuffer, Integer value) {
-      writeInt(physicalBuffer, value);
-    }
-
-    @Override
-    default Integer readValue(ByteDataBuffer physicalBuffer) {
-      return readInt(physicalBuffer);
-    }
-  }
 
   /**
    * Retrieve values of this buffer as a stream of integers <i>(optional operation)</i>.
@@ -53,6 +36,10 @@ public interface IntDataBuffer extends DataBuffer<Integer> {
    * @throws UnsupportedOperationException if streaming is not supported by this buffer
    */
   IntStream intStream();
+
+  int getInt();
+
+  int getInt(long index);
 
   /**
    * Relative bulk <i>get</i> method, using int arrays.
@@ -88,6 +75,10 @@ public interface IntDataBuffer extends DataBuffer<Integer> {
    * @throws IndexOutOfBoundsException if the preconditions on the offset and length parameters do not hold
    */
   IntDataBuffer get(int[] dst, int offset, int length);
+
+  IntDataBuffer putInt(int value);
+
+  IntDataBuffer putInt(long index, int value);
 
   /**
    * Relative bulk <i>put</i> method, using int arrays.
@@ -152,10 +143,24 @@ public interface IntDataBuffer extends DataBuffer<Integer> {
   }
 
   @Override
-  IntDataBuffer put(Integer value);
+  default Integer get() {
+    return getInt();
+  }
 
   @Override
-  IntDataBuffer put(long index, Integer value);
+  default Integer get(long index) {
+    return getInt(index);
+  }
+
+  @Override
+  default IntDataBuffer put(Integer value) {
+    return putInt(value);
+  }
+
+  @Override
+  default IntDataBuffer put(long index, Integer value) {
+    return putInt(index, value);
+  }
 
   @Override
   IntDataBuffer put(DataBuffer<Integer> src);
@@ -165,6 +170,11 @@ public interface IntDataBuffer extends DataBuffer<Integer> {
 
   @Override
   default IntDataBuffer slice() {
-    return new IntDataBufferView(duplicate(), position(), limit());
+    return mutableSlice();
+  }
+
+  @Override
+  default IntDataBufferSlice mutableSlice() {
+    return new IntDataBufferSlice(this);
   }
 }

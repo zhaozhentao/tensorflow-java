@@ -5,18 +5,17 @@ import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
 import org.tensorflow.nio.buffer.FloatDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.FloatJdkDataBuffer;
-import org.tensorflow.nio.nd.FloatNdArray;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.dense.FloatDenseNdArray;
+import org.tensorflow.nio.nd.impl.FloatNdArray;
 import org.tensorflow.types.family.TDecimal;
 
-public interface TFloat extends FloatNdArray, TDecimal {
+public interface TFloat extends org.tensorflow.nio.nd.FloatNdArray, TDecimal {
 
   DataType<TFloat> DTYPE = DataType.create("FLOAT", 1, 4, TFloatImpl::map);
 
   static Tensor<TFloat> scalar(float value) {
     Tensor<TFloat> t = tensorOfShape(Shape.scalar());
-    t.data().set(value);
+    t.data().setFloat(value);
     return t;
   }
 
@@ -31,7 +30,7 @@ public interface TFloat extends FloatNdArray, TDecimal {
   }
 }
 
-class TFloatImpl extends FloatDenseNdArray implements TFloat {
+class TFloatImpl extends FloatNdArray implements TFloat {
 
   static TFloat map(ByteBuffer[] tensorBuffers, Shape shape) {
     FloatDataBuffer buffer = BufferUtils.toFloatDataBuffer(tensorBuffers, b ->

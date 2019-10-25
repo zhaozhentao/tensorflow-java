@@ -72,12 +72,12 @@ public final class DoubleJdkDataBuffer extends AbstractJdkDataBuffer<Double, Dou
   }
 
   @Override
-  public Double get() {
+  public double getDouble() {
     return buf.get();
   }
 
   @Override
-  public Double get(long index) {
+  public double getDouble(long index) {
     return buf.get((int)index);
   }
 
@@ -96,13 +96,13 @@ public final class DoubleJdkDataBuffer extends AbstractJdkDataBuffer<Double, Dou
   }
 
   @Override
-  public DoubleDataBuffer put(Double value) {
+  public DoubleDataBuffer putDouble(double value) {
     buf.put(value);
     return this;
   }
 
   @Override
-  public DoubleDataBuffer put(long index, Double value) {
+  public DoubleDataBuffer putDouble(long index, double value) {
     buf.put((int)index, value);
     return this;
   }

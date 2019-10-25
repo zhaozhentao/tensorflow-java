@@ -102,17 +102,6 @@ public final class SignalOps {
   }
 
   /**
-   * Builds an {@link BatchIfft3d} operation
-   *
-   * @param input 
-   * @return a new instance of BatchIfft3d
-   * @see org.tensorflow.op.signal.BatchIfft3d
-   */
-  public BatchIfft3d batchIfft3d(Operand<?> input) {
-    return BatchIfft3d.create(scope, input);
-  }
-
-  /**
    * Builds an {@link Irfft2d} operation
    *
    * @param input A complex64 tensor.
@@ -122,6 +111,17 @@ public final class SignalOps {
    */
   public Irfft2d irfft2d(Operand<?> input, Operand<TInt32> fftLength) {
     return Irfft2d.create(scope, input, fftLength);
+  }
+
+  /**
+   * Builds an {@link BatchIfft3d} operation
+   *
+   * @param input 
+   * @return a new instance of BatchIfft3d
+   * @see org.tensorflow.op.signal.BatchIfft3d
+   */
+  public BatchIfft3d batchIfft3d(Operand<?> input) {
+    return BatchIfft3d.create(scope, input);
   }
 
   /**
@@ -181,17 +181,6 @@ public final class SignalOps {
   }
 
   /**
-   * Builds an {@link BatchFft} operation
-   *
-   * @param input 
-   * @return a new instance of BatchFft
-   * @see org.tensorflow.op.signal.BatchFft
-   */
-  public BatchFft batchFft(Operand<?> input) {
-    return BatchFft.create(scope, input);
-  }
-
-  /**
    * Builds an {@link BatchIfft2d} operation
    *
    * @param input 
@@ -203,15 +192,14 @@ public final class SignalOps {
   }
 
   /**
-   * Builds an {@link Irfft3d} operation
+   * Builds an {@link BatchFft} operation
    *
-   * @param input A complex64 tensor.
-   * @param fftLength An int32 tensor of shape [3]. The FFT length for each dimension.
-   * @return a new instance of Irfft3d
-   * @see org.tensorflow.op.signal.Irfft3d
+   * @param input 
+   * @return a new instance of BatchFft
+   * @see org.tensorflow.op.signal.BatchFft
    */
-  public Irfft3d irfft3d(Operand<?> input, Operand<TInt32> fftLength) {
-    return Irfft3d.create(scope, input, fftLength);
+  public BatchFft batchFft(Operand<?> input) {
+    return BatchFft.create(scope, input);
   }
 
   /**
@@ -224,6 +212,18 @@ public final class SignalOps {
    */
   public Rfft2d rfft2d(Operand<TFloat> input, Operand<TInt32> fftLength) {
     return Rfft2d.create(scope, input, fftLength);
+  }
+
+  /**
+   * Builds an {@link Irfft3d} operation
+   *
+   * @param input A complex64 tensor.
+   * @param fftLength An int32 tensor of shape [3]. The FFT length for each dimension.
+   * @return a new instance of Irfft3d
+   * @see org.tensorflow.op.signal.Irfft3d
+   */
+  public Irfft3d irfft3d(Operand<?> input, Operand<TInt32> fftLength) {
+    return Irfft3d.create(scope, input, fftLength);
   }
 
   /**

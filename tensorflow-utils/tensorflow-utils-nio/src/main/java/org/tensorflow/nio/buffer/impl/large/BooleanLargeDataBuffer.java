@@ -37,9 +37,39 @@ public final class BooleanLargeDataBuffer extends AbstractLargeDataBuffer<Boolea
   }
 
   @Override
+  public boolean getBoolean() {
+    boolean value = currentBuffer().getBoolean();
+    onPositionIncrement();
+    return value;
+  }
+
+  @Override
+  public boolean getBoolean(long index) {
+    Validator.getArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    return buffer(bufferIdx).getBoolean(indexInBuffer(bufferIdx, index));
+  }
+
+  @Override
   public BooleanDataBuffer get(boolean[] dst, int offset, int length) {
     Validator.getArrayArgs(this, dst.length, offset, length);
     copyArray(offset, length, (b, o, l) -> ((BooleanDataBuffer)b).get(dst, o, l));
+    return this;
+  }
+
+  @Override
+  public BooleanDataBuffer putBoolean(boolean value) {
+    Validator.put(this);
+    currentBuffer().putBoolean(value);
+    onPositionIncrement();
+    return this;
+  }
+
+  @Override
+  public BooleanDataBuffer putBoolean(long index, boolean value) {
+    Validator.putArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    buffer(bufferIdx).putBoolean(indexInBuffer(bufferIdx, index), value);
     return this;
   }
 
@@ -51,15 +81,11 @@ public final class BooleanLargeDataBuffer extends AbstractLargeDataBuffer<Boolea
   }
 
   @Override
-  protected BooleanLargeDataBuffer instantiate(BooleanDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    return new BooleanLargeDataBuffer(buffers, readOnly, capacity, limit, currentBufferIndex);
+  protected BooleanLargeDataBuffer instantiate(BooleanDataBuffer[] buffers, boolean readOnly) {
+    return new BooleanLargeDataBuffer(buffers, readOnly);
   }
 
   private BooleanLargeDataBuffer(BooleanDataBuffer[] buffers, boolean readOnly) {
     super(buffers, readOnly);
-  }
-
-  private BooleanLargeDataBuffer(BooleanDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    super(buffers, readOnly, capacity, limit, currentBufferIndex);
   }
 }

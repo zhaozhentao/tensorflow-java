@@ -71,6 +71,17 @@ public final class LinalgOps {
   }
 
   /**
+   * Builds an {@link BatchMatrixDiagPart} operation
+   *
+   * @param input 
+   * @return a new instance of BatchMatrixDiagPart
+   * @see org.tensorflow.op.linalg.BatchMatrixDiagPart
+   */
+  public <T> BatchMatrixDiagPart<T> batchMatrixDiagPart(Operand<T> input) {
+    return BatchMatrixDiagPart.create(scope, input);
+  }
+
+  /**
    * Builds an {@link BatchMatrixSolveLs} operation
    *
    * @param matrix 
@@ -83,17 +94,6 @@ public final class LinalgOps {
   public <T extends TNumber> BatchMatrixSolveLs<T> batchMatrixSolveLs(Operand<T> matrix,
       Operand<T> rhs, Operand<TDouble> l2Regularizer, BatchMatrixSolveLs.Options... options) {
     return BatchMatrixSolveLs.create(scope, matrix, rhs, l2Regularizer, options);
-  }
-
-  /**
-   * Builds an {@link BatchMatrixDiagPart} operation
-   *
-   * @param input 
-   * @return a new instance of BatchMatrixDiagPart
-   * @see org.tensorflow.op.linalg.BatchMatrixDiagPart
-   */
-  public <T> BatchMatrixDiagPart<T> batchMatrixDiagPart(Operand<T> input) {
-    return BatchMatrixDiagPart.create(scope, input);
   }
 
   /**
@@ -122,6 +122,17 @@ public final class LinalgOps {
   }
 
   /**
+   * Builds an {@link TensorDiag} operation
+   *
+   * @param diagonal Rank k tensor where k is at most 1.
+   * @return a new instance of TensorDiag
+   * @see org.tensorflow.op.linalg.TensorDiag
+   */
+  public <T> TensorDiag<T> tensorDiag(Operand<T> diagonal) {
+    return TensorDiag.create(scope, diagonal);
+  }
+
+  /**
    * Builds an {@link BatchMatrixInverse} operation
    *
    * @param input 
@@ -132,17 +143,6 @@ public final class LinalgOps {
   public <T extends TNumber> BatchMatrixInverse<T> batchMatrixInverse(Operand<T> input,
       BatchMatrixInverse.Options... options) {
     return BatchMatrixInverse.create(scope, input, options);
-  }
-
-  /**
-   * Builds an {@link TensorDiag} operation
-   *
-   * @param diagonal Rank k tensor where k is at most 1.
-   * @return a new instance of TensorDiag
-   * @see org.tensorflow.op.linalg.TensorDiag
-   */
-  public <T> TensorDiag<T> tensorDiag(Operand<T> diagonal) {
-    return TensorDiag.create(scope, diagonal);
   }
 
   /**
@@ -253,19 +253,6 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link BatchSelfAdjointEig} operation
-   *
-   * @param input 
-   * @param options carries optional attributes values
-   * @return a new instance of BatchSelfAdjointEig
-   * @see org.tensorflow.op.linalg.BatchSelfAdjointEig
-   */
-  public <T extends TNumber> BatchSelfAdjointEig<T> batchSelfAdjointEig(Operand<T> input,
-      BatchSelfAdjointEig.Options... options) {
-    return BatchSelfAdjointEig.create(scope, input, options);
-  }
-
-  /**
    * Builds an {@link QuantizedMatMul} operation
    *
    * @param a Must be a two-dimensional tensor.
@@ -284,6 +271,19 @@ public final class LinalgOps {
       Operand<TFloat> minA, Operand<TFloat> maxA, Operand<TFloat> minB, Operand<TFloat> maxB,
       DataType<V> Toutput, DataType<W> Tactivation, QuantizedMatMul.Options... options) {
     return QuantizedMatMul.create(scope, a, b, minA, maxA, minB, maxB, Toutput, Tactivation, options);
+  }
+
+  /**
+   * Builds an {@link BatchSelfAdjointEig} operation
+   *
+   * @param input 
+   * @param options carries optional attributes values
+   * @return a new instance of BatchSelfAdjointEig
+   * @see org.tensorflow.op.linalg.BatchSelfAdjointEig
+   */
+  public <T extends TNumber> BatchSelfAdjointEig<T> batchSelfAdjointEig(Operand<T> input,
+      BatchSelfAdjointEig.Options... options) {
+    return BatchSelfAdjointEig.create(scope, input, options);
   }
 
   /**
@@ -516,20 +516,6 @@ public final class LinalgOps {
   }
 
   /**
-   * Builds an {@link BatchMatMul} operation
-   *
-   * @param x 2-D or higher with shape `[..., r_x, c_x]`.
-   * @param y 2-D or higher with shape `[..., r_y, c_y]`.
-   * @param options carries optional attributes values
-   * @return a new instance of BatchMatMul
-   * @see org.tensorflow.op.linalg.BatchMatMul
-   */
-  public <T> BatchMatMul<T> batchMatMul(Operand<T> x, Operand<T> y,
-      BatchMatMul.Options... options) {
-    return BatchMatMul.create(scope, x, y, options);
-  }
-
-  /**
    * Builds an {@link BatchMatrixTriangularSolve} operation
    *
    * @param matrix 
@@ -541,5 +527,19 @@ public final class LinalgOps {
   public <T extends TNumber> BatchMatrixTriangularSolve<T> batchMatrixTriangularSolve(
       Operand<T> matrix, Operand<T> rhs, BatchMatrixTriangularSolve.Options... options) {
     return BatchMatrixTriangularSolve.create(scope, matrix, rhs, options);
+  }
+
+  /**
+   * Builds an {@link BatchMatMul} operation
+   *
+   * @param x 2-D or higher with shape `[..., r_x, c_x]`.
+   * @param y 2-D or higher with shape `[..., r_y, c_y]`.
+   * @param options carries optional attributes values
+   * @return a new instance of BatchMatMul
+   * @see org.tensorflow.op.linalg.BatchMatMul
+   */
+  public <T> BatchMatMul<T> batchMatMul(Operand<T> x, Operand<T> y,
+      BatchMatMul.Options... options) {
+    return BatchMatMul.create(scope, x, y, options);
   }
 }

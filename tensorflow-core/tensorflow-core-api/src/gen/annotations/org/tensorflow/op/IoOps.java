@@ -222,29 +222,6 @@ public final class IoOps {
   }
 
   /**
-   * Builds an {@link WriteFile} operation
-   *
-   * @param filename scalar. The name of the file to which we write the contents.
-   * @param contents scalar. The content to be written to the output file.
-   * @return a new instance of WriteFile
-   * @see org.tensorflow.op.io.WriteFile
-   */
-  public WriteFile writeFile(Operand<TString> filename, Operand<TString> contents) {
-    return WriteFile.create(scope, filename, contents);
-  }
-
-  /**
-   * Builds an {@link ReaderNumRecordsProduced} operation
-   *
-   * @param readerHandle Handle to a Reader.
-   * @return a new instance of ReaderNumRecordsProduced
-   * @see org.tensorflow.op.io.ReaderNumRecordsProduced
-   */
-  public ReaderNumRecordsProduced readerNumRecordsProduced(Operand<?> readerHandle) {
-    return ReaderNumRecordsProduced.create(scope, readerHandle);
-  }
-
-  /**
    * Builds an {@link QueueEnqueue} operation
    *
    * @param handle The handle to a queue.
@@ -259,17 +236,26 @@ public final class IoOps {
   }
 
   /**
-   * Builds an {@link PriorityQueue} operation
+   * Builds an {@link ReaderNumRecordsProduced} operation
    *
-   * @param componentTypes The type of each component in a value.
-   * @param shapes The shape of each component in a value. The length of this attr must
-   * @param options carries optional attributes values
-   * @return a new instance of PriorityQueue
-   * @see org.tensorflow.op.io.PriorityQueue
+   * @param readerHandle Handle to a Reader.
+   * @return a new instance of ReaderNumRecordsProduced
+   * @see org.tensorflow.op.io.ReaderNumRecordsProduced
    */
-  public PriorityQueue priorityQueue(List<DataType<?>> componentTypes, List<Shape> shapes,
-      PriorityQueue.Options... options) {
-    return PriorityQueue.create(scope, componentTypes, shapes, options);
+  public ReaderNumRecordsProduced readerNumRecordsProduced(Operand<?> readerHandle) {
+    return ReaderNumRecordsProduced.create(scope, readerHandle);
+  }
+
+  /**
+   * Builds an {@link WriteFile} operation
+   *
+   * @param filename scalar. The name of the file to which we write the contents.
+   * @param contents scalar. The content to be written to the output file.
+   * @return a new instance of WriteFile
+   * @see org.tensorflow.op.io.WriteFile
+   */
+  public WriteFile writeFile(Operand<TString> filename, Operand<TString> contents) {
+    return WriteFile.create(scope, filename, contents);
   }
 
   /**
@@ -281,6 +267,20 @@ public final class IoOps {
    */
   public ReaderSerializeState readerSerializeState(Operand<?> readerHandle) {
     return ReaderSerializeState.create(scope, readerHandle);
+  }
+
+  /**
+   * Builds an {@link PriorityQueue} operation
+   *
+   * @param componentTypes The type of each component in a value.
+   * @param shapes The shape of each component in a value. The length of this attr must
+   * @param options carries optional attributes values
+   * @return a new instance of PriorityQueue
+   * @see org.tensorflow.op.io.PriorityQueue
+   */
+  public PriorityQueue priorityQueue(List<DataType<?>> componentTypes, List<Shape> shapes,
+      PriorityQueue.Options... options) {
+    return PriorityQueue.create(scope, componentTypes, shapes, options);
   }
 
   /**
@@ -366,6 +366,17 @@ public final class IoOps {
   }
 
   /**
+   * Builds an {@link TfRecordReader} operation
+   *
+   * @param options carries optional attributes values
+   * @return a new instance of TfRecordReader
+   * @see org.tensorflow.op.io.TfRecordReader
+   */
+  public TfRecordReader tfRecordReader(TfRecordReader.Options... options) {
+    return TfRecordReader.create(scope, options);
+  }
+
+  /**
    * Builds an {@link ShardedFilespec} operation
    *
    * @param basename 
@@ -375,17 +386,6 @@ public final class IoOps {
    */
   public ShardedFilespec shardedFilespec(Operand<TString> basename, Operand<TInt32> numShards) {
     return ShardedFilespec.create(scope, basename, numShards);
-  }
-
-  /**
-   * Builds an {@link TfRecordReader} operation
-   *
-   * @param options carries optional attributes values
-   * @return a new instance of TfRecordReader
-   * @see org.tensorflow.op.io.TfRecordReader
-   */
-  public TfRecordReader tfRecordReader(TfRecordReader.Options... options) {
-    return TfRecordReader.create(scope, options);
   }
 
   /**
@@ -560,17 +560,6 @@ public final class IoOps {
   }
 
   /**
-   * Builds an {@link QueueIsClosed} operation
-   *
-   * @param handle The handle to a queue.
-   * @return a new instance of QueueIsClosed
-   * @see org.tensorflow.op.io.QueueIsClosed
-   */
-  public QueueIsClosed queueIsClosed(Operand<?> handle) {
-    return QueueIsClosed.create(scope, handle);
-  }
-
-  /**
    * Builds an {@link DecodeCompressed} operation
    *
    * @param bytes A Tensor of string which is compressed.
@@ -584,14 +573,14 @@ public final class IoOps {
   }
 
   /**
-   * Builds an {@link QueueSize} operation
+   * Builds an {@link QueueIsClosed} operation
    *
    * @param handle The handle to a queue.
-   * @return a new instance of QueueSize
-   * @see org.tensorflow.op.io.QueueSize
+   * @return a new instance of QueueIsClosed
+   * @see org.tensorflow.op.io.QueueIsClosed
    */
-  public QueueSize queueSize(Operand<?> handle) {
-    return QueueSize.create(scope, handle);
+  public QueueIsClosed queueIsClosed(Operand<?> handle) {
+    return QueueIsClosed.create(scope, handle);
   }
 
   /**
@@ -608,6 +597,17 @@ public final class IoOps {
   }
 
   /**
+   * Builds an {@link QueueSize} operation
+   *
+   * @param handle The handle to a queue.
+   * @return a new instance of QueueSize
+   * @see org.tensorflow.op.io.QueueSize
+   */
+  public QueueSize queueSize(Operand<?> handle) {
+    return QueueSize.create(scope, handle);
+  }
+
+  /**
    * Builds an {@link RandomShuffleQueue} operation
    *
    * @param componentTypes The type of each component in a value.
@@ -618,6 +618,17 @@ public final class IoOps {
   public RandomShuffleQueue randomShuffleQueue(List<DataType<?>> componentTypes,
       RandomShuffleQueue.Options... options) {
     return RandomShuffleQueue.create(scope, componentTypes, options);
+  }
+
+  /**
+   * Builds an {@link TextLineReader} operation
+   *
+   * @param options carries optional attributes values
+   * @return a new instance of TextLineReader
+   * @see org.tensorflow.op.io.TextLineReader
+   */
+  public TextLineReader textLineReader(TextLineReader.Options... options) {
+    return TextLineReader.create(scope, options);
   }
 
   /**
@@ -632,17 +643,6 @@ public final class IoOps {
   public QueueDequeue queueDequeue(Operand<?> handle, List<DataType<?>> componentTypes,
       QueueDequeue.Options... options) {
     return QueueDequeue.create(scope, handle, componentTypes, options);
-  }
-
-  /**
-   * Builds an {@link TextLineReader} operation
-   *
-   * @param options carries optional attributes values
-   * @return a new instance of TextLineReader
-   * @see org.tensorflow.op.io.TextLineReader
-   */
-  public TextLineReader textLineReader(TextLineReader.Options... options) {
-    return TextLineReader.create(scope, options);
   }
 
   /**

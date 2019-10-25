@@ -29,19 +29,11 @@ public class DenseNdArray<T> extends AbstractDenseNdArray<T, NdArray<T>> {
   }
 
   protected DenseNdArray(DataBuffer<T> buffer, DimensionalSpace dimensions) {
-    super(dimensions);
-    this.buffer = buffer;
+    super(buffer, dimensions);
   }
 
   @Override
-  protected DataBuffer<T> buffer() {
-    return buffer;
+  DenseNdArray<T> allocate(DataBuffer<T> buffer, DimensionalSpace dimensions) {
+    return new DenseNdArray<>(buffer, dimensions);
   }
-
-  @Override
-  protected DenseNdArray<T> allocateSlice(long position, DimensionalSpace dimensions) {
-    return new DenseNdArray<>(buffer.withPosition(position).slice(), dimensions);
-  }
-
-  private DataBuffer<T> buffer;
 }

@@ -3,7 +3,7 @@ package org.tensorflow.nio.buffer.impl.logical;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.FloatDataBuffer;
-import org.tensorflow.nio.buffer.FloatDataBuffer.FloatMapper;
+import org.tensorflow.nio.buffer.converter.FloatDataConverter;
 import org.tensorflow.nio.buffer.FloatDataBufferTestBase;
 import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
 
@@ -19,7 +19,7 @@ public class FloatLogicalDataBufferTest extends FloatDataBufferTestBase {
     return ByteLargeDataBuffer.MAX_CAPACITY / 2;
   }
 
-  private static class TestFloatMapper implements FloatMapper {
+  private static class TestFloatMapper implements FloatDataConverter {
 
     @Override
     public void writeFloat(ByteDataBuffer physicalBuffer, float value) {

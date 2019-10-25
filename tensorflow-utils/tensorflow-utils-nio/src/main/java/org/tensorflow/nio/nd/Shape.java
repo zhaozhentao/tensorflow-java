@@ -60,6 +60,9 @@ public final class Shape {
   }
 
   public long size() {
+    if (size == null) {
+      size = computeSize(dimensionSizes);
+    }
     return size;
   }
 
@@ -75,8 +78,8 @@ public final class Shape {
     if (dimensionSizes == null) {
       return true;
     }
-    for (int i = 0; i < dimensionSizes.length; ++i) {
-      if (dimensionSizes[i] < 0) {
+    for (long dimSize : dimensionSizes) {
+      if (dimSize == UNKNOWN_SIZE) {
         return true;
       }
     }
@@ -116,9 +119,22 @@ public final class Shape {
 
   private Shape(long[] dimensionSizes) {
     this.dimensionSizes = dimensionSizes;
-    this.size = Arrays.stream(dimensionSizes).reduce(1L, Math::multiplyExact);
   }
 
-  private final long size;
   private final long[] dimensionSizes;
+  private Long size;
+
+  private static long computeSize(long[] dimensionSizes) {
+    if (dimensionSizes == null) {
+      return UNKNOWN_SIZE;
+    }
+    long computedSize = 1L;
+    for (long dimensionSize : dimensionSizes) {
+      if (dimensionSize == UNKNOWN_SIZE) {
+        return UNKNOWN_SIZE;
+      }
+      computedSize *= dimensionSize;
+    }
+    return computedSize;
+  }
 }

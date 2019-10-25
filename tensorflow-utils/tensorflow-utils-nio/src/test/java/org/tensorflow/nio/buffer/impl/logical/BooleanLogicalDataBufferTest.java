@@ -1,13 +1,10 @@
 package org.tensorflow.nio.buffer.impl.logical;
 
 import org.tensorflow.nio.buffer.BooleanDataBuffer;
-import org.tensorflow.nio.buffer.BooleanDataBuffer.BooleanMapper;
+import org.tensorflow.nio.buffer.converter.BooleanDataConverter;
 import org.tensorflow.nio.buffer.BooleanDataBufferTestBase;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
-import org.tensorflow.nio.buffer.DoubleDataBuffer;
-import org.tensorflow.nio.buffer.DoubleDataBuffer.DoubleMapper;
-import org.tensorflow.nio.buffer.DoubleDataBufferTestBase;
 import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
 
 public class BooleanLogicalDataBufferTest extends BooleanDataBufferTestBase {
@@ -22,7 +19,7 @@ public class BooleanLogicalDataBufferTest extends BooleanDataBufferTestBase {
     return ByteLargeDataBuffer.MAX_CAPACITY;
   }
 
-  private static class TestBooleanMapper implements BooleanMapper {
+  private static class TestBooleanMapper implements BooleanDataConverter {
 
     @Override
     public void writeBoolean(ByteDataBuffer physicalBuffer, boolean value) {

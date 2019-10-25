@@ -16,6 +16,7 @@
  */
 package org.tensorflow.nio.buffer.impl.large;
 
+import java.nio.ReadOnlyBufferException;
 import java.util.stream.IntStream;
 
 import org.tensorflow.nio.buffer.IntDataBuffer;
@@ -46,11 +47,41 @@ public final class IntLargeDataBuffer extends AbstractLargeDataBuffer<Integer, I
     }
     return stream;
   }
- 
+
+  @Override
+  public int getInt() {
+    int value = currentBuffer().getInt();
+    onPositionIncrement();
+    return value;
+  }
+
+  @Override
+  public int getInt(long index) {
+    Validator.getArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    return buffer(bufferIdx).getInt(indexInBuffer(bufferIdx, index));
+  }
+
   @Override
   public IntDataBuffer get(int[] dst, int offset, int length) {
     Validator.getArrayArgs(this, dst.length, offset, length);
     copyArray(offset, length, (b, o, l) -> ((IntDataBuffer)b).get(dst, o, l));
+    return this;
+  }
+
+  @Override
+  public IntDataBuffer putInt(int value) {
+    Validator.put(this);
+    currentBuffer().putInt(value);
+    onPositionIncrement();
+    return this;
+  }
+
+  @Override
+  public IntDataBuffer putInt(long index, int value) {
+    Validator.putArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    buffer(bufferIdx).putInt(indexInBuffer(bufferIdx, index), value);
     return this;
   }
 
@@ -62,15 +93,11 @@ public final class IntLargeDataBuffer extends AbstractLargeDataBuffer<Integer, I
   }
 
   @Override
-  protected IntLargeDataBuffer instantiate(IntDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    return new IntLargeDataBuffer(buffers, readOnly, capacity, limit, currentBufferIndex);
+  protected IntLargeDataBuffer instantiate(IntDataBuffer[] buffers, boolean readOnly) {
+    return new IntLargeDataBuffer(buffers, readOnly);
   }
 
   private IntLargeDataBuffer(IntDataBuffer[] buffers, boolean readOnly) {
     super(buffers, readOnly);
-  }
-
-  private IntLargeDataBuffer(IntDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    super(buffers, readOnly, capacity, limit, currentBufferIndex);
   }
 }

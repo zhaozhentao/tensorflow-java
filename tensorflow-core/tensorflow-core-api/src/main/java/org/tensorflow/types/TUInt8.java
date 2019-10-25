@@ -5,18 +5,17 @@ import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.ByteJdkDataBuffer;
-import org.tensorflow.nio.nd.ByteNdArray;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.dense.ByteDenseNdArray;
+import org.tensorflow.nio.nd.impl.ByteNdArray;
 import org.tensorflow.types.family.TNumber;
 
-public interface TUInt8 extends ByteNdArray, TNumber {
+public interface TUInt8 extends org.tensorflow.nio.nd.ByteNdArray, TNumber {
 
   DataType<TUInt8> DTYPE = DataType.create("UINT8", 4, 1, TUInt8Impl::map);
 
   static Tensor<TUInt8> scalar(byte value) {
     Tensor<TUInt8> t = tensorOfShape(Shape.scalar());
-    t.data().set(value);
+    t.data().setByte(value);
     return t;
   }
 
@@ -31,7 +30,7 @@ public interface TUInt8 extends ByteNdArray, TNumber {
   }
 }
 
-class TUInt8Impl extends ByteDenseNdArray implements TUInt8 {
+class TUInt8Impl extends ByteNdArray implements TUInt8 {
 
   static TUInt8 map(ByteBuffer[] tensorBuffers, Shape shape) {
     ByteDataBuffer buffer = BufferUtils.toByteDataBuffer(tensorBuffers, ByteJdkDataBuffer::wrap);

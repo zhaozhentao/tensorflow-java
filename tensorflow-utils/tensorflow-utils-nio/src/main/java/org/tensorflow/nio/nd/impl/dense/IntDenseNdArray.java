@@ -16,13 +16,15 @@
  */
 package org.tensorflow.nio.nd.impl.dense;
 
+import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.IntDataBuffer;
 import org.tensorflow.nio.nd.IntNdArray;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
-public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray> implements IntNdArray {
+public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray>
+    implements IntNdArray {
 
   public static IntNdArray create(IntDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
@@ -31,12 +33,12 @@ public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray> i
 
   @Override
   public int getInt(long... coordinates) {
-    return buffer().get(position(coordinates, true));
+    return buffer().getInt(positionOf(coordinates, true));
   }
 
   @Override
   public IntNdArray setInt(int value, long... coordinates) {
-    buffer().put(position(coordinates, true), value);
+    buffer().putInt(positionOf(coordinates, true), value);
     return this;
   }
 
@@ -53,19 +55,16 @@ public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray> i
   }
 
   protected IntDenseNdArray(IntDataBuffer buffer, DimensionalSpace dimensions) {
-    super(dimensions);
-    this.buffer = buffer;
+    super(buffer, dimensions);
   }
 
   @Override
   protected IntDataBuffer buffer() {
-    return buffer;
+    return super.buffer();
   }
 
   @Override
-  protected IntDenseNdArray allocateSlice(long position, DimensionalSpace dimensions) {
-    return new IntDenseNdArray(buffer.withPosition(position).slice(), dimensions);
+  IntDenseNdArray allocate(DataBuffer<Integer> buffer, DimensionalSpace dimensions) {
+    return new IntDenseNdArray((IntDataBuffer)buffer, dimensions);
   }
-
-  private IntDataBuffer buffer;
 }

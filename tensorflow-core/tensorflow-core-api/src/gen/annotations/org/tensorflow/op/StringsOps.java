@@ -51,18 +51,6 @@ public final class StringsOps {
   }
 
   /**
-   * Builds an {@link Join} operation
-   *
-   * @param inputs A list of string tensors.  The tensors must all have the same shape,
-   * @param options carries optional attributes values
-   * @return a new instance of Join
-   * @see org.tensorflow.op.strings.Join
-   */
-  public Join join(Iterable<Operand<TString>> inputs, Join.Options... options) {
-    return Join.create(scope, inputs, options);
-  }
-
-  /**
    * Builds an {@link StringFormat} operation
    *
    * @param inputs The list of tensors to format into the placeholder string.
@@ -72,6 +60,18 @@ public final class StringsOps {
    */
   public StringFormat stringFormat(Iterable<Operand<?>> inputs, StringFormat.Options... options) {
     return StringFormat.create(scope, inputs, options);
+  }
+
+  /**
+   * Builds an {@link Join} operation
+   *
+   * @param inputs A list of string tensors.  The tensors must all have the same shape,
+   * @param options carries optional attributes values
+   * @return a new instance of Join
+   * @see org.tensorflow.op.strings.Join
+   */
+  public Join join(Iterable<Operand<TString>> inputs, Join.Options... options) {
+    return Join.create(scope, inputs, options);
   }
 
   /**
@@ -202,19 +202,6 @@ public final class StringsOps {
   }
 
   /**
-   * Builds an {@link ToNumber} operation
-   *
-   * @param stringTensor 
-   * @param outType The numeric type to interpret each string in `string_tensor` as.
-   * @return a new instance of ToNumber
-   * @see org.tensorflow.op.strings.ToNumber
-   */
-  public <T extends TNumber> ToNumber<T> toNumber(Operand<TString> stringTensor,
-      DataType<T> outType) {
-    return ToNumber.create(scope, stringTensor, outType);
-  }
-
-  /**
    * Builds an {@link ReduceJoin} operation
    *
    * @param inputs The input to be joined.  All reduced indices must have non-zero size.
@@ -226,6 +213,19 @@ public final class StringsOps {
   public ReduceJoin reduceJoin(Operand<TString> inputs, Operand<TInt32> reductionIndices,
       ReduceJoin.Options... options) {
     return ReduceJoin.create(scope, inputs, reductionIndices, options);
+  }
+
+  /**
+   * Builds an {@link ToNumber} operation
+   *
+   * @param stringTensor 
+   * @param outType The numeric type to interpret each string in `string_tensor` as.
+   * @return a new instance of ToNumber
+   * @see org.tensorflow.op.strings.ToNumber
+   */
+  public <T extends TNumber> ToNumber<T> toNumber(Operand<TString> stringTensor,
+      DataType<T> outType) {
+    return ToNumber.create(scope, stringTensor, outType);
   }
 
   /**

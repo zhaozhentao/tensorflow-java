@@ -18,31 +18,20 @@ package org.tensorflow.nio.nd.impl;
 
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
-import org.tensorflow.nio.nd.ElementCursor;
 import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArray<T> {
-  
+
+  public DimensionalSpace dimensions() {
+    return dimensions;
+  }
+
   @Override
   public Shape shape() {
     return dimensions.shape();
-  }
-
-  @Override
-  public ElementCursor<U> elements(int dimensionIdx) {
-    if (dimensionIdx >= shape().numDimensions()) {
-      throw new IllegalArgumentException("Cannot iterate elements in dimension '" + dimensionIdx +
-          "' of array with shape " + shape());
-    }
-    return new DefaultElementCursor<>(dimensionIdx, (U)this);
-  }
-
-  @Override
-  public ElementCursor<U> scalars() {
-    return rank() == 0 ? new SingleElementCursor<>((U)this) : elements(shape().numDimensions() - 1);
   }
 
   @Override
@@ -61,10 +50,6 @@ public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArra
 
   @Override public U write(T[] src, int offset) {
     return (U)write(DataBuffers.wrap(src, false).position(offset));
-  }
-
-  public DimensionalSpace dimensions() {
-    return dimensions;
   }
 
   protected AbstractNdArray(DimensionalSpace dimensions) {
@@ -94,5 +79,5 @@ public abstract class AbstractNdArray<T, U extends NdArray<T>> implements NdArra
     }
   }
 
-  private final DimensionalSpace dimensions;
+  private DimensionalSpace dimensions;
 }

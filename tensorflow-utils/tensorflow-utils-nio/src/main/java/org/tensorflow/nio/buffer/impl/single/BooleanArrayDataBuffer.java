@@ -16,11 +16,9 @@
  */
 package org.tensorflow.nio.buffer.impl.single;
 
-import java.lang.reflect.Array;
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 import java.nio.ReadOnlyBufferException;
-import java.util.Arrays;
 import java.util.stream.Stream;
 import org.tensorflow.nio.buffer.BooleanDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
@@ -39,11 +37,17 @@ public class BooleanArrayDataBuffer extends AbstractBasicDataBuffer<Boolean, Boo
   }
 
   @Override
-  public Boolean get() {
+  public boolean getBoolean() {
     if (!hasRemaining()) {
       throw new BufferUnderflowException();
     }
     return values[(int)nextPosition()];
+  }
+
+  @Override
+  public boolean getBoolean(long index) {
+    Validator.getArgs(this, index);
+    return values[(int)index];
   }
 
   @Override
@@ -54,18 +58,12 @@ public class BooleanArrayDataBuffer extends AbstractBasicDataBuffer<Boolean, Boo
   }
 
   @Override
-  public Boolean get(long index) {
-    Validator.getArgs(this, index);
-    return values[(int)index];
-  }
-
-  @Override
   public Stream<Boolean> stream() {
     throw new UnsupportedOperationException(); // TODO!
   }
 
   @Override
-  public BooleanDataBuffer put(Boolean value) {
+  public BooleanDataBuffer putBoolean(boolean value) {
     if (!hasRemaining()) {
       throw new BufferOverflowException();
     }
@@ -77,7 +75,7 @@ public class BooleanArrayDataBuffer extends AbstractBasicDataBuffer<Boolean, Boo
   }
 
   @Override
-  public BooleanDataBuffer put(long index, Boolean value) {
+  public BooleanDataBuffer putBoolean(long index, boolean value) {
     Validator.putArgs(this, index);
     values[(int)index] = value;
     return this;

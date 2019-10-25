@@ -35,11 +35,41 @@ public final class ByteLargeDataBuffer extends AbstractLargeDataBuffer<Byte, Byt
     boolean readOnly = Validator.joinBuffers(buffers);
     return new ByteLargeDataBuffer(buffers, readOnly);
   }
- 
+
+  @Override
+  public byte getByte() {
+    byte value = currentBuffer().getByte();
+    onPositionIncrement();
+    return value;
+  }
+
+  @Override
+  public byte getByte(long index) {
+    Validator.getArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    return buffer(bufferIdx).getByte(indexInBuffer(bufferIdx, index));
+  }
+
   @Override
   public ByteDataBuffer get(byte[] dst, int offset, int length) {
     Validator.getArrayArgs(this, dst.length, offset, length);
     copyArray(offset, length, (b, o, l) -> ((ByteDataBuffer)b).get(dst, o, l));
+    return this;
+  }
+
+  @Override
+  public ByteDataBuffer putByte(byte value) {
+    Validator.put(this);
+    currentBuffer().putByte(value);
+    onPositionIncrement();
+    return this;
+  }
+
+  @Override
+  public ByteDataBuffer putByte(long index, byte value) {
+    Validator.putArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    buffer(bufferIdx).putByte(indexInBuffer(bufferIdx, index), value);
     return this;
   }
 
@@ -51,21 +81,11 @@ public final class ByteLargeDataBuffer extends AbstractLargeDataBuffer<Byte, Byt
   }
 
   @Override
-  public ByteDataBuffer putByte(long index, byte value) {
-    bufferAt(index).putByte(bufferIndex(index), value);
-    return this;
-  }
-
-  @Override
-  protected ByteLargeDataBuffer instantiate(ByteDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    return new ByteLargeDataBuffer(buffers, readOnly, capacity, limit, currentBufferIndex);
+  protected ByteLargeDataBuffer instantiate(ByteDataBuffer[] buffers, boolean readOnly) {
+    return new ByteLargeDataBuffer(buffers, readOnly);
   }
 
   private ByteLargeDataBuffer(ByteDataBuffer[] buffers, boolean readOnly) {
     super(buffers, readOnly);
-  }
-
-  private ByteLargeDataBuffer(ByteDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    super(buffers, readOnly, capacity, limit, currentBufferIndex);
   }
 }

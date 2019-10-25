@@ -20,7 +20,8 @@ import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 
 import org.tensorflow.nio.buffer.DataBuffer;
-import org.tensorflow.nio.nd.IllegalRankException;
+import org.tensorflow.nio.buffer.IntDataBuffer;
+import org.tensorflow.nio.nd.ElementCursor;
 import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.impl.AbstractNdArray;
 import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
@@ -30,8 +31,8 @@ import org.tensorflow.nio.nd.index.Index;
 public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends AbstractNdArray<T, U> {
 
   @Override
-  public U slice(Index... indices) {
-    DimensionalSpace sliceDimensions = dimensions().mapTo(indices);
+  public U slice(Index... coords) {
+    DimensionalSpace sliceDimensions = dimensions().mapTo(coords);
 
     // Skip all leading dimensions that are a single point (i.e. a coordinate)
     long slicePosition = 0L;
@@ -42,25 +43,38 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     if (i > 0) {
       sliceDimensions = sliceDimensions.truncateFrom(i);
     }
-
     return allocateSlice(slicePosition, sliceDimensions);
   }
 
   @Override
-  public U get(long... indices) {
-    DimensionalSpace sliceDimensions = dimensions().truncateFrom(indices.length);
-    long slicePosition = position(indices, false);
+  public ElementCursor<U> elements(int dimensionIdx) {
+    if (dimensionIdx >= shape().numDimensions()) {
+      throw new IllegalArgumentException("Cannot iterate elements in dimension '" + dimensionIdx +
+          "' of array with shape " + shape());
+    }
+    return new DefaultElementCursor<>(dimensionIdx, this);
+  }
+
+  @Override
+  public ElementCursor<U> scalars() {
+    return rank() == 0 ? new SingleElementCursor<>((U)this) : elements(shape().numDimensions() - 1);
+  }
+
+  @Override
+  public U get(long... coords) {
+    DimensionalSpace sliceDimensions = dimensions().truncateFrom(coords.length);
+    long slicePosition = positionOf(coords, false);
     return allocateSlice(slicePosition, sliceDimensions);
   }
 
   @Override
-  public T getValue(long... indices) {
-    return buffer().get(position(indices, true));
+  public T getValue(long... coords) {
+    return buffer.get(positionOf(coords, true));
   }
 
   @Override
-  public U setValue(T value, long... indices) {
-    buffer().put(position(indices, true), value);
+  public U setValue(T value, long... coords) {
+    buffer.put(positionOf(coords, true), value);
     return (U)this;
   }
 
@@ -74,7 +88,7 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
   public U copyTo(NdArray<T> dst) {
     Validator.copyNdArrayArgs(this, dst);
     if (isContinuousInMemory()) {
-      dst.write(buffer().duplicate());
+      dst.write(buffer.duplicate());
     } else {
       super.slowCopyTo(dst);
     }
@@ -88,7 +102,7 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     }
     if (isBulkDataTransferPossible()) {
       BulkDataTransfer.create(this).execute((t, e) ->
-          dst.put(e.buffer().withLimit(t.bulkCopySize()))
+          dst.put(e.buffer.withLimit(t.bulkCopySize()))
       );
     } else {
       slowRead(dst);
@@ -103,7 +117,7 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     }
     if (isBulkDataTransferPossible()) {
       BulkDataTransfer.create(this).execute((t, e) ->
-          e.buffer().put(src.limit(src.position() + t.bulkCopySize())).rewind()
+          e.buffer.put(src.limit(src.position() + t.bulkCopySize())).rewind()
       );
     } else {
       slowWrite(src);
@@ -111,31 +125,23 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
     return (U)this;
   }
 
-  AbstractDenseNdArray(DimensionalSpace dimensions) {
+  protected AbstractDenseNdArray(DataBuffer<T> buffer, DimensionalSpace dimensions) {
     super(dimensions);
+    this.buffer = buffer;
   }
 
-  protected abstract DataBuffer<T> buffer();
-
-  protected abstract U allocateSlice(long position, DimensionalSpace dimensions);
-
-  protected long position(long[] indices, boolean scalar) {
-    if (indices.length > shape().numDimensions()) {
-      throw new IndexOutOfBoundsException();
-    }
-    long position = 0L;
-    int i = 0;
-    for (; i < indices.length; ++i) {
-      position += dimensions().get(i).positionOf(indices[i]);
-    }
-    while (i < dimensions().size() && dimensions().get(i).isSinglePoint()) {
-      position += dimensions().get(i++).position();
-    }
-    if (scalar && i < shape().numDimensions()) {
-      throw new IllegalRankException("Not a scalar value");
-    }
-    return position;
+  protected <B extends DataBuffer<T>> B buffer() {
+    return (B)buffer;
   }
+
+  long positionOf(long[] coords, boolean isValue) {
+    if (coords == null || coords.length == 0) {
+      return 0;
+    }
+    return dimensions().positionOf(coords, isValue);
+  }
+
+  abstract U allocate(DataBuffer<T> buffer, DimensionalSpace dimensions);
 
   /**
    * Check if we copy this array data in bulk. Bulk copy is only possible for array of 1-dimension or more and that
@@ -145,6 +151,12 @@ public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends Abst
    */
   boolean isBulkDataTransferPossible() {
     return dimensions().size() > 0 && !dimensions().get(shape().numDimensions() - 1).isSegmented();
+  }
+
+  private final DataBuffer<T> buffer;
+
+  private U allocateSlice(long position, DimensionalSpace dims) {
+    return allocate(buffer.withPosition(position).slice(), dims); // FIXME double buffer allocation (withPosition, slice). Can we avoid??
   }
 
   private boolean isContinuousInMemory() {

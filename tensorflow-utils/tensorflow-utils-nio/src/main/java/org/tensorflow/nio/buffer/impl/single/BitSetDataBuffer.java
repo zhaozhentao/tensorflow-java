@@ -48,7 +48,7 @@ public class BitSetDataBuffer extends
   }
 
   @Override
-  public Boolean get() {
+  public boolean getBoolean() {
     if (position() >= capacity()) {
       throw new BufferUnderflowException();
     }
@@ -56,7 +56,7 @@ public class BitSetDataBuffer extends
   }
 
   @Override
-  public Boolean get(long index) {
+  public boolean getBoolean(long index) {
     Validator.getArgs(this, index);
     return bitSet.get((int)index);
   }
@@ -67,7 +67,7 @@ public class BitSetDataBuffer extends
   }
 
   @Override
-  public BooleanDataBuffer put(Boolean value) {
+  public BooleanDataBuffer putBoolean(boolean value) {
     if (position() >= capacity()) {
       throw new BufferOverflowException();
     }
@@ -76,7 +76,7 @@ public class BitSetDataBuffer extends
   }
 
   @Override
-  public BooleanDataBuffer put(long index, Boolean value) {
+  public BooleanDataBuffer putBoolean(long index, boolean value) {
     Validator.putArgs(this, index);
     bitSet.set((int)index, value);
     return this;

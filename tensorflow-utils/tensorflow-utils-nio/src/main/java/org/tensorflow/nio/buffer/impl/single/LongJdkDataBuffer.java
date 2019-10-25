@@ -72,12 +72,12 @@ public final class LongJdkDataBuffer extends AbstractJdkDataBuffer<Long, LongDat
   }
 
   @Override
-  public Long get() {
+  public long getLong() {
     return buf.get();
   }
 
   @Override
-  public Long get(long index) {
+  public long getLong(long index) {
     return buf.get((int)index);
   }
 
@@ -88,13 +88,13 @@ public final class LongJdkDataBuffer extends AbstractJdkDataBuffer<Long, LongDat
   }
 
   @Override
-  public LongDataBuffer put(Long value) {
+  public LongDataBuffer putLong(long value) {
     buf.put(value);
     return this;
   }
 
   @Override
-  public LongDataBuffer put(long index, Long value) {
+  public LongDataBuffer putLong(long index, long value) {
     buf.put((int)index, value);
     return this;
   }

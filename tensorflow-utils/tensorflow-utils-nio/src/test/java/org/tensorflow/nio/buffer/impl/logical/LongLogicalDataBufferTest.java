@@ -3,7 +3,7 @@ package org.tensorflow.nio.buffer.impl.logical;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.LongDataBuffer;
-import org.tensorflow.nio.buffer.LongDataBuffer.LongMapper;
+import org.tensorflow.nio.buffer.converter.LongDataConverter;
 import org.tensorflow.nio.buffer.LongDataBufferTestBase;
 import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
 
@@ -19,7 +19,7 @@ public class LongLogicalDataBufferTest extends LongDataBufferTestBase {
     return ByteLargeDataBuffer.MAX_CAPACITY / 3;
   }
 
-  private static class TestLongMapper implements LongMapper {
+  private static class TestLongMapper implements LongDataConverter {
 
     @Override
     public void writeLong(ByteDataBuffer physicalBuffer, long value) {

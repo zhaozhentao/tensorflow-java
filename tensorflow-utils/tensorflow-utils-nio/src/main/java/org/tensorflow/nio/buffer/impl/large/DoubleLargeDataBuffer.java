@@ -16,6 +16,7 @@
  */
 package org.tensorflow.nio.buffer.impl.large;
 
+import java.nio.ReadOnlyBufferException;
 import java.util.stream.DoubleStream;
 
 import org.tensorflow.nio.buffer.DoubleDataBuffer;
@@ -48,9 +49,39 @@ public final class DoubleLargeDataBuffer extends AbstractLargeDataBuffer<Double,
   }
 
   @Override
+  public double getDouble() {
+    double value = currentBuffer().getDouble();
+    onPositionIncrement();
+    return value;
+  }
+
+  @Override
+  public double getDouble(long index) {
+    Validator.getArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    return buffer(bufferIdx).getDouble(indexInBuffer(bufferIdx, index));
+  }
+
+  @Override
   public DoubleDataBuffer get(double[] dst, int offset, int length) {
     Validator.getArrayArgs(this, dst.length, offset, length);
     copyArray(offset, length, (b, o, l) -> ((DoubleDataBuffer)b).get(dst, o, l));
+    return this;
+  }
+
+  @Override
+  public DoubleDataBuffer putDouble(double value) {
+    Validator.put(this);
+    currentBuffer().putDouble(value);
+    onPositionIncrement();
+    return this;
+  }
+
+  @Override
+  public DoubleDataBuffer putDouble(long index, double value) {
+    Validator.putArgs(this, index);
+    int bufferIdx = bufferIndex(index);
+    buffer(bufferIdx).putDouble(indexInBuffer(bufferIdx, index), value);
     return this;
   }
 
@@ -62,15 +93,11 @@ public final class DoubleLargeDataBuffer extends AbstractLargeDataBuffer<Double,
   }
 
   @Override
-  protected DoubleLargeDataBuffer instantiate(DoubleDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    return new DoubleLargeDataBuffer(buffers, readOnly, capacity, limit, currentBufferIndex);
+  protected DoubleLargeDataBuffer instantiate(DoubleDataBuffer[] buffers, boolean readOnly) {
+    return new DoubleLargeDataBuffer(buffers, readOnly);
   }
 
   private DoubleLargeDataBuffer(DoubleDataBuffer[] buffers, boolean readOnly) {
     super(buffers, readOnly);
-  }
-
-  private DoubleLargeDataBuffer(DoubleDataBuffer[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
-    super(buffers, readOnly, capacity, limit, currentBufferIndex);
   }
 }

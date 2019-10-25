@@ -17,21 +17,19 @@
 package org.tensorflow.nio.buffer.impl.large;
 
 import java.lang.reflect.Array;
-import java.nio.ReadOnlyBufferException;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import org.tensorflow.nio.buffer.impl.AbstractDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
+import org.tensorflow.nio.buffer.impl.AbstractDataBuffer;
 
 @SuppressWarnings("unchecked")
 abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends AbstractDataBuffer<T, B> {
 
   @Override
   public long capacity() {
-    return capacity;
+    return bufferRanges[bufferRanges.length - 1].end;
   }
 
   @Override
@@ -42,10 +40,10 @@ abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends Abstr
   @Override
   public B limit(long newLimit) {
     Validator.newLimit(this, newLimit);
-    resetBuffers(newLimit, B::limit);
     if (newLimit < position()) {
-      onPositionChange(newLimit);
+      currentBufferIdx = bufferIndex(newLimit);
     }
+    resetBuffers(newLimit, B::limit);
     limit = newLimit;
     return (B)this;
   }
@@ -62,20 +60,21 @@ abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends Abstr
 
   @Override
   public long position() {
-    return (currentBufferIndex * bufferMaxCapacity) + currentBuffer().position();
+    long positionInBuffer = currentBuffer().position(); // validates current buffer
+    return positionInBuffer + bufferRanges[currentBufferIdx].start;
   }
 
   @Override
   public B position(long newPosition) {
     Validator.newPosition(this, newPosition);
     resetBuffers(newPosition, B::position);
-    onPositionChange(newPosition);
+    currentBufferIdx = bufferIndex(newPosition);
     return (B)this;
   }
 
   @Override
   public B rewind() {
-    currentBufferIndex = 0;
+    currentBufferIdx = 0;
     for (B buffer: buffers) {
       buffer.rewind();
     }
@@ -90,14 +89,15 @@ abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends Abstr
   @Override
   public T get() {
     T value = currentBuffer().get();
-    onPositionChange(position());
+    onPositionIncrement();
     return value;
   }
 
   @Override
   public T get(long index) {
     Validator.getArgs(this, index);
-    return bufferAt(index).get(bufferIndex(index));
+    int bufferIdx = bufferIndex(index);
+    return buffer(bufferIdx).get(indexInBuffer(bufferIdx, index));
   }
 
   @Override
@@ -111,21 +111,20 @@ abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends Abstr
 
   @Override
   public B put(T value) {
-    if (isReadOnly()) {
-      throw new ReadOnlyBufferException();
-    }
+    Validator.put(this);
     currentBuffer().put(value);
-    onPositionChange(position());
+    onPositionIncrement();
     return (B)this;
   }
 
   @Override
   public B put(long index, T value) {
     Validator.putArgs(this, index);
-    bufferAt(index).put(bufferIndex(index), value);
+    int bufferIdx = bufferIndex(index);
+    buffer(bufferIdx).put(indexInBuffer(bufferIdx, index), value);
     return (B)this;
   }
-  
+
   @Override
   public B put(DataBuffer<T> src) {
     Validator.putArgs(this, src);
@@ -137,7 +136,7 @@ abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends Abstr
       if (length < srcRemaining) {
         buffer.put(src.limit(src.position() + length));
         srcRemaining -= length;
-        ++currentBufferIndex;
+        ++currentBufferIdx;
       } else {
         buffer.put(src.limit(srcOriginalLimit));
         srcRemaining = 0;
@@ -149,10 +148,13 @@ abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends Abstr
   @Override
   public B duplicate() {
     B[] duplicateBuffers = Arrays.stream(buffers).map(b -> (B)b.duplicate()).toArray(i -> Arrays.copyOf(buffers, i));
-    return instantiate(duplicateBuffers, readOnly, capacity, limit, currentBufferIndex);
+    AbstractLargeDataBuffer<T, B> duplicate = instantiate(duplicateBuffers, readOnly);
+    duplicate.limit = limit;
+    duplicate.currentBufferIdx = currentBufferIdx;
+    return (B)duplicate;
   }
 
-  abstract B instantiate(B[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex);
+  abstract AbstractLargeDataBuffer<T, B> instantiate(B[] buffers, boolean readOnly);
 
   static <B extends DataBuffer<?>> B[] allocateBuffers(Class<B> bufferClazz, long capacity, long bufferMaxCapacity, Function<Long, B> allocator) {
     int nbMaxedBuffers = (int)(capacity / bufferMaxCapacity);
@@ -169,40 +171,44 @@ abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends Abstr
   }
 
   AbstractLargeDataBuffer(B[] buffers, boolean readOnly) {
-    this(buffers, readOnly, (buffers[0].capacity() * (buffers.length - 1)) + buffers[buffers.length - 1].capacity(), 0, 0);
-    limit = capacity;
-  }
-
-  AbstractLargeDataBuffer(B[] buffers, boolean readOnly, long capacity, long limit, int currentBufferIndex) {
     if (buffers.length == 0) {
       throw new IllegalArgumentException("Buffers list cannot be empty");
     }
     this.buffers = buffers;
-    this.bufferMaxCapacity = buffers[0].capacity();
+    this.bufferRanges = initBufferRanges(buffers);
     this.readOnly = readOnly;
-    this.capacity = capacity;
-    this.limit = limit;
-    this.currentBufferIndex = currentBufferIndex;
+    this.limit = capacity();
+  }
+
+  void onPositionIncrement() {
+    if (currentBuffer().position() == currentBuffer().capacity() && currentBufferIdx < buffers.length - 1) {
+      ++currentBufferIdx;
+    }
+  }
+
+  int bufferIndex(long index) {
+    int bufferIdx = 0;
+    // Since we should have a relatively small number of buffers, we don't need to use binary search
+    while (index >= bufferRanges[bufferIdx].end && bufferIdx < buffers.length - 1) {
+      ++bufferIdx;
+    }
+    return bufferIdx;
   }
 
   B currentBuffer() {
-    return buffers[currentBufferIndex];
+    return buffers[currentBufferIdx];
+  }
+
+  B buffer(int bufferIdx) {
+    return buffers[bufferIdx];
   }
 
   int nbBuffers() {
     return buffers.length;
   }
 
-  B buffer(int i) {
-    return buffers[i];
-  }
-
-  B bufferAt(long index) {
-    return buffers[(int)(index / bufferMaxCapacity)];
-  }
-
-  int bufferIndex(long index) {
-    return (int)(index % bufferMaxCapacity);
+  int indexInBuffer(int bufferIdx, long index) {
+    return (int)(index - bufferRanges[bufferIdx].start);
   }
 
   interface ArrayCopy<T> {
@@ -213,11 +219,11 @@ abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends Abstr
     final int endIndex = offset + length;
     for (int index = offset; index < endIndex;) {
       int copyLength = endIndex - index;
-      B buffer = buffers[currentBufferIndex];
+      B buffer = currentBuffer();
       int bufferRemaining = (int)buffer.remaining();
       if (bufferRemaining < copyLength) {
         copyLength = bufferRemaining;
-        ++currentBufferIndex;
+        ++currentBufferIdx;
       }
       arrayCopy.accept(buffer, index, copyLength);
       index += copyLength;
@@ -225,27 +231,36 @@ abstract class AbstractLargeDataBuffer<T, B extends DataBuffer<T>> extends Abstr
   }
 
   private final B[] buffers;
-  private final long bufferMaxCapacity;
-  private final long capacity;
+  private final BufferRange[] bufferRanges;
   private final boolean readOnly;
   private long limit;
-  private int currentBufferIndex;
+  private int currentBufferIdx;
 
   private void resetBuffers(long start, BiConsumer<B, Long> resetAction) {
     long remaining = start;
     for (B buffer: buffers) {
-      long resetValue;
-      if (remaining > bufferMaxCapacity) {
-        resetValue = bufferMaxCapacity;
-      } else {
-        resetValue = remaining;
-      }
+      long resetValue = Math.min(buffer.capacity(), remaining);
       resetAction.accept(buffer, resetValue);
       remaining -= resetValue;
     }
   }
 
-  private void onPositionChange(long position) {
-    currentBufferIndex = Math.min((int)(position / bufferMaxCapacity), buffers.length - 1);
+  private BufferRange[] initBufferRanges(B[] buffers) {
+    BufferRange[] ranges = new BufferRange[buffers.length];
+    long start = 0;
+    for (int i = 0; i < buffers.length; ++i) {
+      ranges[i] = new BufferRange(start, start + buffers[i].capacity());
+      start = ranges[i].end;
+    }
+    return ranges;
+  }
+
+  private static final class BufferRange {
+    BufferRange(long start, long end) {
+      this.start = start;
+      this.end = end;
+    }
+    final long start;
+    final long end;
   }
 }

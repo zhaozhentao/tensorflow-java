@@ -20,12 +20,16 @@ import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 import java.nio.ReadOnlyBufferException;
 
-import org.tensorflow.nio.buffer.impl.view.ByteDataBufferView;
+import org.tensorflow.nio.buffer.slice.ByteDataBufferSlice;
 
 /**
  * A {@link DataBuffer} of bytes.
  */
 public interface ByteDataBuffer extends DataBuffer<Byte> {
+
+  byte getByte();
+
+  byte getByte(long index);
 
   /**
    * Relative bulk <i>get</i> method, using byte arrays.
@@ -61,7 +65,11 @@ public interface ByteDataBuffer extends DataBuffer<Byte> {
    * @throws IndexOutOfBoundsException if the preconditions on the offset and length parameters do not hold
    */
   ByteDataBuffer get(byte[] dst, int offset, int length);
-  
+
+  ByteDataBuffer putByte(byte value);
+
+  ByteDataBuffer putByte(long index, byte value);
+
   /**
    * Relative bulk <i>put</i> method, using byte arrays.
    * <p>
@@ -100,8 +108,6 @@ public interface ByteDataBuffer extends DataBuffer<Byte> {
    */
   ByteDataBuffer put(byte[] src, int offset, int length);
 
-  ByteDataBuffer putByte(long index, byte value);
-
   @Override
   ByteDataBuffer limit(long newLimit);
 
@@ -120,12 +126,26 @@ public interface ByteDataBuffer extends DataBuffer<Byte> {
 
   @Override
   ByteDataBuffer rewind();
-  
-  @Override
-  ByteDataBuffer put(Byte value);
 
   @Override
-  ByteDataBuffer put(long index, Byte value);
+  default Byte get() {
+    return getByte();
+  }
+
+  @Override
+  default Byte get(long index) {
+    return getByte(index);
+  }
+
+  @Override
+  default ByteDataBuffer put(Byte value) {
+    return putByte(value);
+  }
+
+  @Override
+  default ByteDataBuffer put(long index, Byte value) {
+    return putByte(index, value);
+  }
 
   @Override
   ByteDataBuffer put(DataBuffer<Byte> src);
@@ -135,6 +155,11 @@ public interface ByteDataBuffer extends DataBuffer<Byte> {
 
   @Override
   default ByteDataBuffer slice() {
-    return new ByteDataBufferView(duplicate(), position(), limit());
+    return mutableSlice();
+  }
+
+  @Override
+  default ByteDataBufferSlice mutableSlice() {
+    return new ByteDataBufferSlice(this);
   }
 }

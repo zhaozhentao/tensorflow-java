@@ -22,29 +22,12 @@ import java.nio.ReadOnlyBufferException;
 import java.util.stream.DoubleStream;
 
 import java.util.stream.Stream;
-import org.tensorflow.nio.buffer.impl.view.DoubleDataBufferView;
+import org.tensorflow.nio.buffer.slice.DoubleDataBufferSlice;
 
 /**
  * A {@link DataBuffer} of doubles.
  */
 public interface DoubleDataBuffer extends DataBuffer<Double> {
-
-  interface DoubleMapper extends ValueMapper<Double> {
-
-    void writeDouble(ByteDataBuffer physicalBuffer, double value);
-
-    double readDouble(ByteDataBuffer physicalBuffer);
-
-    @Override
-    default void writeValue(ByteDataBuffer physicalBuffer, Double value) {
-      writeDouble(physicalBuffer, value);
-    }
-
-    @Override
-    default Double readValue(ByteDataBuffer physicalBuffer) {
-      return readDouble(physicalBuffer);
-    }
-  }
 
   /**
    * Retrieve values of this buffer as a stream of doubles <i>(optional operation)</i>.
@@ -53,6 +36,10 @@ public interface DoubleDataBuffer extends DataBuffer<Double> {
    * @throws UnsupportedOperationException if streaming is not supported by this buffer
    */
   DoubleStream doubleStream();
+
+  double getDouble();
+
+  double getDouble(long index);
 
   /**
    * Relative bulk <i>get</i> method, using double arrays.
@@ -88,6 +75,10 @@ public interface DoubleDataBuffer extends DataBuffer<Double> {
    * @throws IndexOutOfBoundsException if the preconditions on the offset and length parameters do not hold
    */
   DoubleDataBuffer get(double[] dst, int offset, int length);
+
+  DoubleDataBuffer putDouble(double value);
+
+  DoubleDataBuffer putDouble(long index, double value);
 
   /**
    * Relative bulk <i>put</i> method, using double arrays.
@@ -152,10 +143,24 @@ public interface DoubleDataBuffer extends DataBuffer<Double> {
   }
 
   @Override
-  DoubleDataBuffer put(Double value);
+  default Double get() {
+    return getDouble();
+  }
 
   @Override
-  DoubleDataBuffer put(long index, Double value);
+  default Double get(long index) {
+    return getDouble(index);
+  }
+
+  @Override
+  default DoubleDataBuffer put(Double value) {
+    return putDouble(value);
+  }
+
+  @Override
+  default DoubleDataBuffer put(long index, Double value) {
+    return putDouble(index, value);
+  }
 
   @Override
   DoubleDataBuffer put(DataBuffer<Double> src);
@@ -165,6 +170,11 @@ public interface DoubleDataBuffer extends DataBuffer<Double> {
 
   @Override
   default DoubleDataBuffer slice() {
-    return new DoubleDataBufferView(duplicate(), position(), limit());
+    return mutableSlice();
+  }
+
+  @Override
+  default DoubleDataBufferSlice mutableSlice() {
+    return new DoubleDataBufferSlice(this);
   }
 }

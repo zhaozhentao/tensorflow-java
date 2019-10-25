@@ -2,6 +2,7 @@ package org.tensorflow.nio.buffer.impl.logical;
 
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
+import org.tensorflow.nio.buffer.converter.DataConverter;
 import org.tensorflow.nio.buffer.impl.AbstractDataBuffer;
 import org.tensorflow.nio.buffer.impl.Validator;
 
@@ -11,17 +12,17 @@ abstract class AbstractLogicalDataBuffer<T, B extends DataBuffer<T>> extends
 
   @Override
   public long capacity() {
-    return physicalBuffer.capacity() / valueMapper.sizeInBytes();
+    return physicalBuffer.capacity() / converter.sizeInBytes();
   }
 
   @Override
   public long limit() {
-    return physicalBuffer.limit() / valueMapper.sizeInBytes();
+    return physicalBuffer.limit() / converter.sizeInBytes();
   }
 
   @Override
   public B limit(long newLimit) {
-    physicalBuffer.limit(newLimit * valueMapper.sizeInBytes());
+    physicalBuffer.limit(newLimit * converter.sizeInBytes());
     return (B) this;
   }
 
@@ -32,17 +33,17 @@ abstract class AbstractLogicalDataBuffer<T, B extends DataBuffer<T>> extends
 
   @Override
   public long remaining() {
-    return physicalBuffer.remaining() / valueMapper.sizeInBytes();
+    return physicalBuffer.remaining() / converter.sizeInBytes();
   }
 
   @Override
   public long position() {
-    return physicalBuffer.position() / valueMapper.sizeInBytes();
+    return physicalBuffer.position() / converter.sizeInBytes();
   }
 
   @Override
   public B position(long newPosition) {
-    physicalBuffer.position(newPosition * valueMapper.sizeInBytes());
+    physicalBuffer.position(newPosition * converter.sizeInBytes());
     return (B) this;
   }
 
@@ -59,19 +60,19 @@ abstract class AbstractLogicalDataBuffer<T, B extends DataBuffer<T>> extends
 
   @Override
   public T get() {
-    return valueMapper.readValue(physicalBuffer());
+    return converter.readValue(physicalBuffer());
   }
 
   @Override
   public T get(long index) {
     Validator.getArgs(this, index);
     // FIXME this duplicates the physical buffer on each call
-    return valueMapper.readValue(physicalBuffer().withPosition(index * valueMapper.sizeInBytes()));
+    return converter.readValue(physicalBuffer().withPosition(index * converter.sizeInBytes()));
   }
 
   @Override
   public B put(T value) {
-    valueMapper.writeValue(physicalBuffer(), value);
+    converter.writeValue(physicalBuffer(), value);
     return (B) this;
   }
 
@@ -79,7 +80,7 @@ abstract class AbstractLogicalDataBuffer<T, B extends DataBuffer<T>> extends
   public B put(long index, T value) {
     Validator.putArgs(this, index);
     // FIXME this duplicates the physical buffer on each call
-    valueMapper.writeValue(physicalBuffer().withPosition(index * valueMapper.sizeInBytes()), value);
+    converter.writeValue(physicalBuffer().withPosition(index * converter.sizeInBytes()), value);
     return (B) this;
   }
 
@@ -87,15 +88,15 @@ abstract class AbstractLogicalDataBuffer<T, B extends DataBuffer<T>> extends
     return physicalBuffer;
   }
 
-  protected ValueMapper<T> valueMapper() {
-    return valueMapper;
+  protected DataConverter<T> valueMapper() {
+    return converter;
   }
 
-  AbstractLogicalDataBuffer(ByteDataBuffer physicalBuffer, ValueMapper<T> valueMapper) {
+  AbstractLogicalDataBuffer(ByteDataBuffer physicalBuffer, DataConverter<T> converter) {
     this.physicalBuffer = physicalBuffer;
-    this.valueMapper = valueMapper;
+    this.converter = converter;
   }
 
   private final ByteDataBuffer physicalBuffer;
-  private final ValueMapper<T> valueMapper;
+  private final DataConverter<T> converter;
 }
