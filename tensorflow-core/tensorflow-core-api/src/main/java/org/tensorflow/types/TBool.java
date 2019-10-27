@@ -4,15 +4,16 @@ import java.nio.ByteBuffer;
 import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
 import org.tensorflow.nio.buffer.BooleanDataBuffer;
-import org.tensorflow.nio.buffer.converter.BooleanDataConverter;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
+import org.tensorflow.nio.buffer.DataBuffers;
+import org.tensorflow.nio.buffer.converter.BooleanDataConverter;
 import org.tensorflow.nio.buffer.impl.logical.BooleanLogicalDataBuffer;
-import org.tensorflow.nio.buffer.impl.single.ByteJdkDataBuffer;
+import org.tensorflow.nio.nd.BooleanNdArray;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.BooleanNdArrayImpl;
+import org.tensorflow.nio.nd.impl.dense.BooleanDenseNdArray;
 import org.tensorflow.types.family.TType;
 
-public interface TBool extends org.tensorflow.nio.nd.BooleanNdArray, TType {
+public interface TBool extends BooleanNdArray, TType {
 
   DataType<TBool> DTYPE = DataType.create("BOOL", 10, 1, TBoolImpl::map);
 
@@ -33,13 +34,14 @@ public interface TBool extends org.tensorflow.nio.nd.BooleanNdArray, TType {
   }
 }
 
-class TBoolImpl extends BooleanNdArrayImpl implements TBool {
+class TBoolImpl extends BooleanDenseNdArray implements TBool {
 
   static TBool map(ByteBuffer[] tensorBuffers, Shape shape) {
-    BooleanDataBuffer buffer = BufferUtils.toBooleanDataBuffer(tensorBuffers, b ->
-        BooleanLogicalDataBuffer.map(ByteJdkDataBuffer.wrap(b), BOOL_MAPPER)
-    );
-    return new TBoolImpl(buffer, shape);
+    BooleanDataBuffer[] buffers = new BooleanDataBuffer[tensorBuffers.length];
+    for (int i = 0; i < tensorBuffers.length; ++i) {
+      buffers[i] = BooleanLogicalDataBuffer.map(DataBuffers.wrap(tensorBuffers[i]), BOOL_MAPPER);
+    }
+    return new TBoolImpl(DataBuffers.join(buffers), shape);
   }
 
   private TBoolImpl(BooleanDataBuffer buffer, Shape shape) {
@@ -49,13 +51,13 @@ class TBoolImpl extends BooleanNdArrayImpl implements TBool {
   private static BooleanDataConverter BOOL_MAPPER = new BooleanDataConverter() {
 
     @Override
-    public void writeBoolean(ByteDataBuffer physicalBuffer, boolean value) {
-      physicalBuffer.put((byte)(value ? 1 : 0));
+    public void writeBoolean(ByteDataBuffer buffer, boolean value) {
+      buffer.put((byte)(value ? 1 : 0));
     }
 
     @Override
-    public boolean readBoolean(ByteDataBuffer physicalBuffer) {
-      return physicalBuffer.get() > 0;
+    public boolean readBoolean(ByteDataBuffer buffer) {
+      return buffer.get() > 0;
     }
 
     @Override

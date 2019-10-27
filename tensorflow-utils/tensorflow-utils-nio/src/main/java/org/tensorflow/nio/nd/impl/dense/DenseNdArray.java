@@ -25,15 +25,19 @@ public class DenseNdArray<T> extends AbstractDenseNdArray<T, NdArray<T>> {
 
   public static <T> NdArray<T> wrap(DataBuffer<T> buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new DenseNdArray<>(buffer, DimensionalSpace.create(shape));
+    return new DenseNdArray<>(buffer, shape);
   }
 
-  protected DenseNdArray(DataBuffer<T> buffer, DimensionalSpace dimensions) {
-    super(buffer, dimensions);
+  protected DenseNdArray(DataBuffer<T> buffer, Shape shape) {
+    super(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
   DenseNdArray<T> allocate(DataBuffer<T> buffer, DimensionalSpace dimensions) {
     return new DenseNdArray<>(buffer, dimensions);
+  }
+
+  private DenseNdArray(DataBuffer<T> buffer, DimensionalSpace dimensions) {
+    super(buffer, dimensions);
   }
 }

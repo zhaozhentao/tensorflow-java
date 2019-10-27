@@ -17,10 +17,11 @@
 
 package org.tensorflow.c_api;
 
-import org.bytedeco.javacpp.*;
-import org.bytedeco.javacpp.annotation.Properties;
+import static org.tensorflow.c_api.global.tensorflow.TF_DeleteStatus;
+import static org.tensorflow.c_api.global.tensorflow.TF_NewStatus;
 
-import static org.tensorflow.c_api.global.tensorflow.*;
+import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.annotation.Properties;
 
 @Properties(inherit = org.tensorflow.c_api.presets.tensorflow.class)
 public abstract class AbstractTF_Status extends Pointer {

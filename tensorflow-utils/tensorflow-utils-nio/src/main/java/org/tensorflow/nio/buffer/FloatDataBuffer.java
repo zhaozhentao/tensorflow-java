@@ -26,8 +26,25 @@ import org.tensorflow.nio.buffer.slice.FloatDataBufferSlice;
  */
 public interface FloatDataBuffer extends DataBuffer<Float> {
 
+  /**
+   * Relative <i>get</i> method.
+   *
+   * Reads the float at this buffer's current position, and then increments the position.
+   *
+   * @return the float at the buffer's current position
+   * @throws BufferUnderflowException if the buffer's current position is not smaller than its limit
+   */
   float getFloat();
 
+  /**
+   * Absolute <i>get</i> method.
+   *
+   * Reads the float at the given index.
+   *
+   * @param index the index from which the float will be read
+   * @return the float at the given index
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   */
   float getFloat(long index);
 
   /**
@@ -65,8 +82,29 @@ public interface FloatDataBuffer extends DataBuffer<Float> {
    */
   FloatDataBuffer get(float[] dst, int offset, int length);
 
+  /**
+   * Relative <i>put</i> method.
+   *
+   * Writes the given float into this buffer at the current position, and then increments the position.
+
+   * @param value float to be written
+   * @return this buffer
+   * @throws BufferOverflowException if this buffer's current position is not smaller than its limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   FloatDataBuffer putFloat(float value);
 
+  /**
+   * Absolute <i>put</i> method.
+   *
+   * Writes the given float into this buffer at the given index.
+   *
+   * @param index the index at which the value will be written
+   * @param value the float to be written
+   * @return this buffer
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   FloatDataBuffer putFloat(long index, float value);
 
   /**
@@ -159,6 +197,6 @@ public interface FloatDataBuffer extends DataBuffer<Float> {
 
   @Override
   default FloatDataBufferSlice mutableSlice() {
-    return new FloatDataBufferSlice(this);
+    return FloatDataBufferSlice.create(this);
   }
 }

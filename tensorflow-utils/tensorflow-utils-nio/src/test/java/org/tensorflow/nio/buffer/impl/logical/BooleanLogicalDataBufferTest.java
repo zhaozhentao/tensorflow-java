@@ -22,13 +22,13 @@ public class BooleanLogicalDataBufferTest extends BooleanDataBufferTestBase {
   private static class TestBooleanMapper implements BooleanDataConverter {
 
     @Override
-    public void writeBoolean(ByteDataBuffer physicalBuffer, boolean value) {
-      physicalBuffer.put((byte)(value ? 1 : 0));
+    public void writeBoolean(ByteDataBuffer buffer, boolean value) {
+      buffer.put((byte)(value ? 1 : 0));
     }
 
     @Override
-    public boolean readBoolean(ByteDataBuffer physicalBuffer) {
-      return physicalBuffer.get() > 0;
+    public boolean readBoolean(ByteDataBuffer buffer) {
+      return buffer.get() > 0;
     }
 
     @Override

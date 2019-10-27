@@ -15,7 +15,6 @@ limitations under the License.
 package org.tensorflow.op.core;
 
 import java.nio.ByteBuffer;
-
 import org.tensorflow.DataType;
 import org.tensorflow.Operand;
 import org.tensorflow.Output;

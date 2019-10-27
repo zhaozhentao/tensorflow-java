@@ -28,7 +28,7 @@ public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray>
 
   public static IntNdArray create(IntDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new IntDenseNdArray(buffer, DimensionalSpace.create(shape));
+    return new IntDenseNdArray(buffer, shape);
   }
 
   @Override
@@ -54,11 +54,12 @@ public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray>
     return write(DataBuffers.wrap(src, true).position(offset));
   }
 
-  protected IntDenseNdArray(IntDataBuffer buffer, DimensionalSpace dimensions) {
-    super(buffer, dimensions);
+  protected IntDenseNdArray(IntDataBuffer buffer, Shape shape) {
+    this(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected IntDataBuffer buffer() {
     return super.buffer();
   }
@@ -66,5 +67,9 @@ public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray>
   @Override
   IntDenseNdArray allocate(DataBuffer<Integer> buffer, DimensionalSpace dimensions) {
     return new IntDenseNdArray((IntDataBuffer)buffer, dimensions);
+  }
+
+  private IntDenseNdArray(IntDataBuffer buffer, DimensionalSpace dimensions) {
+    super(buffer, dimensions);
   }
 }

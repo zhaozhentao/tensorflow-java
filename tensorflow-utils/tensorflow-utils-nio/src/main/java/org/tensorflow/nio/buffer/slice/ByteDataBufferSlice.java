@@ -19,10 +19,20 @@ package org.tensorflow.nio.buffer.slice;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
 
+/**
+ * A slice of a byte buffer that could be repositioned.
+ */
 public class ByteDataBufferSlice extends DataBufferSlice<Byte> implements ByteDataBuffer {
 
-    public ByteDataBufferSlice(ByteDataBuffer buffer) {
-        super(buffer);
+    /**
+     * Creates a new slice of a byte buffer, starting at {@code buffer.position()} and ending
+     * at {@code buffer.limit()}.
+     *
+     * @param buffer buffer to slice
+     * @return buffer slice
+     */
+    public static ByteDataBufferSlice create(ByteDataBuffer buffer) {
+        return new ByteDataBufferSlice(buffer, buffer.position(), buffer.limit());
     }
 
     @Override

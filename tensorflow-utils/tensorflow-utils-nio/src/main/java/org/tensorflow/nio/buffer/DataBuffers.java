@@ -89,6 +89,12 @@ public final class DataBuffers {
     return ByteJdkDataBuffer.wrap(buf);
   }
 
+  /**
+   * Join multiple byte buffers together to create a large buffer indexable with 64-bits values.
+   *
+   * @param buffers buffers to join
+   * @return a potentially large buffer
+   */
   public static ByteDataBuffer join(ByteDataBuffer... buffers) {
     if (buffers == null) {
       return null;
@@ -109,9 +115,18 @@ public final class DataBuffers {
     return LongJdkDataBuffer.allocate(capacity);
   }
 
-  public static LongDataBuffer ofLongs(long capacity, LongDataConverter mapper) {
-    ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
-    return LongLogicalDataBuffer.map(physicalBuffer, mapper);
+  /**
+   * Creates a logical buffer of longs that can store up to `capacity` values.
+   *
+   * <p>The provided converter is used to map the long values to/from bytes, allowing custom
+   * representation of a long.
+   *
+   * @param capacity capacity of the buffer to allocate
+   * @return a new buffer
+   */
+  public static LongDataBuffer ofLongs(long capacity, LongDataConverter converter) {
+    ByteDataBuffer physicalBuffer = ofBytes(capacity * converter.sizeInBytes());
+    return LongLogicalDataBuffer.map(physicalBuffer, converter);
   }
 
   /**
@@ -136,6 +151,12 @@ public final class DataBuffers {
     return LongJdkDataBuffer.wrap(buf);
   }
 
+  /**
+   * Join multiple long buffers together to create a large buffer indexable with 64-bits values.
+   *
+   * @param buffers buffers to join
+   * @return a potentially large buffer
+   */
   public static LongDataBuffer join(LongDataBuffer... buffers) {
     if (buffers == null) {
       return null;
@@ -156,9 +177,18 @@ public final class DataBuffers {
     return IntJdkDataBuffer.allocate(capacity);
   }
 
-  public static IntDataBuffer ofInts(long capacity, IntDataConverter mapper) {
-    ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
-    return IntLogicalDataBuffer.map(physicalBuffer, mapper);
+  /**
+   * Creates a logical buffer of integers that can store up to `capacity` values.
+   *
+   * <p>The provided converter is used to map the integer values to/from bytes, allowing custom
+   * representation of a integer.
+   *
+   * @param capacity capacity of the buffer to allocate
+   * @return a new buffer
+   */
+  public static IntDataBuffer ofInts(long capacity, IntDataConverter converter) {
+    ByteDataBuffer physicalBuffer = ofBytes(capacity * converter.sizeInBytes());
+    return IntLogicalDataBuffer.map(physicalBuffer, converter);
   }
 
   /**
@@ -183,6 +213,12 @@ public final class DataBuffers {
     return IntJdkDataBuffer.wrap(buf);
   }
 
+  /**
+   * Join multiple integer buffers together to create a large buffer indexable with 64-bits values.
+   *
+   * @param buffers buffers to join
+   * @return a potentially large buffer
+   */
   public static IntDataBuffer join(IntDataBuffer... buffers) {
     if (buffers == null) {
       return null;
@@ -203,9 +239,18 @@ public final class DataBuffers {
     return DoubleJdkDataBuffer.allocate(capacity);
   }
 
-  public static DoubleDataBuffer ofDoubles(long capacity, DoubleDataConverter mapper) {
-    ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
-    return DoubleLogicalDataBuffer.map(physicalBuffer, mapper);
+  /**
+   * Creates a logical buffer of doubles that can store up to `capacity` values.
+   *
+   * <p>The provided converter is used to map the double values to/from bytes, allowing custom
+   * representation of a double.
+   *
+   * @param capacity capacity of the buffer to allocate
+   * @return a new buffer
+   */
+  public static DoubleDataBuffer ofDoubles(long capacity, DoubleDataConverter converter) {
+    ByteDataBuffer physicalBuffer = ofBytes(capacity * converter.sizeInBytes());
+    return DoubleLogicalDataBuffer.map(physicalBuffer, converter);
   }
 
   /**
@@ -230,6 +275,13 @@ public final class DataBuffers {
     return DoubleJdkDataBuffer.wrap(buf);
   }
 
+  /**
+   * Join multiple double buffers together to create a large buffer indexable with 64-bits values.
+   *
+   * @param buffers buffers to join
+   * @return a potentially large buffer
+   */
+
   public static DoubleDataBuffer join(DoubleDataBuffer... buffers) {
     if (buffers == null) {
       return null;
@@ -250,9 +302,18 @@ public final class DataBuffers {
     return FloatJdkDataBuffer.allocate(capacity);
   }
 
-  public static FloatDataBuffer ofFloats(long capacity, FloatDataConverter mapper) {
-    ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
-    return FloatLogicalDataBuffer.map(physicalBuffer, mapper);
+  /**
+   * Creates a logical buffer of floats that can store up to `capacity` values.
+   *
+   * <p>The provided converter is used to map the float values to/from bytes, allowing custom
+   * representation of a float.
+   *
+   * @param capacity capacity of the buffer to allocate
+   * @return a new buffer
+   */
+  public static FloatDataBuffer ofFloats(long capacity, FloatDataConverter converter) {
+    ByteDataBuffer physicalBuffer = ofBytes(capacity * converter.sizeInBytes());
+    return FloatLogicalDataBuffer.map(physicalBuffer, converter);
   }
 
   /**
@@ -277,6 +338,12 @@ public final class DataBuffers {
     return FloatJdkDataBuffer.wrap(buf);
   }
 
+  /**
+   * Join multiple float buffers together to create a large buffer indexable with 64-bits values.
+   *
+   * @param buffers buffers to join
+   * @return a potentially large buffer
+   */
   public static FloatDataBuffer join(FloatDataBuffer... buffers) {
     if (buffers == null) {
       return null;
@@ -297,9 +364,18 @@ public final class DataBuffers {
     return BitSetDataBuffer.allocate(capacity);
   }
 
-  public static BooleanDataBuffer ofBooleans(long capacity, BooleanDataConverter mapper) {
-    ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
-    return BooleanLogicalDataBuffer.map(physicalBuffer, mapper);
+  /**
+   * Creates a logical buffer of booleans that can store up to `capacity` values.
+   *
+   * <p>The provided converter is used to map the boolean values to/from bytes, allowing custom
+   * representation of a boolean.
+   *
+   * @param capacity capacity of the buffer to allocate
+   * @return a new buffer
+   */
+  public static BooleanDataBuffer ofBooleans(long capacity, BooleanDataConverter converter) {
+    ByteDataBuffer physicalBuffer = ofBytes(capacity * converter.sizeInBytes());
+    return BooleanLogicalDataBuffer.map(physicalBuffer, converter);
   }
 
   /**
@@ -313,6 +389,12 @@ public final class DataBuffers {
     return BooleanArrayDataBuffer.wrap(array, readOnly);
   }
 
+  /**
+   * Join multiple boolean buffers together to create a large buffer indexable with 64-bits values.
+   *
+   * @param buffers buffers to join
+   * @return a potentially large buffer
+   */
   public static BooleanDataBuffer join(BooleanDataBuffer... buffers) {
     if (buffers == null) {
       return null;
@@ -334,10 +416,20 @@ public final class DataBuffers {
     return ArrayDataBuffer.allocate(clazz, capacity);
   }
 
-  public static <T> DataBuffer<T> of(long capacity, DataConverter<T> mapper) {
-    ByteDataBuffer physicalBuffer = ofBytes(capacity * mapper.sizeInBytes());
-    return LogicalDataBuffer.map(physicalBuffer, mapper);
+  /**
+   * Creates a logical buffer that can store up to `capacity` values.
+   *
+   * <p>The provided converter is used to map the values to/from bytes, allowing custom
+   * representation of this buffer type.
+   *
+   * @param capacity capacity of the buffer to allocate
+   * @return a new buffer
+   */
+  public static <T> DataBuffer<T> of(long capacity, DataConverter<T> converter) {
+    ByteDataBuffer physicalBuffer = ofBytes(capacity * converter.sizeInBytes());
+    return LogicalDataBuffer.map(physicalBuffer, converter);
   }
+
   /**
    * Wraps an array of objects into a data buffer.
    *
@@ -349,6 +441,13 @@ public final class DataBuffers {
     return ArrayDataBuffer.wrap(array, readOnly);
   }
 
+  /**
+   * Join multiple buffers together to create a large buffer indexable with 64-bits values.
+   *
+   * @param buffers buffers to join
+   * @return a potentially large buffer
+   */
+  @SafeVarargs
   public static <T> DataBuffer<T> join(DataBuffer<T>... buffers) {
     if (buffers == null) {
       return null;

@@ -4,12 +4,15 @@ import java.nio.ByteBuffer;
 import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
+import org.tensorflow.nio.buffer.DataBuffers;
+import org.tensorflow.nio.buffer.LongDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.ByteJdkDataBuffer;
+import org.tensorflow.nio.nd.ByteNdArray;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.ByteNdArray;
+import org.tensorflow.nio.nd.impl.dense.ByteDenseNdArray;
 import org.tensorflow.types.family.TNumber;
 
-public interface TUInt8 extends org.tensorflow.nio.nd.ByteNdArray, TNumber {
+public interface TUInt8 extends ByteNdArray, TNumber {
 
   DataType<TUInt8> DTYPE = DataType.create("UINT8", 4, 1, TUInt8Impl::map);
 
@@ -30,11 +33,14 @@ public interface TUInt8 extends org.tensorflow.nio.nd.ByteNdArray, TNumber {
   }
 }
 
-class TUInt8Impl extends ByteNdArray implements TUInt8 {
+class TUInt8Impl extends ByteDenseNdArray implements TUInt8 {
 
   static TUInt8 map(ByteBuffer[] tensorBuffers, Shape shape) {
-    ByteDataBuffer buffer = BufferUtils.toByteDataBuffer(tensorBuffers, ByteJdkDataBuffer::wrap);
-    return new TUInt8Impl(buffer, shape);
+    ByteDataBuffer[] buffers = new ByteDataBuffer[tensorBuffers.length];
+    for (int i = 0; i < tensorBuffers.length; ++i) {
+      buffers[i] = DataBuffers.wrap(tensorBuffers[i]);
+    }
+    return new TUInt8Impl(DataBuffers.join(buffers), shape);
   }
 
   private TUInt8Impl(ByteDataBuffer buffer, Shape shape) {

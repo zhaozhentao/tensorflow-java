@@ -28,18 +28,18 @@ public class BigIntegerLogicalDataBufferTest extends DataBufferTestBase<BigInteg
   private static class TestBigIntegerMapper implements DataConverter<BigInteger> {
 
     @Override
-    public void writeValue(ByteDataBuffer physicalBuffer, BigInteger value) {
+    public void writeValue(ByteDataBuffer buffer, BigInteger value) {
       byte[] bytes = value.toByteArray();
-      physicalBuffer.put(bytes.length > 2 ? bytes[2] : 0);
-      physicalBuffer.put(bytes.length > 1 ? bytes[1] : 0);
-      physicalBuffer.put(bytes[0]);
+      buffer.put(bytes.length > 2 ? bytes[2] : 0);
+      buffer.put(bytes.length > 1 ? bytes[1] : 0);
+      buffer.put(bytes[0]);
     }
 
     @Override
-    public BigInteger readValue(ByteDataBuffer physicalBuffer) {
-      byte byte2 = physicalBuffer.get();
-      byte byte1 = physicalBuffer.get();
-      byte byte0 = physicalBuffer.get();
+    public BigInteger readValue(ByteDataBuffer buffer) {
+      byte byte2 = buffer.get();
+      byte byte1 = buffer.get();
+      byte byte0 = buffer.get();
       return new BigInteger(new byte[] { byte2, byte1, byte0 });
     }
 

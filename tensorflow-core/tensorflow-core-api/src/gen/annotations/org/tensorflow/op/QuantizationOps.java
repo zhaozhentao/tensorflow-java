@@ -45,6 +45,21 @@ public final class QuantizationOps {
   }
 
   /**
+   * Builds an {@link Dequantize} operation
+   *
+   * @param input 
+   * @param minRange The minimum scalar value possibly produced for the input.
+   * @param maxRange The maximum scalar value possibly produced for the input.
+   * @param options carries optional attributes values
+   * @return a new instance of Dequantize
+   * @see org.tensorflow.op.quantization.Dequantize
+   */
+  public <T> Dequantize dequantize(Operand<T> input, Operand<TFloat> minRange,
+      Operand<TFloat> maxRange, Dequantize.Options... options) {
+    return Dequantize.create(scope, input, minRange, maxRange, options);
+  }
+
+  /**
    * Builds an {@link FakeQuantWithMinMaxVarsGradient} operation
    *
    * @param gradients Backpropagated gradients above the FakeQuantWithMinMaxVars operation.
@@ -59,21 +74,6 @@ public final class QuantizationOps {
       Operand<TFloat> inputs, Operand<TFloat> min, Operand<TFloat> max,
       FakeQuantWithMinMaxVarsGradient.Options... options) {
     return FakeQuantWithMinMaxVarsGradient.create(scope, gradients, inputs, min, max, options);
-  }
-
-  /**
-   * Builds an {@link Dequantize} operation
-   *
-   * @param input 
-   * @param minRange The minimum scalar value possibly produced for the input.
-   * @param maxRange The maximum scalar value possibly produced for the input.
-   * @param options carries optional attributes values
-   * @return a new instance of Dequantize
-   * @see org.tensorflow.op.quantization.Dequantize
-   */
-  public <T> Dequantize dequantize(Operand<T> input, Operand<TFloat> minRange,
-      Operand<TFloat> maxRange, Dequantize.Options... options) {
-    return Dequantize.create(scope, input, minRange, maxRange, options);
   }
 
   /**
@@ -129,20 +129,6 @@ public final class QuantizationOps {
   }
 
   /**
-   * Builds an {@link RequantizationRange} operation
-   *
-   * @param input 
-   * @param inputMin The float value that the minimum quantized input value represents.
-   * @param inputMax The float value that the maximum quantized input value represents.
-   * @return a new instance of RequantizationRange
-   * @see org.tensorflow.op.quantization.RequantizationRange
-   */
-  public <T> RequantizationRange requantizationRange(Operand<T> input, Operand<TFloat> inputMin,
-      Operand<TFloat> inputMax) {
-    return RequantizationRange.create(scope, input, inputMin, inputMax);
-  }
-
-  /**
    * Builds an {@link FakeQuantWithMinMaxVarsPerChannel} operation
    *
    * @param inputs 
@@ -159,16 +145,17 @@ public final class QuantizationOps {
   }
 
   /**
-   * Builds an {@link FakeQuantWithMinMaxArgs} operation
+   * Builds an {@link RequantizationRange} operation
    *
-   * @param inputs 
-   * @param options carries optional attributes values
-   * @return a new instance of FakeQuantWithMinMaxArgs
-   * @see org.tensorflow.op.quantization.FakeQuantWithMinMaxArgs
+   * @param input 
+   * @param inputMin The float value that the minimum quantized input value represents.
+   * @param inputMax The float value that the maximum quantized input value represents.
+   * @return a new instance of RequantizationRange
+   * @see org.tensorflow.op.quantization.RequantizationRange
    */
-  public FakeQuantWithMinMaxArgs fakeQuantWithMinMaxArgs(Operand<TFloat> inputs,
-      FakeQuantWithMinMaxArgs.Options... options) {
-    return FakeQuantWithMinMaxArgs.create(scope, inputs, options);
+  public <T> RequantizationRange requantizationRange(Operand<T> input, Operand<TFloat> inputMin,
+      Operand<TFloat> inputMax) {
+    return RequantizationRange.create(scope, input, inputMin, inputMax);
   }
 
   /**
@@ -184,6 +171,19 @@ public final class QuantizationOps {
   public <U, T> QuantizeDownAndShrinkRange<U> quantizeDownAndShrinkRange(Operand<T> input,
       Operand<TFloat> inputMin, Operand<TFloat> inputMax, DataType<U> outType) {
     return QuantizeDownAndShrinkRange.create(scope, input, inputMin, inputMax, outType);
+  }
+
+  /**
+   * Builds an {@link FakeQuantWithMinMaxArgs} operation
+   *
+   * @param inputs 
+   * @param options carries optional attributes values
+   * @return a new instance of FakeQuantWithMinMaxArgs
+   * @see org.tensorflow.op.quantization.FakeQuantWithMinMaxArgs
+   */
+  public FakeQuantWithMinMaxArgs fakeQuantWithMinMaxArgs(Operand<TFloat> inputs,
+      FakeQuantWithMinMaxArgs.Options... options) {
+    return FakeQuantWithMinMaxArgs.create(scope, inputs, options);
   }
 
   /**

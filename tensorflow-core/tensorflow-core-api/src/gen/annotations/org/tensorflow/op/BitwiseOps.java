@@ -34,18 +34,6 @@ public final class BitwiseOps {
   }
 
   /**
-   * Builds an {@link BitwiseAnd} operation
-   *
-   * @param x 
-   * @param y 
-   * @return a new instance of BitwiseAnd
-   * @see org.tensorflow.op.bitwise.BitwiseAnd
-   */
-  public <T extends TNumber> BitwiseAnd<T> bitwiseAnd(Operand<T> x, Operand<T> y) {
-    return BitwiseAnd.create(scope, x, y);
-  }
-
-  /**
    * Builds an {@link BitwiseXor} operation
    *
    * @param x 
@@ -55,6 +43,18 @@ public final class BitwiseOps {
    */
   public <T extends TNumber> BitwiseXor<T> bitwiseXor(Operand<T> x, Operand<T> y) {
     return BitwiseXor.create(scope, x, y);
+  }
+
+  /**
+   * Builds an {@link BitwiseAnd} operation
+   *
+   * @param x 
+   * @param y 
+   * @return a new instance of BitwiseAnd
+   * @see org.tensorflow.op.bitwise.BitwiseAnd
+   */
+  public <T extends TNumber> BitwiseAnd<T> bitwiseAnd(Operand<T> x, Operand<T> y) {
+    return BitwiseAnd.create(scope, x, y);
   }
 
   /**

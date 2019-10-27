@@ -19,10 +19,20 @@ package org.tensorflow.nio.buffer.slice;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.FloatDataBuffer;
 
+/**
+ * A slice of a float buffer that could be repositioned.
+ */
 public class FloatDataBufferSlice extends DataBufferSlice<Float> implements FloatDataBuffer {
 
-    public FloatDataBufferSlice(FloatDataBuffer buffer) {
-        super(buffer);
+    /**
+     * Creates a new slice of a float buffer, starting at {@code buffer.position()} and ending
+     * at {@code buffer.limit()}.
+     *
+     * @param buffer buffer to slice
+     * @return buffer slice
+     */
+    public static FloatDataBufferSlice create(FloatDataBuffer buffer) {
+        return new FloatDataBufferSlice(buffer, buffer.position(), buffer.limit());
     }
 
     @Override

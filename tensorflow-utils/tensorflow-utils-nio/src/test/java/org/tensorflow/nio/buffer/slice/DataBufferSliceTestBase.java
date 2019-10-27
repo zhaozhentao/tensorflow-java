@@ -37,14 +37,14 @@ abstract class DataBufferSliceTestBase<T> extends DataBufferTestBase<T> {
 
     slice.moveTo(10L);
     assertEquals(0L, slice.position());
-    assertEquals(75L, slice.limit());
+    assertEquals(90L, slice.limit());
     assertEquals(90L, slice.capacity());
-    assertEquals(75L, slice.remaining());
+    assertEquals(90L, slice.remaining());
 
-    slice.moveTo(0L);
+    slice.moveTo(0L, 70L);
     assertEquals(0L, slice.position());
-    assertEquals(85L, slice.limit());
-    assertEquals(100L, slice.capacity());
-    assertEquals(85L, slice.remaining());
+    assertEquals(70L, slice.limit());
+    assertEquals(70L, slice.capacity());
+    assertEquals(70L, slice.remaining());
   }
 }

@@ -2,19 +2,34 @@ package org.tensorflow.nio.buffer.converter;
 
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 
+/**
+ * Converts a boolean to/from bytes
+ */
 public interface BooleanDataConverter extends DataConverter<Boolean> {
 
-  void writeBoolean(ByteDataBuffer physicalBuffer, boolean value);
+  /**
+   * Writes a boolean as bytes to the given buffer at its current position.
+   *
+   * @param buffer buffer that receives the value as bytes
+   * @param value value
+   */
+  void writeBoolean(ByteDataBuffer buffer, boolean value);
 
-  boolean readBoolean(ByteDataBuffer physicalBuffer);
+  /**
+   * Reads a boolean as bytes from the given buffer at its current position.
+   *
+   * @param buffer buffer that supplies the value as bytes
+   * @return value
+   */
+  boolean readBoolean(ByteDataBuffer buffer);
 
   @Override
-  default void writeValue(ByteDataBuffer physicalBuffer, Boolean value) {
-    writeBoolean(physicalBuffer, value);
+  default void writeValue(ByteDataBuffer buffer, Boolean value) {
+    writeBoolean(buffer, value);
   }
 
   @Override
-  default Boolean readValue(ByteDataBuffer physicalBuffer) {
-    return readBoolean(physicalBuffer);
+  default Boolean readValue(ByteDataBuffer buffer) {
+    return readBoolean(buffer);
   }
 }

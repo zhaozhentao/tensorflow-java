@@ -16,16 +16,7 @@ limitations under the License.
 package org.tensorflow;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.types.TBool;
-import org.tensorflow.types.TDouble;
-import org.tensorflow.types.TFloat;
-import org.tensorflow.types.TInt32;
-import org.tensorflow.types.TInt64;
-import org.tensorflow.types.TString;
-import org.tensorflow.types.TUInt8;
 
 /** Represents a type of elements in a {@link Tensor} */
 public final class DataType<T> {

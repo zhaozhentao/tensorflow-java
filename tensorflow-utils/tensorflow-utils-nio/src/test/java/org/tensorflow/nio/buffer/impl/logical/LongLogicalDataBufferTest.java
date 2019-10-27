@@ -22,17 +22,17 @@ public class LongLogicalDataBufferTest extends LongDataBufferTestBase {
   private static class TestLongMapper implements LongDataConverter {
 
     @Override
-    public void writeLong(ByteDataBuffer physicalBuffer, long value) {
-      physicalBuffer.put((byte)(((value >> 56) & 0x80) | ((value >> 16) & 0x7F)));
-      physicalBuffer.put((byte)((value >> 8) & 0xFF));
-      physicalBuffer.put((byte)(value & 0xFF));
+    public void writeLong(ByteDataBuffer buffer, long value) {
+      buffer.put((byte)(((value >> 56) & 0x80) | ((value >> 16) & 0x7F)));
+      buffer.put((byte)((value >> 8) & 0xFF));
+      buffer.put((byte)(value & 0xFF));
     }
 
     @Override
-    public long readLong(ByteDataBuffer physicalBuffer) {
-      long msb = physicalBuffer.get();
-      long midb = physicalBuffer.get();
-      long lsb = physicalBuffer.get();
+    public long readLong(ByteDataBuffer buffer) {
+      long msb = buffer.get();
+      long midb = buffer.get();
+      long lsb = buffer.get();
       return ((msb & 0x80) << 56) | ((msb & 0x7F) << 16) | ((midb & 0xFF) << 8) | (lsb & 0xFF);
     }
 

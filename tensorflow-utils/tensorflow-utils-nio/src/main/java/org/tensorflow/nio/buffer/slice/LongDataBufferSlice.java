@@ -20,10 +20,20 @@ import java.util.stream.LongStream;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.LongDataBuffer;
 
+/**
+ * A slice of a long buffer that could be repositioned.
+ */
 public class LongDataBufferSlice extends DataBufferSlice<Long> implements LongDataBuffer {
 
-    public LongDataBufferSlice(LongDataBuffer buffer) {
-        super(buffer);
+    /**
+     * Creates a new slice of a long buffer, starting at {@code buffer.position()} and ending
+     * at {@code buffer.limit()}.
+     *
+     * @param buffer buffer to slice
+     * @return buffer slice
+     */
+    public static LongDataBufferSlice create(LongDataBuffer buffer) {
+        return new LongDataBufferSlice(buffer, buffer.position(), buffer.limit());
     }
 
     @Override

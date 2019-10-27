@@ -22,15 +22,15 @@ public class IntLogicalDataBufferTest extends IntDataBufferTestBase {
   private static class TestIntMapper implements IntDataConverter {
 
     @Override
-    public void writeInt(ByteDataBuffer physicalBuffer, int value) {
-      physicalBuffer.put((byte)(((value & 0x80000000) >> 24) | ((value & 0x7F) >> 7)));
-      physicalBuffer.put((byte)(value));
+    public void writeInt(ByteDataBuffer buffer, int value) {
+      buffer.put((byte)(((value & 0x80000000) >> 24) | ((value & 0x7F) >> 7)));
+      buffer.put((byte)(value));
     }
 
     @Override
-    public int readInt(ByteDataBuffer physicalBuffer) {
-      int msb = physicalBuffer.get();
-      int lsb = physicalBuffer.get();
+    public int readInt(ByteDataBuffer buffer) {
+      int msb = buffer.get();
+      int lsb = buffer.get();
       return ((msb & 0x80) << 24) | ((msb & 0x7F) << 7) | lsb;
     }
 

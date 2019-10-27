@@ -26,7 +26,7 @@ import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 import org.tensorflow.nio.nd.index.Index;
 
 @SuppressWarnings("unchecked")
-public abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends AbstractNdArray<T, U> {
+abstract class AbstractDenseNdArray<T, U extends NdArray<T>> extends AbstractNdArray<T, U> {
 
   @Override
   public U slice(Index... coords) {

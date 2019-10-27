@@ -1,4 +1,3 @@
 package org.tensorflow.types.family;
 
-public interface TType {
-}
+public interface TType {}

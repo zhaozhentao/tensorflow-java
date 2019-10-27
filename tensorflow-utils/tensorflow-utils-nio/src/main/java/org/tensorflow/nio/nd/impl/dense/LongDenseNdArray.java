@@ -28,7 +28,7 @@ public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray>
 
   public static LongNdArray create(LongDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new LongDenseNdArray(buffer, DimensionalSpace.create(shape));
+    return new LongDenseNdArray(buffer, shape);
   }
 
   @Override
@@ -54,11 +54,12 @@ public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray>
     return write(DataBuffers.wrap(src, true).position(offset));
   }
 
-  protected LongDenseNdArray(LongDataBuffer buffer, DimensionalSpace dimensions) {
-    super(buffer, dimensions);
+  protected LongDenseNdArray(LongDataBuffer buffer, Shape shape) {
+    this(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected LongDataBuffer buffer() {
     return super.buffer();
   }
@@ -66,5 +67,9 @@ public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray>
   @Override
   LongDenseNdArray allocate(DataBuffer<Long> buffer, DimensionalSpace dimensions) {
     return new LongDenseNdArray((LongDataBuffer)buffer, dimensions);
+  }
+
+  private LongDenseNdArray(LongDataBuffer buffer, DimensionalSpace dimensions) {
+    super(buffer, dimensions);
   }
 }

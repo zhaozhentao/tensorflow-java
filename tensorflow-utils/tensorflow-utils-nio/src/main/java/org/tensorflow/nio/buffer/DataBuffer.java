@@ -159,7 +159,7 @@ public interface DataBuffer<T> {
    * 
    * Reads the value at the given index.
    * 
-   * @param index the value from which the float will be read
+   * @param index the index from which the float will be read
    * @return the value at the given index
    * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
    */
@@ -238,13 +238,25 @@ public interface DataBuffer<T> {
    * The new buffer's position will be zero, its capacity and its limit will be the number of chars remaining in this buffer.
    * The new buffer will be read-only if, and only if, this buffer is read-only.
    *
-   * @return the new buffer
+   * @return the new buffer slice
    */
   default DataBuffer<T> slice() {
     return mutableSlice();
   }
 
+  /**
+   * Creates a new buffer whose content is a shared subsequence of this buffer's content.
+   * <p>
+   * The content of the new buffer will start at this buffer's current position. Changes to this buffer's content will be visible in the new buffer,
+   * and vice versa; the two buffers' position and limit values will be independent.
+   * <p>
+   * The new buffer's position will be zero, its capacity and its limit will be the number of chars remaining in this buffer.
+   * The new buffer will be read-only if, and only if, this buffer is read-only. As opposed to {@link #slice()}, the returned slice could be
+   * repositioned in its origin buffer without allocation.
+   *
+   * @return the new buffer slice
+   */
   default DataBufferSlice<T> mutableSlice() {
-    return new DataBufferSlice<>(this);
+    return DataBufferSlice.create(this);
   }
 }

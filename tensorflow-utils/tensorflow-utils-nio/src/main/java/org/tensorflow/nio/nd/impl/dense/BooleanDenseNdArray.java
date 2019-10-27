@@ -28,7 +28,7 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
 
   public static BooleanNdArray create(BooleanDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new BooleanDenseNdArray(buffer, DimensionalSpace.create(shape));
+    return new BooleanDenseNdArray(buffer, shape);
   }
 
   @Override
@@ -54,11 +54,12 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
     return write(DataBuffers.wrap(src, true).position(offset));
   }
 
-  protected BooleanDenseNdArray(BooleanDataBuffer buffer, DimensionalSpace dimensions) {
-    super(buffer, dimensions);
+  protected BooleanDenseNdArray(BooleanDataBuffer buffer, Shape shape) {
+    this(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected BooleanDataBuffer buffer() {
     return super.buffer();
   }
@@ -66,5 +67,9 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
   @Override
   BooleanDenseNdArray allocate(DataBuffer<Boolean> buffer, DimensionalSpace dimensions) {
     return new BooleanDenseNdArray((BooleanDataBuffer)buffer, dimensions);
+  }
+
+  private BooleanDenseNdArray(BooleanDataBuffer buffer, DimensionalSpace dimensions) {
+    super(buffer, dimensions);
   }
 }

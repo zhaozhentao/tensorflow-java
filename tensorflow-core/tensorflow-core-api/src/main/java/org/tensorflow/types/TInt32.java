@@ -3,13 +3,17 @@ package org.tensorflow.types;
 import java.nio.ByteBuffer;
 import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
+import org.tensorflow.nio.buffer.DataBuffers;
+import org.tensorflow.nio.buffer.FloatDataBuffer;
 import org.tensorflow.nio.buffer.IntDataBuffer;
+import org.tensorflow.nio.buffer.impl.single.FloatJdkDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.IntJdkDataBuffer;
+import org.tensorflow.nio.nd.IntNdArray;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.IntNdArray;
+import org.tensorflow.nio.nd.impl.dense.IntDenseNdArray;
 import org.tensorflow.types.family.TNumber;
 
-public interface TInt32 extends org.tensorflow.nio.nd.IntNdArray, TNumber {
+public interface TInt32 extends IntNdArray, TNumber {
 
   DataType<TInt32> DTYPE = DataType.create("INT32", 3, 4, TInt32Impl::map);
 
@@ -30,13 +34,14 @@ public interface TInt32 extends org.tensorflow.nio.nd.IntNdArray, TNumber {
   }
 }
 
-class TInt32Impl extends IntNdArray implements TInt32 {
+class TInt32Impl extends IntDenseNdArray implements TInt32 {
 
   static TInt32 map(ByteBuffer[] tensorBuffers, Shape shape) {
-    IntDataBuffer buffer = BufferUtils.toIntDataBuffer(tensorBuffers, b ->
-        IntJdkDataBuffer.wrap(b.asIntBuffer())
-    );
-    return new TInt32Impl(buffer, shape);
+    IntDataBuffer[] buffers = new IntDataBuffer[tensorBuffers.length];
+    for (int i = 0; i < tensorBuffers.length; ++i) {
+      buffers[i] = DataBuffers.wrap(tensorBuffers[i].asIntBuffer());
+    }
+    return new TInt32Impl(DataBuffers.join(buffers), shape);
   }
 
   private TInt32Impl(IntDataBuffer buffer, Shape shape) {

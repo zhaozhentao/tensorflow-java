@@ -20,30 +20,65 @@ import java.util.stream.Stream;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.impl.Validator;
 
-@SuppressWarnings("unchecked")
+/**
+ * A slice of a buffer that could be repositioned.
+ *
+ * @param <T> type of data
+ */
 public class DataBufferSlice<T> implements DataBuffer<T> {
 
-  public DataBufferSlice(DataBuffer<T> buffer) {
-    this(buffer, buffer.position(), buffer.limit());
+  /**
+   * Creates a new slice of a buffer, starting at {@code buffer.position()} and ending
+   * at {@code buffer.limit()}.
+   *
+   * @param buffer buffer to slice
+   * @param <T> type of data
+   * @return buffer slice
+   */
+  public static <T> DataBufferSlice<T> create(DataBuffer<T> buffer) {
+    return new DataBufferSlice<>(buffer, buffer.position(), buffer.limit());
   }
 
-  public DataBufferSlice(DataBuffer<T> buffer, long start, long end) {
-    this.start = start;
-    this.end = end;
-    this.delegate = buffer.duplicate();
-  }
-
+  /**
+   * Returns the index in the origin buffer where this slice starts.
+   */
   public long start() {
     return start;
   }
 
+  /**
+   * Returns the index in the origin buffer where this slice ends.
+   */
   public long end() {
     return end;
   }
 
+  /**
+   * Move this slice to start at the provided index in its origin buffer.
+   *
+   * <p>The end of the slice remains the same. Both position and limit are reset to the start
+   * and end boundaries of this slice respectively.
+   *
+   * @param start new start index
+   */
   public void moveTo(long start) {
     this.start = start;
-    delegate.position(start);
+    delegate.position(start).limit(end);
+  }
+
+  /**
+   * Move this slice to start and end at the provided indices in its origin buffer.
+   *
+   * <p>Both position and limit are reset to the new start and end boundaries of this slice
+   * respectively.
+   *
+   * @param start new start index
+   * @param end new end index
+   */
+  public void moveTo(long start, long end) {
+    this.start = start;
+    this.end = end;
+    delegate.position(start).limit(end);
   }
 
   @Override
@@ -145,7 +180,7 @@ public class DataBufferSlice<T> implements DataBuffer<T> {
 
   @Override
   public DataBufferSlice<T> duplicate() {
-    return new DataBufferSlice(delegate, start, end);
+    return new DataBufferSlice<>(delegate, start, end);
   }
 
   protected DataBuffer<T> delegate() {
@@ -156,8 +191,13 @@ public class DataBufferSlice<T> implements DataBuffer<T> {
     return index + start;
   }
 
+  protected DataBufferSlice(DataBuffer<T> buffer, long start, long end) {
+    this.start = start;
+    this.end = end;
+    this.delegate = buffer.duplicate();
+  }
+
   private final DataBuffer<T> delegate;
   private long start;
   private long end;
-  private long offset = 0;
 }

@@ -26,8 +26,25 @@ import org.tensorflow.nio.buffer.slice.BooleanDataBufferSlice;
  */
 public interface BooleanDataBuffer extends DataBuffer<Boolean> {
 
+  /**
+   * Relative <i>get</i> method.
+   *
+   * Reads the boolean at this buffer's current position, and then increments the position.
+   *
+   * @return the boolean at the buffer's current position
+   * @throws BufferUnderflowException if the buffer's current position is not smaller than its limit
+   */
   boolean getBoolean();
 
+  /**
+   * Absolute <i>get</i> method.
+   *
+   * Reads the boolean at the given index.
+   *
+   * @param index the index from which the float will be read
+   * @return the boolean at the given index
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   */
   boolean getBoolean(long index);
 
   /**
@@ -65,8 +82,29 @@ public interface BooleanDataBuffer extends DataBuffer<Boolean> {
    */
   BooleanDataBuffer get(boolean[] dst, int offset, int length);
 
+  /**
+   * Relative <i>put</i> method.
+   *
+   * Writes the given boolean into this buffer at the current position, and then increments the position.
+
+   * @param value boolean to be written
+   * @return this buffer
+   * @throws BufferOverflowException if this buffer's current position is not smaller than its limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   BooleanDataBuffer putBoolean(boolean value);
 
+  /**
+   * Absolute <i>put</i> method.
+   *
+   * Writes the given boolean into this buffer at the given index.
+   *
+   * @param index the index at which the value will be written
+   * @param value the boolean to be written
+   * @return this buffer
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   BooleanDataBuffer putBoolean(long index, boolean value);
 
   /**
@@ -159,6 +197,6 @@ public interface BooleanDataBuffer extends DataBuffer<Boolean> {
 
   @Override
   default BooleanDataBufferSlice mutableSlice() {
-    return new BooleanDataBufferSlice(this);
+    return BooleanDataBufferSlice.create(this);
   }
 }

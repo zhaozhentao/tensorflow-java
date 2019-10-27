@@ -20,18 +20,6 @@ public final class DtypesOps {
   }
 
   /**
-   * Builds an {@link AsString} operation
-   *
-   * @param input 
-   * @param options carries optional attributes values
-   * @return a new instance of AsString
-   * @see org.tensorflow.op.dtypes.AsString
-   */
-  public <T> AsString asString(Operand<T> input, AsString.Options... options) {
-    return AsString.create(scope, input, options);
-  }
-
-  /**
    * Builds an {@link Cast} operation
    *
    * @param x 
@@ -42,6 +30,18 @@ public final class DtypesOps {
    */
   public <U, T> Cast<U> cast(Operand<T> x, DataType<U> DstT, Cast.Options... options) {
     return Cast.create(scope, x, DstT, options);
+  }
+
+  /**
+   * Builds an {@link AsString} operation
+   *
+   * @param input 
+   * @param options carries optional attributes values
+   * @return a new instance of AsString
+   * @see org.tensorflow.op.dtypes.AsString
+   */
+  public <T> AsString asString(Operand<T> input, AsString.Options... options) {
+    return AsString.create(scope, input, options);
   }
 
   /**

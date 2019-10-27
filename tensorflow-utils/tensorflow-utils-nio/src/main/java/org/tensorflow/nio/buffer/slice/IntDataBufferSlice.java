@@ -20,10 +20,20 @@ import java.util.stream.IntStream;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.IntDataBuffer;
 
+/**
+ * A slice of an integer buffer that could be repositioned.
+ */
 public class IntDataBufferSlice extends DataBufferSlice<Integer> implements IntDataBuffer {
 
-    public IntDataBufferSlice(IntDataBuffer buffer) {
-        super(buffer);
+    /**
+     * Creates a new slice of an integer buffer, starting at {@code buffer.position()} and ending
+     * at {@code buffer.limit()}.
+     *
+     * @param buffer buffer to slice
+     * @return buffer slice
+     */
+    public static IntDataBufferSlice create(IntDataBuffer buffer) {
+        return new IntDataBufferSlice(buffer, buffer.position(), buffer.limit());
     }
 
     @Override

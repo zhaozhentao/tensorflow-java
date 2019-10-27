@@ -54,11 +54,12 @@ public class ByteDenseNdArray extends AbstractDenseNdArray<Byte, ByteNdArray>
     return write(DataBuffers.wrap(src, true).position(offset));
   }
 
-  protected ByteDenseNdArray(ByteDataBuffer buffer, DimensionalSpace dimensions) {
-    super(buffer, dimensions);
+  protected ByteDenseNdArray(ByteDataBuffer buffer, Shape shape) {
+    this(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected ByteDataBuffer buffer() {
     return super.buffer();
   }
@@ -66,5 +67,9 @@ public class ByteDenseNdArray extends AbstractDenseNdArray<Byte, ByteNdArray>
   @Override
   ByteDenseNdArray allocate(DataBuffer<Byte> buffer, DimensionalSpace dimensions) {
     return new ByteDenseNdArray((ByteDataBuffer)buffer, dimensions);
+  }
+
+  private ByteDenseNdArray(ByteDataBuffer buffer, DimensionalSpace dimensions) {
+    super(buffer, dimensions);
   }
 }

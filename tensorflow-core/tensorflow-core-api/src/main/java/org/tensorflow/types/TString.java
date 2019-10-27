@@ -13,12 +13,13 @@ import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.LongDataBuffer;
 import org.tensorflow.nio.buffer.impl.AbstractBasicDataBuffer;
 import org.tensorflow.nio.buffer.impl.Validator;
+import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.NdArrays;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.ObjectNdArray;
+import org.tensorflow.nio.nd.impl.dense.DenseNdArray;
 import org.tensorflow.types.family.TType;
 
-public interface TString extends org.tensorflow.nio.nd.NdArray, TType {
+public interface TString extends NdArray<String>, TType {
 
   DataType<TString> DTYPE = DataType.create("STRING", 7, -1, TStringImpl::map);
 
@@ -30,14 +31,14 @@ public interface TString extends org.tensorflow.nio.nd.NdArray, TType {
     return copyOf(NdArrays.of(String.class, Shape.make(values.length)).write(values));
   }
 
-  static Tensor<TString> copyOf(org.tensorflow.nio.nd.NdArray src) {
+  static Tensor<TString> copyOf(NdArray<String> src) {
     return TStringImpl.createTensor(src);
   }
 }
 
-class TStringImpl extends ObjectNdArray<String> implements TString {
+class TStringImpl extends DenseNdArray<String> implements TString {
 
-  static Tensor<TString> createTensor(org.tensorflow.nio.nd.NdArray src) {
+  static Tensor<TString> createTensor(NdArray<String> src) {
 
     // First, compute the capacity of the tensor to create
     AtomicLong capacity = new AtomicLong(src.size() * 8);  // add space to store 64-bits offsets
@@ -70,6 +71,7 @@ class TStringImpl extends ObjectNdArray<String> implements TString {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected TStringBuffer buffer() {
     return (TStringBuffer)super.buffer();
   }
@@ -131,7 +133,7 @@ class TStringBuffer extends AbstractBasicDataBuffer<String, DataBuffer<String>> 
     return new TStringBuffer(offsets, data, position(), limit());
   }
 
-  void init(org.tensorflow.nio.nd.NdArray src) {
+  void init(NdArray<String> src) {
     src.scalars().forEach(e -> {
       String value = e.getValue();
       long offset = data.position();

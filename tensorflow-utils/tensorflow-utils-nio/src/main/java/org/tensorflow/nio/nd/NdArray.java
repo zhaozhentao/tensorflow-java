@@ -16,6 +16,8 @@
  */
 package org.tensorflow.nio.nd;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.nd.index.Index;
 
@@ -24,31 +26,33 @@ import org.tensorflow.nio.nd.index.Index;
  *
  * <p>The `NdArray` interface creates an abstraction between the physical storage of a data record,
  * which can be linear or segmented, and its logical representation. In general, they achieve
- * better performances than standard multi-dimensional arrays in Java by mapping directly the
- * data in memory.
+ * better performances than standard multi-dimensional arrays in Java by mapping directly linear
+ * data segments in memory.
  *
  * <p>Like {@link DataBuffer}, {@code NdArray} instances support 64-bits indexation so they can be
- * used to map very large data records. They also support special coordinates that to traverse their
- * values in any direction or to select only a subset of them.
+ * used to map very large data records. They also support special coordinates that allow traversing
+ * their values in any direction or to select only a subset of them.
  *
  * <p>Example of usage:
  * <pre>{@code
  *    import static org.tensorflow.nio.StaticApi.*;
  *
- *    // Creates a 2x2x2 matrix (of rank 3)
- *    FloatNdArray matrix3d = ndArrayOfFloats(shape(2, 2, 2));
+ *    // Creates a 2x3x2 matrix (of rank 3)
+ *    FloatNdArray matrix3d = ndArrayOfFloats(shapeOf(2, 3, 2));
  *
  *    // Initialize sub-matrices data with vectors
- *    matrix.set(vector(1.0f, 2.0f), 0, 0)
- *          .set(vector(3.0f, 4.0f), 0, 1)
- *          .set(vector(5.0f, 6.0f), 1, 0)
- *          .set(vector(7.0f, 8.0f), 1, 1);
+ *    matrix.set(vectorOf(1.0f, 2.0f), 0, 0)
+ *          .set(vectorOf(3.0f, 4.0f), 0, 1)
+ *          .set(vectorOf(5.0f, 6.0f), 0, 2)
+ *          .set(vectorOf(7.0f, 8.0f), 1, 0)
+ *          .set(vectorOf(9.0f, 10.0f), 1, 1)
+ *          .set(vectorOf(11.0f, 12.0f), 1, 2);
  *
- *    // Access the second 2x2 matrix (of rank 2)
+ *    // Access the second 3x2 matrix (of rank 2)
  *    FloatNdArray matrix = matrix3d.get(1);
  *
  *    // Access directly the float value at (1, 0) from the second matrix
- *    assertEquals(3.0f, matrix.getFloat(1, 0));
+ *    assertEquals(9.0f, matrix.getFloat(1, 0));
  * }</pre>
  *
  * @param <T> the type of values to be mapped
@@ -80,34 +84,41 @@ public interface NdArray<T> {
   /**
    * Visit all elements of a given dimension.
    *
-   * <p>Logically, the N-dimensional array is flatten in a vector of scalars, where scalars of the
-   * {@code n - 1} dimension precedes those of the {@code n} dimension, for a total of
+   * <p>Logically, the N-dimensional array can be flatten in a single vector, where the scalars of
+   * the {@code (n - 1)}th element precedes those of the {@code (n)}th element, for a total of
    * {@link #size()} values.
    *
-   * <p>For example, given a {@code n x m} matrix on the {@code [x, y]} axes, values are iterated in the
-   * following order:
+   * <p>For example, given a {@code n x m} matrix on the {@code [x, y]} axes, values are iterated in
+   * the following order:
    * <pre>
    * x<sub>0</sub>y<sub>0</sub>, x<sub>0</sub>y<sub>1</sub>, ..., x<sub>0</sub>y<sub>m-1</sub>, x<sub>1</sub>y<sub>0</sub>, x<sub>1</sub>y<sub>1</sub>, ..., x<sub>n-1</sub>y<sub>m-1</sub>
    * </pre>
    *
-   * <p>The returned iterable can be used for reading, as any other iteration, or for writing
-   * by keeping a direct reference to its {@link ValueIterator}
+   * <p>The returned cursor is used to visit each elements, either by calling
+   * {@link ElementCursor#forEach(Consumer)} or {@link ElementCursor#forEachIdx(BiConsumer)}.
    * <pre>{@code
-   *    // Iterate for initializing matrix by vectors
+   *    // Iterate matrix for initializing each of its vectors
    *    matrixOfFloats.elements(0).forEach(v -> {
-   *      v.set(vector(1, 2, 3));
+   *      v.set(vectorOf(1.0f, 2.0f, 3.0f));
    *    });
    *
-   *    // Iterate for reading each scalar
-   *    vectorOfFloats.scalars().forEach(s -> {
-   *      System.out.println(s.getValue());
+   *    // Iterate a vector for reading each of its scalar
+   *    vectorOfFloats.scalars().forEachIdx((coords, s) -> {
+   *      System.out.println("Value " + s.getFloat() + " found at " + coords);
    *    });
    * }</pre>
    *
-   * @return this array
+   * @return a new cursor to visit all elements at the requested dimension
    */
   ElementCursor<? extends NdArray<T>> elements(int dimensionIdx);
 
+  /**
+   * Visit all scalars of this array.
+   *
+   * <p>This is equivalent to call {@code elements(shape().numDimensions() - 1)}
+   *
+   * @return a new cursor to visit all scalars of this array
+   */
   ElementCursor<? extends NdArray<T>> scalars();
 
   /**
@@ -123,27 +134,29 @@ public interface NdArray<T> {
    *
    * <p>Example of usage:
    * <pre>{@code
-   *    NdArray<Float> matrix3d = NdArrays.ofFloats(shape(3, 2, 4));  // with [x, y, z] axes
+   *    FloatNdArray matrix3d = ndArrayOfFloats(shapeOf(3, 2, 4));  // with [x, y, z] axes
    *
-   *    // Iterates values over the 3rd elements on the z axis, (i.e. [x, x, 2])
-   *    for (Float values = matrix3d.slice(all(), all(), at(2)).values()) {
-   *      ...
-   *    }
+   *    // Iterates elements on the x axis by preserving only the 3rd value on the z axis,
+   *    // (i.e. [x, y, 2])
+   *    matrix3d.slice(all(), all(), at(2)).elements(0).forEach(m -> {
+   *      assertEquals(shapeOf(2), m); // y=2, z=0 (scalar)
+   *    });
    *
    *    // Creates a slice that contains only the last element of the y axis and elements with an
    *    // odd `z` coordinate.
-   *    NdArray<Float> slice = matrix3d.slice(all(), at(1), odd());
-   *    assertEquals(shape(3, 2), slice.shape());  // x=3, y=0 (scalar), z=2 (odd coordinates)
+   *    FloatNdArray slice = matrix3d.slice(all(), at(1), odd());
+   *    assertEquals(shapeOf(3, 2), slice.shape());  // x=3, y=0 (scalar), z=2 (odd coordinates)
    *
    *    // Iterates backward the elements on the x axis
-   *    for (NdArray<Float> matrix = matrix3d.slice(flip())) {
-   *      assertEquals(shape(2, 4), matrix);  // y=2, z=4
-   *    }
+   *    matrix3d.slice(flip()).elements(0).forEach(m -> {
+   *      assertEquals(shapeOf(2, 4), m);  // y=2, z=4
+   *    });
    * }</pre>
    *
    * @param indices index selectors per dimensions, starting from dimension 0 of this array.
    * @return the element resulting of the index selection
-   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their
+   * respective dimension
    */
   NdArray<T> slice(Index... indices);
 
@@ -151,19 +164,20 @@ public interface NdArray<T> {
    * Returns the N-dimensional element of this array at the given coordinates.
    *
    * <p>Elements of any of the dimensions of this array can be retrieved. For example, if the number
-   * of coordinates is equal to the number of dimensions of this array, then a rank-0 (scalar) array is
-   * returned, which value can then be obtained with `array.getValue()`.
+   * of coordinates is equal to the number of dimensions of this array, then a rank-0 (scalar) array
+   * is returned, which value can then be obtained by calling `array.getValue()`.
    *
    * <p>Any changes applied to the returned elements affect the data of this array as well, as there
    * is no copy involved.
    *
-   * <p>Note that invoking this method is equivalent and more efficient to slice this array at
-   * on single element for each indexed dimension, i.e.
-   * {@code array.get(x, y, z) == array.slice(at(x), at(y), at(z))}
+   * <p>Note that invoking this method is an equivalent and more efficient way to slice this array
+   * on single scalar, i.e. {@code array.get(x, y, z)} is equal to
+   * {@code array.slice(at(x), at(y), at(z))}
    *
    * @param coordinates coordinates of the element to access, none will return this array
    * @return the element at this index
-   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their
+   * respective dimension
    */
   NdArray<T> get(long... coordinates);
 
@@ -172,14 +186,15 @@ public interface NdArray<T> {
    *
    * <p>The number of coordinates provided can be anywhere between 0 and rank - 1. For example:
    * <pre>{@code
-   *  NdArray<Float> matrix = NdArrays.ofFloats(shape(2, 2));  // matrix rank = 2
-   *  matrix.set(NdArrays.vector(10.0f, 20.0f), 0);  // succeeds
-   *  matrix.set(NdArrays.scalar(10.0f), 1, 0); // succeeds
+   *  FloatNdArray matrix = ndArrayOfFloats(shapeOf(2, 2));  // matrix rank = 2
+   *  matrix.set(vectorOf(10.0f, 20.0f), 0);  // success
+   *  matrix.set(scalarOf(10.0f), 1, 0); // success
    * }</pre>
    *
    * @param coordinates coordinates of the element to assign
    * @return this array
-   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their
+   * respective dimension
    */
   NdArray<T> set(NdArray<T> src, long... coordinates);
 
@@ -189,11 +204,11 @@ public interface NdArray<T> {
    * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
-   *  NdArray<Float> matrix = NdArrays.ofFloat(shape(2, 2));  // matrix rank = 2
+   *  FloatNdArray matrix = ndArrayOfFloats(shapeOf(2, 2));  // matrix rank = 2
    *  matrix.getValue(0, 1);  // succeeds, returns 0.0f
    *  matrix.getValue(0);  // throws IllegalRankException
    *
-   *  NdArray<Float> scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  FloatNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
    *  scalar.getValue();  // succeeds, returns 0.0f
    * }</pre>
    *
@@ -202,8 +217,10 @@ public interface NdArray<T> {
    *
    * @param coordinates coordinates of the scalar to resolve
    * @return value of that scalar
-   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their
+   * respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar
+   * element
    */
   T getValue(long... coordinates);
 
@@ -213,11 +230,11 @@ public interface NdArray<T> {
    * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
-   *  NdArray<Float> matrix = NdArrays.ofFloat(shape(2, 2));  // matrix rank = 2
+   *  FloatNdArray matrix = ndArrayOfFloats(shapeOf(2, 2));  // matrix rank = 2
    *  matrix.setValue(10.0f, 0, 1);  // succeeds
    *  matrix.setValue(10.0f, 0);  // throws IllegalRankException
    *
-   *  NdArray<Float> scalar = matrix.at(0, 1);  // scalar rank = 0
+   *  FloatNdArray scalar = matrix.get(0, 1);  // scalar rank = 0
    *  scalar.setValue(10.0f);  // succeeds
    * }</pre>
    *
@@ -226,30 +243,33 @@ public interface NdArray<T> {
    *
    * @param coordinates coordinates of the scalar to assign
    * @return this array
-   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their respective dimension
-   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar element
+   * @throws IndexOutOfBoundsException if some coordinates are outside the limits of their
+   * respective dimension
+   * @throws IllegalRankException if number of coordinates is not sufficient to access a scalar
+   * element
    */
   NdArray<T> setValue(T value, long... coordinates);
 
   /**
    * Copy the content of this array to the destination array.
    *
-   * <p>The {@link #shape()} of the destination array must be equal to the shape of this array, or an exception is
-   * thrown. After the copy, the content of both arrays can be altered independently, without affecting
-   * each other.
+   * <p>The {@link #shape()} of the destination array must be equal to the shape of this array, or
+   * an exception is thrown. After the copy, the content of both arrays can be altered
+   * independently, without affecting each other.
    *
    * @param dst array to receive a copy of the content of this array
    * @return this array
-   * @throws IllegalArgumentException if the shape of {@code dst} is not equal to the shape of this array
+   * @throws IllegalArgumentException if the shape of {@code dst} is not equal to the shape of this
+   * array
    */
   NdArray<T> copyTo(NdArray<T> dst);
 
   /**
    * Read the content of this N-dimensional array into the destination buffer.
    *
-   * <p>The remaining space of the buffer must be equal or greater to the {@link #size()} of this array,
-   * or an exception is thrown. After the copy, content of the buffer and of the array can be altered
-   * independently, without affecting each other.
+   * <p>The remaining space of the buffer must be equal or greater to the {@link #size()} of this
+   * array, or an exception is thrown. After the copy, content of the buffer and of the array can be
+   * altered independently, without affecting each other.
    *
    * @param dst the destination buffer
    * @return this array
@@ -261,13 +281,14 @@ public interface NdArray<T> {
   /**
    * Write the content of this N-dimensional array from the source buffer.
    *
-   * <p>The remaining data of the buffer must be equal or greater to the {@link #size()} of this array,
-   * or an exception is thrown. After the copy, content of the buffer and of the array can be altered
-   * independently, without affecting each other.
+   * <p>The remaining data of the buffer must be equal or greater to the {@link #size()} of this
+   * array, or an exception is thrown. After the copy, content of the buffer and of the array can be
+   * altered independently, without affecting each other.
    *
    * @param src the source buffer
    * @return this array
-   * @throws java.nio.BufferUnderflowException if the buffer has not enough remaining data to write into this array
+   * @throws java.nio.BufferUnderflowException if the buffer has not enough remaining data to write
+   * into this array
    * @see DataBuffer#remaining()
    */
   NdArray<T> write(DataBuffer<T> src);
@@ -275,13 +296,14 @@ public interface NdArray<T> {
   /**
    * Reads the content of this N-dimensional array into the destination array.
    *
-   * <p>The size of the destination array must be equal or greater to the {@link #size()} of this array,
-   * or an exception is thrown. After the copy, content of the both arrays can be altered
+   * <p>The size of the destination array must be equal or greater to the {@link #size()} of this
+   * array, or an exception is thrown. After the copy, content of the both arrays can be altered
    * independently, without affecting each other.
    *
    * @param dst the destination array
    * @return this array
-   * @throws java.nio.BufferOverflowException if the destination array cannot hold the content of this array
+   * @throws java.nio.BufferOverflowException if the destination array cannot hold the content of
+   * this array
    */
   NdArray<T> read(T[] dst);
 
@@ -295,7 +317,8 @@ public interface NdArray<T> {
    * @param dst the destination array
    * @param offset the index of the first element to write in the destination array
    * @return this array
-   * @throws java.nio.BufferOverflowException if the destination array cannot hold the content of this array
+   * @throws java.nio.BufferOverflowException if the destination array cannot hold the content of
+   * this array
    * @throws IllegalArgumentException if offset is greater than dst length or is negative
    */
   NdArray<T> read(T[] dst, int offset);
@@ -309,7 +332,8 @@ public interface NdArray<T> {
    *
    * @param src the source array
    * @return this array
-   * @throws java.nio.BufferUnderflowException if the size of the source array is less than the size of this array
+   * @throws java.nio.BufferUnderflowException if the size of the source array is less than the size
+   * of this array
    */
   NdArray<T> write(T[] src);
 
@@ -323,7 +347,8 @@ public interface NdArray<T> {
    * @param src the source array
    * @param offset the index of the first byte to read from the source array
    * @return this array
-   * @throws java.nio.BufferUnderflowException if the size of the source array is less than the size of this array
+   * @throws java.nio.BufferUnderflowException if the size of the source array is less than the size
+   * of this array
    * @throws IllegalArgumentException if offset is greater than src length or is negative
    */
   NdArray<T> write(T[] src, int offset);

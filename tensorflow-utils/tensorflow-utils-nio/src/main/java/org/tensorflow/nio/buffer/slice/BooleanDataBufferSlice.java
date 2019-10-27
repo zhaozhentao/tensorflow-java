@@ -19,10 +19,20 @@ package org.tensorflow.nio.buffer.slice;
 import org.tensorflow.nio.buffer.BooleanDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
 
+/**
+ * A slice of a boolean buffer that could be repositioned.
+ */
 public class BooleanDataBufferSlice extends DataBufferSlice<Boolean> implements BooleanDataBuffer {
 
-    public BooleanDataBufferSlice(BooleanDataBuffer buffer) {
-        super(buffer);
+    /**
+     * Creates a new slice of a boolean buffer, starting at {@code buffer.position()} and ending
+     * at {@code buffer.limit()}.
+     *
+     * @param buffer buffer to slice
+     * @return buffer slice
+     */
+    public static BooleanDataBufferSlice create(BooleanDataBuffer buffer) {
+        return new BooleanDataBufferSlice(buffer, buffer.position(), buffer.limit());
     }
 
     @Override

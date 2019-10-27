@@ -36,8 +36,25 @@ public interface LongDataBuffer extends DataBuffer<Long> {
    */
   LongStream longStream();
 
+  /**
+   * Relative <i>get</i> method.
+   *
+   * Reads the long at this buffer's current position, and then increments the position.
+   *
+   * @return the long at the buffer's current position
+   * @throws BufferUnderflowException if the buffer's current position is not smaller than its limit
+   */
   long getLong();
 
+  /**
+   * Absolute <i>get</i> method.
+   *
+   * Reads the long at the given index.
+   *
+   * @param index the index from which the float will be read
+   * @return the long at the given index
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   */
   long getLong(long index);
   
   /**
@@ -75,8 +92,29 @@ public interface LongDataBuffer extends DataBuffer<Long> {
    */
   LongDataBuffer get(long[] dst, int offset, int length);
 
+  /**
+   * Relative <i>put</i> method.
+   *
+   * Writes the given long into this buffer at the current position, and then increments the position.
+
+   * @param value long to be written
+   * @return this buffer
+   * @throws BufferOverflowException if this buffer's current position is not smaller than its limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   LongDataBuffer putLong(long value);
 
+  /**
+   * Absolute <i>put</i> method.
+   *
+   * Writes the given long into this buffer at the given index.
+   *
+   * @param index the index at which the value will be written
+   * @param value the long to be written
+   * @return this buffer
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   LongDataBuffer putLong(long index, long value);
 
   /**
@@ -174,6 +212,6 @@ public interface LongDataBuffer extends DataBuffer<Long> {
 
   @Override
   default LongDataBufferSlice mutableSlice() {
-    return new LongDataBufferSlice(this);
+    return LongDataBufferSlice.create(this);
   }
 }

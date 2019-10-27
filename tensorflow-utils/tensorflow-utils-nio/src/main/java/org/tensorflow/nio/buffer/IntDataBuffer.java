@@ -36,8 +36,25 @@ public interface IntDataBuffer extends DataBuffer<Integer> {
    */
   IntStream intStream();
 
+  /**
+   * Relative <i>get</i> method.
+   *
+   * Reads the integer at this buffer's current position, and then increments the position.
+   *
+   * @return the integer at the buffer's current position
+   * @throws BufferUnderflowException if the buffer's current position is not smaller than its limit
+   */
   int getInt();
 
+  /**
+   * Absolute <i>get</i> method.
+   *
+   * Reads the integer at the given index.
+   *
+   * @param index the index from which the float will be read
+   * @return the integer at the given index
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   */
   int getInt(long index);
 
   /**
@@ -75,8 +92,29 @@ public interface IntDataBuffer extends DataBuffer<Integer> {
    */
   IntDataBuffer get(int[] dst, int offset, int length);
 
+  /**
+   * Relative <i>put</i> method.
+   *
+   * Writes the given integer into this buffer at the current position, and then increments the position.
+
+   * @param value integer to be written
+   * @return this buffer
+   * @throws BufferOverflowException if this buffer's current position is not smaller than its limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   IntDataBuffer putInt(int value);
 
+  /**
+   * Absolute <i>put</i> method.
+   *
+   * Writes the given integer into this buffer at the given index.
+   *
+   * @param index the index at which the value will be written
+   * @param value the integer to be written
+   * @return this buffer
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   IntDataBuffer putInt(long index, int value);
 
   /**
@@ -174,6 +212,6 @@ public interface IntDataBuffer extends DataBuffer<Integer> {
 
   @Override
   default IntDataBufferSlice mutableSlice() {
-    return new IntDataBufferSlice(this);
+    return IntDataBufferSlice.create(this);
   }
 }

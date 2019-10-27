@@ -26,8 +26,25 @@ import org.tensorflow.nio.buffer.slice.ByteDataBufferSlice;
  */
 public interface ByteDataBuffer extends DataBuffer<Byte> {
 
+  /**
+   * Relative <i>get</i> method.
+   *
+   * Reads the byte at this buffer's current position, and then increments the position.
+   *
+   * @return the byte at the buffer's current position
+   * @throws BufferUnderflowException if the buffer's current position is not smaller than its limit
+   */
   byte getByte();
 
+  /**
+   * Absolute <i>get</i> method.
+   *
+   * Reads the byte at the given index.
+   *
+   * @param index the index from which the float will be read
+   * @return the byte at the given index
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   */
   byte getByte(long index);
 
   /**
@@ -65,8 +82,29 @@ public interface ByteDataBuffer extends DataBuffer<Byte> {
    */
   ByteDataBuffer get(byte[] dst, int offset, int length);
 
+  /**
+   * Relative <i>put</i> method.
+   *
+   * Writes the given byte into this buffer at the current position, and then increments the position.
+
+   * @param value byte to be written
+   * @return this buffer
+   * @throws BufferOverflowException if this buffer's current position is not smaller than its limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   ByteDataBuffer putByte(byte value);
 
+  /**
+   * Absolute <i>put</i> method.
+   *
+   * Writes the given byte into this buffer at the given index.
+   *
+   * @param index the index at which the value will be written
+   * @param value the byte to be written
+   * @return this buffer
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   ByteDataBuffer putByte(long index, byte value);
 
   /**
@@ -159,6 +197,6 @@ public interface ByteDataBuffer extends DataBuffer<Byte> {
 
   @Override
   default ByteDataBufferSlice mutableSlice() {
-    return new ByteDataBufferSlice(this);
+    return ByteDataBufferSlice.create(this);
   }
 }

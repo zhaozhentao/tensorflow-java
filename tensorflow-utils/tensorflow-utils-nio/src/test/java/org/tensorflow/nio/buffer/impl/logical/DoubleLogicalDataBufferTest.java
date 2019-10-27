@@ -22,18 +22,18 @@ public class DoubleLogicalDataBufferTest extends DoubleDataBufferTestBase {
   private static class TestDoubleMapper implements DoubleDataConverter {
 
     @Override
-    public void writeDouble(ByteDataBuffer physicalBuffer, double value) {
+    public void writeDouble(ByteDataBuffer buffer, double value) {
       long bits = Double.doubleToLongBits(value);
-      physicalBuffer.put((byte)((bits >> 56) & 0xFF));
-      physicalBuffer.put((byte)((bits >> 48) & 0xFF));
-      physicalBuffer.put((byte)((bits >> 40) & 0xFF));
+      buffer.put((byte)((bits >> 56) & 0xFF));
+      buffer.put((byte)((bits >> 48) & 0xFF));
+      buffer.put((byte)((bits >> 40) & 0xFF));
     }
 
     @Override
-    public double readDouble(ByteDataBuffer physicalBuffer) {
-      long byte7 = physicalBuffer.get();
-      long byte6 = physicalBuffer.get();
-      long byte5 = physicalBuffer.get();
+    public double readDouble(ByteDataBuffer buffer) {
+      long byte7 = buffer.get();
+      long byte6 = buffer.get();
+      long byte5 = buffer.get();
       return Double.longBitsToDouble(((byte7 & 0xFF) << 56) | ((byte6 & 0xFF) << 48) | ((byte5 & 0xFF) << 40));
     }
 

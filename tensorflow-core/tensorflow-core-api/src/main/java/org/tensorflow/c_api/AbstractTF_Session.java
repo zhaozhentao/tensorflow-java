@@ -17,10 +17,11 @@
 
 package org.tensorflow.c_api;
 
-import org.bytedeco.javacpp.*;
-import org.bytedeco.javacpp.annotation.Properties;
+import static org.tensorflow.c_api.global.tensorflow.TF_DeleteSession;
+import static org.tensorflow.c_api.global.tensorflow.TF_NewSession;
 
-import static org.tensorflow.c_api.global.tensorflow.*;
+import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.annotation.Properties;
 
 @Properties(inherit = org.tensorflow.c_api.presets.tensorflow.class)
 public abstract class AbstractTF_Session extends Pointer {

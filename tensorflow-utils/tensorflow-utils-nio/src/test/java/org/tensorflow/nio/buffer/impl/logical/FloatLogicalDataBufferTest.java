@@ -22,16 +22,16 @@ public class FloatLogicalDataBufferTest extends FloatDataBufferTestBase {
   private static class TestFloatMapper implements FloatDataConverter {
 
     @Override
-    public void writeFloat(ByteDataBuffer physicalBuffer, float value) {
+    public void writeFloat(ByteDataBuffer buffer, float value) {
       int bits = Float.floatToIntBits(value);
-      physicalBuffer.put((byte)((bits >> 24) & 0xFF));
-      physicalBuffer.put((byte)((bits >> 16) & 0xFF));
+      buffer.put((byte)((bits >> 24) & 0xFF));
+      buffer.put((byte)((bits >> 16) & 0xFF));
     }
 
     @Override
-    public float readFloat(ByteDataBuffer physicalBuffer) {
-      int byte3 = physicalBuffer.get();
-      int byte2 = physicalBuffer.get();
+    public float readFloat(ByteDataBuffer buffer) {
+      int byte3 = buffer.get();
+      int byte2 = buffer.get();
       return Float.intBitsToFloat(((byte3 & 0xFF) << 24) | ((byte2 & 0xFF) << 16));
     }
 

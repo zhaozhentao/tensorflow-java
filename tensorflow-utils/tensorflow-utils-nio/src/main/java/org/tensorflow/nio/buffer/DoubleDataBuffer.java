@@ -36,8 +36,25 @@ public interface DoubleDataBuffer extends DataBuffer<Double> {
    */
   DoubleStream doubleStream();
 
+  /**
+   * Relative <i>get</i> method.
+   *
+   * Reads the double at this buffer's current position, and then increments the position.
+   *
+   * @return the double at the buffer's current position
+   * @throws BufferUnderflowException if the buffer's current position is not smaller than its limit
+   */
   double getDouble();
 
+  /**
+   * Absolute <i>get</i> method.
+   *
+   * Reads the double at the given index.
+   *
+   * @param index the index from which the float will be read
+   * @return the double at the given index
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   */
   double getDouble(long index);
 
   /**
@@ -75,8 +92,29 @@ public interface DoubleDataBuffer extends DataBuffer<Double> {
    */
   DoubleDataBuffer get(double[] dst, int offset, int length);
 
+  /**
+   * Relative <i>put</i> method.
+   *
+   * Writes the given double into this buffer at the current position, and then increments the position.
+
+   * @param value double to be written
+   * @return this buffer
+   * @throws BufferOverflowException if this buffer's current position is not smaller than its limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   DoubleDataBuffer putDouble(double value);
 
+  /**
+   * Absolute <i>put</i> method.
+   *
+   * Writes the given double into this buffer at the given index.
+   *
+   * @param index the index at which the value will be written
+   * @param value the double to be written
+   * @return this buffer
+   * @throws IndexOutOfBoundsException if index is negative or not smaller than the buffer's limit
+   * @throws ReadOnlyBufferException if this buffer is read-only
+   */
   DoubleDataBuffer putDouble(long index, double value);
 
   /**
@@ -174,6 +212,6 @@ public interface DoubleDataBuffer extends DataBuffer<Double> {
 
   @Override
   default DoubleDataBufferSlice mutableSlice() {
-    return new DoubleDataBufferSlice(this);
+    return DoubleDataBufferSlice.create(this);
   }
 }

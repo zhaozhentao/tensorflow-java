@@ -17,10 +17,13 @@
 
 package org.tensorflow.c_api;
 
-import org.bytedeco.javacpp.*;
-import org.bytedeco.javacpp.annotation.Properties;
+import static org.tensorflow.c_api.global.tensorflow.TF_AllocateTensor;
+import static org.tensorflow.c_api.global.tensorflow.TF_DeleteTensor;
+import static org.tensorflow.c_api.global.tensorflow.TF_NewTensor;
 
-import static org.tensorflow.c_api.global.tensorflow.*;
+import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.PointerScope;
+import org.bytedeco.javacpp.annotation.Properties;
 
 @Properties(inherit = org.tensorflow.c_api.presets.tensorflow.class)
 public abstract class AbstractTF_Tensor extends Pointer {

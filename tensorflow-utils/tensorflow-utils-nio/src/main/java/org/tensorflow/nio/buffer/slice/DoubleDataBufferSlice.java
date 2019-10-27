@@ -20,10 +20,20 @@ import java.util.stream.DoubleStream;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.DoubleDataBuffer;
 
+/**
+ * A slice of a double buffer that could be repositioned.
+ */
 public class DoubleDataBufferSlice extends DataBufferSlice<Double> implements DoubleDataBuffer {
 
-    public DoubleDataBufferSlice(DoubleDataBuffer buffer) {
-        super(buffer);
+    /**
+     * Creates a new slice of a double buffer, starting at {@code buffer.position()} and ending
+     * at {@code buffer.limit()}.
+     *
+     * @param buffer buffer to slice
+     * @return buffer slice
+     */
+    public static DoubleDataBufferSlice create(DoubleDataBuffer buffer) {
+        return new DoubleDataBufferSlice(buffer, buffer.position(), buffer.limit());
     }
 
     @Override

@@ -28,7 +28,7 @@ public class DoubleDenseNdArray extends AbstractDenseNdArray<Double, DoubleNdArr
 
   public static DoubleNdArray create(DoubleDataBuffer buffer, Shape shape) {
     Validator.denseShape(shape);
-    return new DoubleDenseNdArray(buffer, DimensionalSpace.create(shape));
+    return new DoubleDenseNdArray(buffer, shape);
   }
 
   @Override
@@ -54,11 +54,12 @@ public class DoubleDenseNdArray extends AbstractDenseNdArray<Double, DoubleNdArr
     return write(DataBuffers.wrap(src, true).position(offset));
   }
 
-  protected DoubleDenseNdArray(DoubleDataBuffer buffer, DimensionalSpace dimensions) {
-    super(buffer, dimensions);
+  protected DoubleDenseNdArray(DoubleDataBuffer buffer, Shape shape) {
+    this(buffer, DimensionalSpace.create(shape));
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected DoubleDataBuffer buffer() {
     return super.buffer();
   }
@@ -66,5 +67,9 @@ public class DoubleDenseNdArray extends AbstractDenseNdArray<Double, DoubleNdArr
   @Override
   DoubleDenseNdArray allocate(DataBuffer<Double> buffer, DimensionalSpace dimensions) {
     return new DoubleDenseNdArray((DoubleDataBuffer)buffer, dimensions);
+  }
+
+  private DoubleDenseNdArray(DoubleDataBuffer buffer, DimensionalSpace dimensions) {
+    super(buffer, dimensions);
   }
 }
