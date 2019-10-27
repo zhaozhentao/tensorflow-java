@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.tensorflow.nio.nd.IntNdArray;
 import org.tensorflow.nio.nd.NdArrays;
 import org.tensorflow.nio.nd.Shape;
-import org.tensorflow.nio.nd.impl.AbstractNdArray;
 
 public class DefaultElementCursorTest {
 

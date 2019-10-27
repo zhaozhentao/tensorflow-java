@@ -3,8 +3,8 @@ package org.tensorflow.nio.buffer.impl.logical;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.FloatDataBuffer;
-import org.tensorflow.nio.buffer.converter.FloatDataConverter;
 import org.tensorflow.nio.buffer.FloatDataBufferTestBase;
+import org.tensorflow.nio.buffer.converter.FloatDataConverter;
 import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
 
 public class FloatLogicalDataBufferTest extends FloatDataBufferTestBase {

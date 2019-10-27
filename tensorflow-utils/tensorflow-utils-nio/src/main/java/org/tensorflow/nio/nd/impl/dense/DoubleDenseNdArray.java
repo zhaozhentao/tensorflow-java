@@ -16,7 +16,6 @@
  */
 package org.tensorflow.nio.nd.impl.dense;
 
-import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.DoubleDataBuffer;

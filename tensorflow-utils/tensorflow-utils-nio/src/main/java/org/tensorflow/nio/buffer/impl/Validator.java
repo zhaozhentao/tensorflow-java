@@ -19,7 +19,6 @@ package org.tensorflow.nio.buffer.impl;
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 import java.nio.ReadOnlyBufferException;
-
 import org.tensorflow.nio.buffer.DataBuffer;
 
 public class Validator {

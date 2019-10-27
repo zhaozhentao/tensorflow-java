@@ -21,7 +21,6 @@ import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
 import java.nio.ReadOnlyBufferException;
 import java.util.stream.Stream;
-
 import org.tensorflow.nio.buffer.slice.DataBufferSlice;
 
 /**

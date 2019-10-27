@@ -3,9 +3,9 @@ package org.tensorflow.nio.buffer.impl.logical;
 import java.math.BigInteger;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
-import org.tensorflow.nio.buffer.converter.DataConverter;
 import org.tensorflow.nio.buffer.DataBufferTestBase;
 import org.tensorflow.nio.buffer.DataBuffers;
+import org.tensorflow.nio.buffer.converter.DataConverter;
 import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
 
 public class BigIntegerLogicalDataBufferTest extends DataBufferTestBase<BigInteger> {

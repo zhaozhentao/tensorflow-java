@@ -19,7 +19,6 @@ package org.tensorflow.nio.buffer.impl.single;
 
 import java.nio.ByteBuffer;
 import java.util.stream.Stream;
-
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
 

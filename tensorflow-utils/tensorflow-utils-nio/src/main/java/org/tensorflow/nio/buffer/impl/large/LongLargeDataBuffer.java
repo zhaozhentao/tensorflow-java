@@ -16,9 +16,7 @@
  */
 package org.tensorflow.nio.buffer.impl.large;
 
-import java.nio.ReadOnlyBufferException;
 import java.util.stream.LongStream;
-
 import org.tensorflow.nio.buffer.LongDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.LongJdkDataBuffer;
 

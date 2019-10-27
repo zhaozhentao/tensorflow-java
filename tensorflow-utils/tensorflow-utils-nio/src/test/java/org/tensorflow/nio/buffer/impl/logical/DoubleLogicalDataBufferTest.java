@@ -3,8 +3,8 @@ package org.tensorflow.nio.buffer.impl.logical;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.DoubleDataBuffer;
-import org.tensorflow.nio.buffer.converter.DoubleDataConverter;
 import org.tensorflow.nio.buffer.DoubleDataBufferTestBase;
+import org.tensorflow.nio.buffer.converter.DoubleDataConverter;
 import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
 
 public class DoubleLogicalDataBufferTest extends DoubleDataBufferTestBase {

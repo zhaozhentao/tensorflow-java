@@ -18,8 +18,6 @@ package org.tensorflow.nio.buffer.impl.single;
 
 import org.tensorflow.nio.buffer.BooleanDataBuffer;
 import org.tensorflow.nio.buffer.BooleanDataBufferTestBase;
-import org.tensorflow.nio.buffer.DataBuffer;
-import org.tensorflow.nio.buffer.DataBufferTestBase;
 
 public class BitSetDataBufferTest extends BooleanDataBufferTestBase {
 

@@ -21,7 +21,6 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
-
 import org.tensorflow.nio.buffer.converter.BooleanDataConverter;
 import org.tensorflow.nio.buffer.converter.DataConverter;
 import org.tensorflow.nio.buffer.converter.DoubleDataConverter;
@@ -29,6 +28,12 @@ import org.tensorflow.nio.buffer.converter.FloatDataConverter;
 import org.tensorflow.nio.buffer.converter.IntDataConverter;
 import org.tensorflow.nio.buffer.converter.LongDataConverter;
 import org.tensorflow.nio.buffer.impl.large.BooleanLargeDataBuffer;
+import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
+import org.tensorflow.nio.buffer.impl.large.DoubleLargeDataBuffer;
+import org.tensorflow.nio.buffer.impl.large.FloatLargeDataBuffer;
+import org.tensorflow.nio.buffer.impl.large.IntLargeDataBuffer;
+import org.tensorflow.nio.buffer.impl.large.LargeDataBuffer;
+import org.tensorflow.nio.buffer.impl.large.LongLargeDataBuffer;
 import org.tensorflow.nio.buffer.impl.logical.BooleanLogicalDataBuffer;
 import org.tensorflow.nio.buffer.impl.logical.DoubleLogicalDataBuffer;
 import org.tensorflow.nio.buffer.impl.logical.FloatLogicalDataBuffer;
@@ -43,12 +48,6 @@ import org.tensorflow.nio.buffer.impl.single.DoubleJdkDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.FloatJdkDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.IntJdkDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.LongJdkDataBuffer;
-import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
-import org.tensorflow.nio.buffer.impl.large.DoubleLargeDataBuffer;
-import org.tensorflow.nio.buffer.impl.large.FloatLargeDataBuffer;
-import org.tensorflow.nio.buffer.impl.large.IntLargeDataBuffer;
-import org.tensorflow.nio.buffer.impl.large.LargeDataBuffer;
-import org.tensorflow.nio.buffer.impl.large.LongLargeDataBuffer;
 
 /**
  * Helper class for creating `DataBuffer` instances.

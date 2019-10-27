@@ -3,7 +3,6 @@ package org.tensorflow.nio.buffer.impl.logical;
 import java.util.stream.IntStream;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.IntDataBuffer;
-import org.tensorflow.nio.buffer.LongDataBuffer;
 import org.tensorflow.nio.buffer.converter.IntDataConverter;
 import org.tensorflow.nio.buffer.impl.Validator;
 

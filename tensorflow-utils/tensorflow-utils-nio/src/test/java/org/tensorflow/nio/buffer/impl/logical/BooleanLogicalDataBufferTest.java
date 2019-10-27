@@ -1,10 +1,10 @@
 package org.tensorflow.nio.buffer.impl.logical;
 
 import org.tensorflow.nio.buffer.BooleanDataBuffer;
-import org.tensorflow.nio.buffer.converter.BooleanDataConverter;
 import org.tensorflow.nio.buffer.BooleanDataBufferTestBase;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
+import org.tensorflow.nio.buffer.converter.BooleanDataConverter;
 import org.tensorflow.nio.buffer.impl.large.ByteLargeDataBuffer;
 
 public class BooleanLogicalDataBufferTest extends BooleanDataBufferTestBase {

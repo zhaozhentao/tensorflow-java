@@ -16,7 +16,6 @@
  */
 package org.tensorflow.nio.buffer.impl.large;
 
-import java.nio.ReadOnlyBufferException;
 import org.tensorflow.nio.buffer.FloatDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.FloatJdkDataBuffer;
 

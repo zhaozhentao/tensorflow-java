@@ -17,12 +17,8 @@
 package org.tensorflow.nio.buffer.slice;
 
 import java.util.stream.DoubleStream;
-
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.DoubleDataBuffer;
-import org.tensorflow.nio.buffer.FloatDataBuffer;
-import org.tensorflow.nio.buffer.IntDataBuffer;
-import org.tensorflow.nio.buffer.LongDataBuffer;
 
 public class DoubleDataBufferSlice extends DataBufferSlice<Double> implements DoubleDataBuffer {
 

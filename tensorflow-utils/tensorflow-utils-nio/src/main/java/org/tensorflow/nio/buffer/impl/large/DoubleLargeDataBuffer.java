@@ -16,9 +16,7 @@
  */
 package org.tensorflow.nio.buffer.impl.large;
 
-import java.nio.ReadOnlyBufferException;
 import java.util.stream.DoubleStream;
-
 import org.tensorflow.nio.buffer.DoubleDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.DoubleJdkDataBuffer;
 

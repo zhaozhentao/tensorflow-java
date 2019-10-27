@@ -17,7 +17,6 @@
 package org.tensorflow.nio.nd;
 
 import org.tensorflow.nio.buffer.DataBuffer;
-import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.nd.index.Index;
 
 /**

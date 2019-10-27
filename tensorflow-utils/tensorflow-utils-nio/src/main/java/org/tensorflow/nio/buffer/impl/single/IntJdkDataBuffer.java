@@ -20,8 +20,6 @@ package org.tensorflow.nio.buffer.impl.single;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
 import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.buffer.IntDataBuffer;
 

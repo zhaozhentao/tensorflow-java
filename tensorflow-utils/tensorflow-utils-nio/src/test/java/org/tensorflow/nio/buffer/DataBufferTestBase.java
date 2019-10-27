@@ -23,7 +23,6 @@ import static org.junit.Assert.fail;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
-
 import org.junit.Test;
 
 abstract public class DataBufferTestBase<T> {

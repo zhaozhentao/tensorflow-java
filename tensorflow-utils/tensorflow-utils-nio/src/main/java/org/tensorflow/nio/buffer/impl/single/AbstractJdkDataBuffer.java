@@ -18,9 +18,8 @@
 package org.tensorflow.nio.buffer.impl.single;
 
 import java.nio.Buffer;
-
-import org.tensorflow.nio.buffer.impl.AbstractDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
+import org.tensorflow.nio.buffer.impl.AbstractDataBuffer;
 
 /**
  * Base class for all JDK-based data buffers.

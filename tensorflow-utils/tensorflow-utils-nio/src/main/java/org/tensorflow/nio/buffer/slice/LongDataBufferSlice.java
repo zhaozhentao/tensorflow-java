@@ -17,9 +17,7 @@
 package org.tensorflow.nio.buffer.slice;
 
 import java.util.stream.LongStream;
-
 import org.tensorflow.nio.buffer.DataBuffer;
-import org.tensorflow.nio.buffer.IntDataBuffer;
 import org.tensorflow.nio.buffer.LongDataBuffer;
 
 public class LongDataBufferSlice extends DataBufferSlice<Long> implements LongDataBuffer {

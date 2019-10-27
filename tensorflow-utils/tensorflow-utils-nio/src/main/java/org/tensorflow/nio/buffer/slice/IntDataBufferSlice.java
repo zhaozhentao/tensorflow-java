@@ -17,9 +17,7 @@
 package org.tensorflow.nio.buffer.slice;
 
 import java.util.stream.IntStream;
-
 import org.tensorflow.nio.buffer.DataBuffer;
-import org.tensorflow.nio.buffer.FloatDataBuffer;
 import org.tensorflow.nio.buffer.IntDataBuffer;
 
 public class IntDataBufferSlice extends DataBufferSlice<Integer> implements IntDataBuffer {

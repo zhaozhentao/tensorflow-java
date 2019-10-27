@@ -19,9 +19,8 @@ package org.tensorflow.nio.buffer.impl.single;
 
 import java.nio.FloatBuffer;
 import java.util.stream.Stream;
-
-import org.tensorflow.nio.buffer.FloatDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffer;
+import org.tensorflow.nio.buffer.FloatDataBuffer;
 
 /**
  * A buffer of bytes using a JDK {@link FloatBuffer} for storage.

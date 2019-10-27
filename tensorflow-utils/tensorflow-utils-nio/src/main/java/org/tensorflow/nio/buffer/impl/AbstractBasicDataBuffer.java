@@ -17,8 +17,6 @@
 package org.tensorflow.nio.buffer.impl;
 
 import org.tensorflow.nio.buffer.DataBuffer;
-import org.tensorflow.nio.buffer.impl.AbstractDataBuffer;
-import org.tensorflow.nio.buffer.impl.Validator;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractBasicDataBuffer<T, B extends DataBuffer<T>> extends AbstractDataBuffer<T, B> {

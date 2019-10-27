@@ -16,9 +16,7 @@
  */
 package org.tensorflow.nio.buffer.impl.large;
 
-import java.nio.ReadOnlyBufferException;
 import java.util.stream.IntStream;
-
 import org.tensorflow.nio.buffer.IntDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.IntJdkDataBuffer;
 

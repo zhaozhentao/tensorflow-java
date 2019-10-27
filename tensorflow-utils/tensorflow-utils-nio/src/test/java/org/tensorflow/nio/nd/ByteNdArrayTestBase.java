@@ -22,7 +22,6 @@ import static org.tensorflow.nio.nd.NdArrays.vector;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
-
 import org.junit.Test;
 
 public abstract class ByteNdArrayTestBase extends NdArrayTestBase<Byte> {

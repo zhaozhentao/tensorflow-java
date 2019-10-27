@@ -18,9 +18,7 @@ package org.tensorflow.nio.nd.impl.dense;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
-
 import org.tensorflow.nio.buffer.DataBuffer;
-import org.tensorflow.nio.buffer.IntDataBuffer;
 import org.tensorflow.nio.nd.ElementCursor;
 import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.impl.AbstractNdArray;
