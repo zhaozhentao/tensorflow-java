@@ -27,7 +27,7 @@ public class ByteDenseNdArray extends AbstractDenseNdArray<Byte, ByteNdArray>
     implements ByteNdArray {
 
   public static ByteNdArray create(ByteDataBuffer buffer, Shape shape) {
-    Validator.denseShape(shape);
+    Validator.denseShape(buffer, shape);
     return new ByteDenseNdArray(buffer, DimensionalSpace.create(shape));
   }
 

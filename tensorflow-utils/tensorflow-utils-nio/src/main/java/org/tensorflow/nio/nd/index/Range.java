@@ -18,12 +18,6 @@ package org.tensorflow.nio.nd.index;
 
 import org.tensorflow.nio.nd.impl.dimension.Dimension;
 
-/**
- * An index that returns only elements on a given dimension between two coordinates.
- *
- * <p>For example, given a vector with {@code n} elements on the {@code x} axis, and {@code n > k > j},
- * {@code range(j, k)} returns x<sub>j</sub>, x<sub>j+1</sub>, ..., x<sub>k</sub>
- */
 class Range implements Index {
 
   @Override

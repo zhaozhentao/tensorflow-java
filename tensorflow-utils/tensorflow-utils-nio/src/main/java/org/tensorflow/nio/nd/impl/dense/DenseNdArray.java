@@ -24,7 +24,7 @@ import org.tensorflow.nio.nd.impl.dimension.DimensionalSpace;
 public class DenseNdArray<T> extends AbstractDenseNdArray<T, NdArray<T>> {
 
   public static <T> NdArray<T> wrap(DataBuffer<T> buffer, Shape shape) {
-    Validator.denseShape(shape);
+    Validator.denseShape(buffer, shape);
     return new DenseNdArray<>(buffer, shape);
   }
 

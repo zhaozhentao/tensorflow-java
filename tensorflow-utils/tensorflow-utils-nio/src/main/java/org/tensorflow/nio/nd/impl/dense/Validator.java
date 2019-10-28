@@ -18,15 +18,22 @@ package org.tensorflow.nio.nd.impl.dense;
 
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;
+import org.tensorflow.nio.buffer.DataBuffer;
 import org.tensorflow.nio.nd.NdArray;
 import org.tensorflow.nio.nd.Shape;
 
 final class Validator {
 
-  static void denseShape(Shape shape) {
+  static void denseShape(DataBuffer<?> buffer, Shape shape) {
+    if (shape == null) {
+      throw new IllegalArgumentException("Shape cannot be null");
+    }
     if (shape.hasUnknownDimension()) {
       throw new IllegalArgumentException("Dense arrays cannot have unknown dimension(s)");
     }
+    if (buffer.capacity() < shape.size()) {
+      throw new IllegalArgumentException("Buffer capacity is smaller than the shape size");
+    };
   }
 
   static void getArrayArgs(NdArray<?> ndArray, int arrayLength, int arrayOffset) {

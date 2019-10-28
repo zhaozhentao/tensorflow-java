@@ -27,7 +27,7 @@ public class FloatDenseNdArray extends AbstractDenseNdArray<Float, FloatNdArray>
     implements FloatNdArray {
 
   public static FloatNdArray create(FloatDataBuffer buffer, Shape shape) {
-    Validator.denseShape(shape);
+    Validator.denseShape(buffer, shape);
     return new FloatDenseNdArray(buffer, shape);
   }
 

@@ -27,7 +27,7 @@ public class IntDenseNdArray extends AbstractDenseNdArray<Integer, IntNdArray>
     implements IntNdArray {
 
   public static IntNdArray create(IntDataBuffer buffer, Shape shape) {
-    Validator.denseShape(shape);
+    Validator.denseShape(buffer, shape);
     return new IntDenseNdArray(buffer, shape);
   }
 

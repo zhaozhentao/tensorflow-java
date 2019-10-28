@@ -18,15 +18,6 @@ package org.tensorflow.nio.nd.index;
 
 import org.tensorflow.nio.nd.impl.dimension.Dimension;
 
-/**
- * An index that returns all elements of a dimension in the original order.
- *
- * <p>Applying this index to a given dimension will return the original dimension
- * directly.
- *
- * <p>For example, given a vector with {@code n} elements, {@code all()} returns
- * x<sub>0</sub>, x<sub>1</sub>, ..., x<sub>n-1</sub>
- */
 class All implements Index {
 
   static final All INSTANCE = new All();

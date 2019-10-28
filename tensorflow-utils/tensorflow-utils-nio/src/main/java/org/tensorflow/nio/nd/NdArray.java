@@ -38,15 +38,15 @@ import org.tensorflow.nio.nd.index.Index;
  *    import static org.tensorflow.nio.StaticApi.*;
  *
  *    // Creates a 2x3x2 matrix (of rank 3)
- *    FloatNdArray matrix3d = ndArrayOfFloats(shapeOf(2, 3, 2));
+ *    FloatNdArray matrix3d = ndArrayOfFloats(shape(2, 3, 2));
  *
  *    // Initialize sub-matrices data with vectors
- *    matrix.set(vectorOf(1.0f, 2.0f), 0, 0)
- *          .set(vectorOf(3.0f, 4.0f), 0, 1)
- *          .set(vectorOf(5.0f, 6.0f), 0, 2)
- *          .set(vectorOf(7.0f, 8.0f), 1, 0)
- *          .set(vectorOf(9.0f, 10.0f), 1, 1)
- *          .set(vectorOf(11.0f, 12.0f), 1, 2);
+ *    matrix.set(vector(1.0f, 2.0f), 0, 0)
+ *          .set(vector(3.0f, 4.0f), 0, 1)
+ *          .set(vector(5.0f, 6.0f), 0, 2)
+ *          .set(vector(7.0f, 8.0f), 1, 0)
+ *          .set(vector(9.0f, 10.0f), 1, 1)
+ *          .set(vector(11.0f, 12.0f), 1, 2);
  *
  *    // Access the second 3x2 matrix (of rank 2)
  *    FloatNdArray matrix = matrix3d.get(1);
@@ -99,7 +99,7 @@ public interface NdArray<T> {
    * <pre>{@code
    *    // Iterate matrix for initializing each of its vectors
    *    matrixOfFloats.elements(0).forEach(v -> {
-   *      v.set(vectorOf(1.0f, 2.0f, 3.0f));
+   *      v.set(vector(1.0f, 2.0f, 3.0f));
    *    });
    *
    *    // Iterate a vector for reading each of its scalar
@@ -134,22 +134,22 @@ public interface NdArray<T> {
    *
    * <p>Example of usage:
    * <pre>{@code
-   *    FloatNdArray matrix3d = ndArrayOfFloats(shapeOf(3, 2, 4));  // with [x, y, z] axes
+   *    FloatNdArray matrix3d = ndArrayOfFloats(shape(3, 2, 4));  // with [x, y, z] axes
    *
    *    // Iterates elements on the x axis by preserving only the 3rd value on the z axis,
    *    // (i.e. [x, y, 2])
    *    matrix3d.slice(all(), all(), at(2)).elements(0).forEach(m -> {
-   *      assertEquals(shapeOf(2), m); // y=2, z=0 (scalar)
+   *      assertEquals(shape(2), m); // y=2, z=0 (scalar)
    *    });
    *
    *    // Creates a slice that contains only the last element of the y axis and elements with an
    *    // odd `z` coordinate.
    *    FloatNdArray slice = matrix3d.slice(all(), at(1), odd());
-   *    assertEquals(shapeOf(3, 2), slice.shape());  // x=3, y=0 (scalar), z=2 (odd coordinates)
+   *    assertEquals(shape(3, 2), slice.shape());  // x=3, y=0 (scalar), z=2 (odd coordinates)
    *
    *    // Iterates backward the elements on the x axis
    *    matrix3d.slice(flip()).elements(0).forEach(m -> {
-   *      assertEquals(shapeOf(2, 4), m);  // y=2, z=4
+   *      assertEquals(shape(2, 4), m);  // y=2, z=4
    *    });
    * }</pre>
    *
@@ -186,9 +186,9 @@ public interface NdArray<T> {
    *
    * <p>The number of coordinates provided can be anywhere between 0 and rank - 1. For example:
    * <pre>{@code
-   *  FloatNdArray matrix = ndArrayOfFloats(shapeOf(2, 2));  // matrix rank = 2
-   *  matrix.set(vectorOf(10.0f, 20.0f), 0);  // success
-   *  matrix.set(scalarOf(10.0f), 1, 0); // success
+   *  FloatNdArray matrix = ndArrayOfFloats(shape(2, 2));  // matrix rank = 2
+   *  matrix.set(vector(10.0f, 20.0f), 0);  // success
+   *  matrix.set(scalar(10.0f), 1, 0); // success
    * }</pre>
    *
    * @param coordinates coordinates of the element to assign
@@ -204,7 +204,7 @@ public interface NdArray<T> {
    * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
-   *  FloatNdArray matrix = ndArrayOfFloats(shapeOf(2, 2));  // matrix rank = 2
+   *  FloatNdArray matrix = ndArrayOfFloats(shape(2, 2));  // matrix rank = 2
    *  matrix.getValue(0, 1);  // succeeds, returns 0.0f
    *  matrix.getValue(0);  // throws IllegalRankException
    *
@@ -230,7 +230,7 @@ public interface NdArray<T> {
    * <p>To access the scalar element, the number of coordinates provided must be equal to the number
    * of dimensions of this array (i.e. its rank). For example:
    * <pre>{@code
-   *  FloatNdArray matrix = ndArrayOfFloats(shapeOf(2, 2));  // matrix rank = 2
+   *  FloatNdArray matrix = ndArrayOfFloats(shape(2, 2));  // matrix rank = 2
    *  matrix.setValue(10.0f, 0, 1);  // succeeds
    *  matrix.setValue(10.0f, 0);  // throws IllegalRankException
    *

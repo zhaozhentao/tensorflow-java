@@ -27,7 +27,7 @@ public class DoubleDenseNdArray extends AbstractDenseNdArray<Double, DoubleNdArr
     implements DoubleNdArray {
 
   public static DoubleNdArray create(DoubleDataBuffer buffer, Shape shape) {
-    Validator.denseShape(shape);
+    Validator.denseShape(buffer, shape);
     return new DoubleDenseNdArray(buffer, shape);
   }
 

@@ -27,7 +27,7 @@ public class BooleanDenseNdArray extends AbstractDenseNdArray<Boolean, BooleanNd
     implements BooleanNdArray {
 
   public static BooleanNdArray create(BooleanDataBuffer buffer, Shape shape) {
-    Validator.denseShape(shape);
+    Validator.denseShape(buffer, shape);
     return new BooleanDenseNdArray(buffer, shape);
   }
 

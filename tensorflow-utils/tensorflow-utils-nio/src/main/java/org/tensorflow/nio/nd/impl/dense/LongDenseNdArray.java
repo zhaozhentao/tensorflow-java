@@ -27,7 +27,7 @@ public class LongDenseNdArray extends AbstractDenseNdArray<Long, LongNdArray>
     implements LongNdArray {
 
   public static LongNdArray create(LongDataBuffer buffer, Shape shape) {
-    Validator.denseShape(shape);
+    Validator.denseShape(buffer, shape);
     return new LongDenseNdArray(buffer, shape);
   }
 

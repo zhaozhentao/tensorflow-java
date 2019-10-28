@@ -18,12 +18,6 @@ package org.tensorflow.nio.nd.index;
 
 import org.tensorflow.nio.nd.impl.dimension.Dimension;
 
-/**
- * An index that skips a fixed amount of coordinates between each values returned.
- *
- * <p>For example, given a vector with {@code n} elements on the {@code x} axis,
- * {@code step(k)} returns x<sub>0</sub>, x<sub>k</sub>, x<sub>k*2</sub>, ...
- */
 class Step implements Index {
 
   @Override

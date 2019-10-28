@@ -50,12 +50,12 @@ import org.tensorflow.nio.buffer.impl.single.IntJdkDataBuffer;
 import org.tensorflow.nio.buffer.impl.single.LongJdkDataBuffer;
 
 /**
- * Helper class for creating `DataBuffer` instances.
+ * Helper class for creating {@code DataBuffer} instances.
  */
 public final class DataBuffers {
 
   /**
-   * Creates a buffer of bytes that can store up to `capacity` values
+   * Creates a buffer of bytes that can store up to {@code capacity} values
    *
    * @param capacity capacity of the buffer to allocate
    * @return a new buffer
@@ -103,7 +103,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a buffer of longs that can store up to `capacity` values
+   * Creates a buffer of longs that can store up to {@code capacity} values
    *
    * @param capacity capacity of the buffer to allocate
    * @return a new buffer
@@ -116,7 +116,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a logical buffer of longs that can store up to `capacity` values.
+   * Creates a logical buffer of longs that can store up to {@code capacity} values.
    *
    * <p>The provided converter is used to map the long values to/from bytes, allowing custom
    * representation of a long.
@@ -165,7 +165,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a buffer of integers that can store up to `capacity` values
+   * Creates a buffer of integers that can store up to {@code capacity} values
    *
    * @param capacity capacity of the buffer to allocate
    * @return a new buffer
@@ -178,7 +178,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a logical buffer of integers that can store up to `capacity` values.
+   * Creates a logical buffer of integers that can store up to {@code capacity} values.
    *
    * <p>The provided converter is used to map the integer values to/from bytes, allowing custom
    * representation of a integer.
@@ -227,7 +227,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a buffer of doubles that can store up to `capacity` values
+   * Creates a buffer of doubles that can store up to {@code capacity} values
    *
    * @param capacity capacity of the buffer to allocate
    * @return a new buffer
@@ -240,7 +240,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a logical buffer of doubles that can store up to `capacity` values.
+   * Creates a logical buffer of doubles that can store up to {@code capacity} values.
    *
    * <p>The provided converter is used to map the double values to/from bytes, allowing custom
    * representation of a double.
@@ -290,7 +290,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a buffer of floats that can store up to `capacity` values
+   * Creates a buffer of floats that can store up to {@code capacity} values
    *
    * @param capacity capacity of the buffer to allocate
    * @return a new buffer
@@ -303,7 +303,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a logical buffer of floats that can store up to `capacity` values.
+   * Creates a logical buffer of floats that can store up to {@code capacity} values.
    *
    * <p>The provided converter is used to map the float values to/from bytes, allowing custom
    * representation of a float.
@@ -352,7 +352,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a buffer of booleans that can store up to `capacity` values
+   * Creates a buffer of booleans that can store up to {@code capacity} values
    *
    * @param capacity capacity of the buffer to allocate
    * @return a new buffer
@@ -365,7 +365,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a logical buffer of booleans that can store up to `capacity` values.
+   * Creates a logical buffer of booleans that can store up to {@code capacity} values.
    *
    * <p>The provided converter is used to map the boolean values to/from bytes, allowing custom
    * representation of a boolean.
@@ -403,7 +403,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a buffer of objects of type `clazz` that can store up to `capacity` values
+   * Creates a buffer of objects of type {@code clazz` that can store up to `capacity} values
    *
    * @param clazz the type of object stored in this buffer
    * @param capacity capacity of the buffer to allocate
@@ -417,7 +417,7 @@ public final class DataBuffers {
   }
 
   /**
-   * Creates a logical buffer that can store up to `capacity` values.
+   * Creates a logical buffer that can store up to {@code capacity} values.
    *
    * <p>The provided converter is used to map the values to/from bytes, allowing custom
    * representation of this buffer type.

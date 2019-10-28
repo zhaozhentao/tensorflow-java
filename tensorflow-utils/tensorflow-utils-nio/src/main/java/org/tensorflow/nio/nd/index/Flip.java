@@ -18,12 +18,6 @@ package org.tensorflow.nio.nd.index;
 
 import org.tensorflow.nio.nd.impl.dimension.Dimension;
 
-/**
- * An index that reverse the order of the elements on a given dimension.
- *
- * <p>For example, given a vector with {@code n} elements on the {@code x} axis,
- * this index returns x<sub>n-1</sub>, x<sub>n-2</sub>, ..., x<sub>0</sub>
- */
 class Flip implements Index {
 
   static final Flip INSTANCE = new Flip();

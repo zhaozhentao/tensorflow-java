@@ -18,16 +18,6 @@ package org.tensorflow.nio.nd.index;
 
 import org.tensorflow.nio.nd.impl.dimension.Dimension;
 
-/**
- * An index that selects a specific element on a given dimension.
- *
- * <p>When this index is applied to a given dimension, the dimension is resolved as a
- * single element and therefore is excluded from the computation of the rank.
- *
- * <p>For example, given a 3D matrix on the axis [x, y, z], if
- * {@code matrix.slice(all(), at(0), at(0)}, then the rank of the returned slice is 1 and its
- * number of elements is {@code x.numElements()}
- */
 class At implements Index {
 
   @Override
@@ -37,17 +27,17 @@ class At implements Index {
 
   @Override
   public long mapCoordinate(long coordinate, Dimension dim) {
-    return value;  // TODO Validate that coordinate is 0?
+    return coord;  // TODO Validate that coordinate is 0?
   }
 
   @Override
   public Dimension apply(Dimension dim) {
-    return dim.withCoordinate(value);
+    return dim.withCoordinate(coord);
   }
 
-  At(long value) {
-    this.value = value;
+  At(long coord) {
+    this.coord = coord;
   }
 
-  private long value;
+  private long coord;
 }
