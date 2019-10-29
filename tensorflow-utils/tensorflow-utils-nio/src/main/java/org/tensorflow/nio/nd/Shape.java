@@ -56,6 +56,9 @@ public final class Shape {
    * }</pre>
    */
   public static Shape make(long... dimensionSizes) {
+    if (dimensionSizes == null || dimensionSizes.length == 0) {
+      return scalar();
+    }
     return new Shape(dimensionSizes);
   }
 

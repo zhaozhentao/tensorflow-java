@@ -241,6 +241,14 @@ public abstract class NdArrayTestBase<T> {
     NdArray<T> scalar102 = matrix3d.slice(at(1), at(0), at(z));
     assertEquals(scalar102.shape(), Shape.make());
     assertEquals(val102, scalar102.getValue());
+
+    // Slicing the 3D matrix so we only keep the first element of the second dimension
+    NdArray<T> matrix_X0Z = matrix3d.slice(all(), at(0));
+    assertEquals(2, matrix_X0Z.rank());
+    assertEquals(Shape.make(5, 5), matrix_X0Z.shape());
+    assertEquals(val100, matrix_X0Z.getValue(1, 0));
+    assertEquals(val101, matrix_X0Z.getValue(1, 1));
+    assertEquals(val200, matrix_X0Z.getValue(2, 0));
   }
 
   @Test

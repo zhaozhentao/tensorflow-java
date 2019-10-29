@@ -5,7 +5,6 @@ import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
 import org.tensorflow.nio.buffer.DataBuffers;
 import org.tensorflow.nio.buffer.DoubleDataBuffer;
-import org.tensorflow.nio.buffer.impl.single.DoubleJdkDataBuffer;
 import org.tensorflow.nio.nd.DoubleNdArray;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.impl.dense.DoubleDenseNdArray;
@@ -16,19 +15,19 @@ public interface TDouble extends DoubleNdArray, TDecimal {
   DataType<TDouble> DTYPE = DataType.create("DOUBLE", 2, 8, TDoubleImpl::map);
 
   static Tensor<TDouble> scalar(double value) {
-    Tensor<TDouble> t = tensorOfShape(Shape.scalar());
+    Tensor<TDouble> t = tensorOfShape();
     t.data().setDouble(value);
     return t;
   }
 
   static Tensor<TDouble> vector(double... values) {
-    Tensor<TDouble> t = tensorOfShape(Shape.make(values.length));
+    Tensor<TDouble> t = tensorOfShape(values.length);
     t.data().write(values);
     return t;
   }
 
-  static Tensor<TDouble> tensorOfShape(Shape shape) {
-    return Tensor.allocate(DTYPE, shape);
+  static Tensor<TDouble> tensorOfShape(long... dimensionSizes) {
+    return Tensor.allocate(DTYPE, Shape.make(dimensionSizes));
   }
 }
 

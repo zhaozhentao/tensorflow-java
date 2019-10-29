@@ -23,7 +23,7 @@ import org.tensorflow.nio.nd.index.Indices;
 /**
  * Helper class for instantiating NIO utility objects.
  */
-interface StaticApi {
+public interface StaticApi {
 
   /**
    * Creates a buffer of objects of type {@code clazz} that can store up to {@code capacity} values

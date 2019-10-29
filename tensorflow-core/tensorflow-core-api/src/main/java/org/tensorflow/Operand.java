@@ -45,4 +45,15 @@ public interface Operand<T> {
    * @see OperationBuilder#addInput(Output)
    */
   Output<T> asOutput();
+
+  /**
+   * Returns the data of the tensor.
+   *
+   * <i>This only works when running in an eager execution</i>
+   *
+   * @throws IllegalStateException if this is an operand of a graph
+   */
+  default T tensorData() {
+    return asOutput().tensor().data();
+  }
 }

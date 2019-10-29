@@ -18,19 +18,19 @@ public interface TBool extends BooleanNdArray, TType {
   DataType<TBool> DTYPE = DataType.create("BOOL", 10, 1, TBoolImpl::map);
 
   static Tensor<TBool> scalar(boolean value) {
-    Tensor<TBool> t = tensorOfShape(Shape.scalar());
+    Tensor<TBool> t = tensorOfShape();
     t.data().setBoolean(value);
     return t;
   }
 
   static Tensor<TBool> vector(boolean... values) {
-    Tensor<TBool> t = tensorOfShape(Shape.make(values.length));
+    Tensor<TBool> t = tensorOfShape(values.length);
     t.data().write(values);
     return t;
   }
 
-  static Tensor<TBool> tensorOfShape(Shape shape) {
-    return Tensor.allocate(DTYPE, shape);
+  static Tensor<TBool> tensorOfShape(long... dimensionSizes) {
+    return Tensor.allocate(DTYPE, Shape.make(dimensionSizes));
   }
 }
 

@@ -5,8 +5,6 @@ import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
 import org.tensorflow.nio.buffer.ByteDataBuffer;
 import org.tensorflow.nio.buffer.DataBuffers;
-import org.tensorflow.nio.buffer.LongDataBuffer;
-import org.tensorflow.nio.buffer.impl.single.ByteJdkDataBuffer;
 import org.tensorflow.nio.nd.ByteNdArray;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.impl.dense.ByteDenseNdArray;
@@ -17,19 +15,19 @@ public interface TUInt8 extends ByteNdArray, TNumber {
   DataType<TUInt8> DTYPE = DataType.create("UINT8", 4, 1, TUInt8Impl::map);
 
   static Tensor<TUInt8> scalar(byte value) {
-    Tensor<TUInt8> t = tensorOfShape(Shape.scalar());
+    Tensor<TUInt8> t = tensorOfShape();
     t.data().setByte(value);
     return t;
   }
 
   static Tensor<TUInt8> vector(byte... values) {
-    Tensor<TUInt8> t = tensorOfShape(Shape.make(values.length));
+    Tensor<TUInt8> t = tensorOfShape(values.length);
     t.data().write(values);
     return t;
   }
 
-  static Tensor<TUInt8> tensorOfShape(Shape shape) {
-    return Tensor.allocate(DTYPE, shape);
+  static Tensor<TUInt8> tensorOfShape(long... dimensionSizes) {
+    return Tensor.allocate(DTYPE, Shape.make(dimensionSizes));
   }
 }
 

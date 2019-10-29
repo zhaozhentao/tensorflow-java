@@ -4,9 +4,7 @@ import java.nio.ByteBuffer;
 import org.tensorflow.DataType;
 import org.tensorflow.Tensor;
 import org.tensorflow.nio.buffer.DataBuffers;
-import org.tensorflow.nio.buffer.DoubleDataBuffer;
 import org.tensorflow.nio.buffer.FloatDataBuffer;
-import org.tensorflow.nio.buffer.impl.single.FloatJdkDataBuffer;
 import org.tensorflow.nio.nd.FloatNdArray;
 import org.tensorflow.nio.nd.Shape;
 import org.tensorflow.nio.nd.impl.dense.FloatDenseNdArray;
@@ -17,19 +15,19 @@ public interface TFloat extends FloatNdArray, TDecimal {
   DataType<TFloat> DTYPE = DataType.create("FLOAT", 1, 4, TFloatImpl::map);
 
   static Tensor<TFloat> scalar(float value) {
-    Tensor<TFloat> t = tensorOfShape(Shape.scalar());
+    Tensor<TFloat> t = tensorOfShape();
     t.data().setFloat(value);
     return t;
   }
 
   static Tensor<TFloat> vector(float... values) {
-    Tensor<TFloat> t = tensorOfShape(Shape.make(values.length));
+    Tensor<TFloat> t = tensorOfShape(values.length);
     t.data().write(values);
     return t;
   }
 
-  static Tensor<TFloat> tensorOfShape(Shape shape) {
-    return Tensor.allocate(DTYPE, shape);
+  static Tensor<TFloat> tensorOfShape(long... dimensionSizes) {
+    return Tensor.allocate(DTYPE, Shape.make(dimensionSizes));
   }
 }
 

@@ -78,14 +78,15 @@ public class DimensionalSpace {
       throw new IndexOutOfBoundsException();
     }
     long position = 0L;
-    int i = 0;
-    for (; i < coords.length; ++i) {
-      position += dimensions[i].positionOf(coords[i]);
+    int dimIdx = 0;
+    for (long coord : coords) {
+      position += dimensions[dimIdx++].positionOf(coord);
+      // Fast-forward any remaining dimensions that are a single point
+      while (dimIdx < dimensions.length && dimensions[dimIdx].isSinglePoint()) {
+        position += dimensions[dimIdx++].position();
+      }
     }
-    while (i < dimensions.length && dimensions[i].isSinglePoint()) {
-      position += dimensions[i++].position();
-    }
-    if (isValue && i < shape.numDimensions()) {
+    if (isValue && dimIdx < shape.numDimensions()) {
       throw new IllegalRankException("Not a scalar value");
     }
     return position;
