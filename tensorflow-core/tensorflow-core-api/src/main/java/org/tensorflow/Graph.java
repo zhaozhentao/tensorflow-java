@@ -15,7 +15,12 @@ limitations under the License.
 
 package org.tensorflow;
 
+import org.tensorflow.op.Scope;
+import org.tensorflow.op.core.NoOp;
+
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * A data flow graph representing a TensorFlow computation.
@@ -26,6 +31,8 @@ import java.util.Iterator;
  * the {@link #close()} method then the Graph object is no longer needed.
  */
 public final class Graph implements ExecutionEnvironment, AutoCloseable {
+
+  public static final String DEFAULT_INIT_NAME = "init";
 
   /** Create an empty Graph. */
   public Graph() {
@@ -142,6 +149,28 @@ public final class Graph implements ExecutionEnvironment, AutoCloseable {
     synchronized (nativeHandleLock) {
       return toGraphDef(nativeHandle);
     }
+  }
+
+  /**
+   * Adds an initializer to the graph initializer list.
+   * @param initializer An initializer to add to the list.
+   */
+  public synchronized void addInitializer(Operand<?> initializer) {
+    initializers.add(initializer);
+  }
+
+  /**
+   * Returns an op which initializers all the variables.
+   * @return The initializer operation.
+   */
+  public NoOp variablesInitializer() {
+    return variablesInitializer(DEFAULT_INIT_NAME);
+  }
+
+  public NoOp variablesInitializer(String name) {
+    Scope scope = new Scope(this);
+    scope = scope.withName(name).withControlDependencies(initializers);
+    return NoOp.create(scope);
   }
 
   /**
@@ -349,6 +378,8 @@ public final class Graph implements ExecutionEnvironment, AutoCloseable {
   private final Object nativeHandleLock = new Object();
   private long nativeHandle;
   private int refcount = 0;
+
+  private final List<Operand<?>> initializers = new ArrayList<>();
 
   // Related native objects (such as the TF_Operation object backing an Operation instance)
   // have a validity tied to that of the Graph. The handles to those native objects are not
