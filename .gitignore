@@ -56,3 +56,5 @@ gradleBuild
 **/target
 .tf_configure.bazelrc
 .clwb/
+
+*~

@@ -10,7 +10,7 @@ if [[ -d $BAZEL_VC ]]; then
     export BUILD_FLAGS="--copt=//arch:AVX `#--copt=//arch:AVX2` --define=override_eigen_strong_inline=true"
     export PYTHON_BIN_PATH=$(which python.exe)
 else
-    export BUILD_FLAGS="--copt=-msse4.1 --copt=-msse4.2 --copt=-mavx `#--copt=-mavx2 --copt=-mfma` --linkopt=-lstdc++ --host_linkopt=-lstdc++"
+    export BUILD_FLAGS="`#--copt=-msse4.1 --copt=-msse4.2 --copt=-mavx --copt=-mavx2 --copt=-mfma` --linkopt=-lstdc++ --host_linkopt=-lstdc++"
     export PYTHON_BIN_PATH=$(which python3)
 fi
 
@@ -34,12 +34,13 @@ BUILD_FLAGS="$BUILD_FLAGS --distinct_host_configuration=true"
 
 # Build C/C++ API of TensorFlow itself including a target to generate ops for Java
 bazel build $BUILD_FLAGS ${BUILD_USER_FLAGS:-} \
+    --config=macos_arm64 \
+    --incompatible_restrict_string_escapes=false \
     @org_tensorflow//tensorflow:tensorflow_cc \
     @org_tensorflow//tensorflow/tools/lib_package:jnilicenses_generate \
     :java_proto_gen_sources \
     :java_op_exporter \
-    :java_api_import \
-    :custom_ops_test
+    :java_api_import
 
 export BAZEL_SRCS=$(pwd -P)/bazel-tensorflow-core-api
 export BAZEL_BIN=$(pwd -P)/bazel-bin
