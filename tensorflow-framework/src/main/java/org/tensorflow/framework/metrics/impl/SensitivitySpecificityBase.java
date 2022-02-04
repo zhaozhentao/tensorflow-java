@@ -1,5 +1,6 @@
 package org.tensorflow.framework.metrics.impl;
 
+import static org.tensorflow.framework.losses.impl.LossesHelper.allAxes;
 import static org.tensorflow.framework.utils.CastHelper.cast;
 
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import org.tensorflow.ndarray.Shape;
 import org.tensorflow.op.Op;
 import org.tensorflow.op.Ops;
 import org.tensorflow.op.core.Variable;
+import org.tensorflow.op.core.Where;
+import org.tensorflow.types.TBool;
 import org.tensorflow.types.family.TNumber;
 
 /**
@@ -274,5 +277,37 @@ public abstract class SensitivitySpecificityBase<T extends TNumber> extends Base
 
   public Class<T> getInternalType() {
     return internalType;
+  }
+
+  /**
+   * Returns the maximum of dependent that satisfies the constraint.
+   *
+   * @param tf The tf ops.
+   * @param constraint The constraint tensor.
+   * @param dependent The dependent tensor.
+   * @param constraintValue The value to test for.
+   * @param resultType The type of the result.
+   * @param <U> The type of the result tensor.
+   * @return The value of the dependent tensor when the constraint tensor is greater than or equal to the constraint.
+   */
+  protected <U extends TNumber> Operand<U> findMaxUnderGreaterThanConstraint(
+      Ops tf,
+      Operand<T> constraint,
+      Operand<T> dependent,
+      double constraintValue,
+      Class<U> resultType) {
+    Operand<TBool> isFeasible =
+        tf.math.greaterEqual(constraint, cast(tf, tf.constant(constraintValue), getType()));
+    Where feasible = tf.where(isFeasible);
+    Operand<TBool> feasibleExists = tf.math.greater(tf.size(feasible), tf.constant(0));
+
+    Operand<T> gather = tf.expandDims(tf.gather(dependent, feasible, tf.constant(0)), tf.constant(0));
+    return cast(
+        tf,
+        tf.select(
+            feasibleExists,
+            tf.reduceMax(gather, allAxes(tf, gather)),
+            cast(tf, tf.constant(0), getType())),
+        resultType);
   }
 }

@@ -109,14 +109,12 @@ public class PrecisionAtRecall<T extends TNumber> extends SensitivitySpecificity
   @Override
   public <U extends TNumber> Operand<U> result(Ops tf, Class<U> resultType) {
     init(tf);
-    Operand<T> div = tf.math.divNoNan(truePositives, tf.math.add(truePositives, falseNegatives));
-    Operand<T> sub = tf.math.sub(div, cast(tf, tf.constant(recall), getType()));
-    Operand<TInt32> minIndex = tf.math.argMin(tf.math.abs(sub), tf.constant(0), TInt32.class);
-    minIndex = tf.expandDims(minIndex, tf.constant(0));
+    Operand<T> precisions =
+        tf.math.divNoNan(truePositives, tf.math.add(truePositives, falsePositives));
+    Operand<T> recalls =
+        tf.math.divNoNan(truePositives, tf.math.add(truePositives, falseNegatives));
 
-    Operand<T> trueSlice = tf.slice(truePositives, minIndex, tf.constant(new int[] {1}));
-    Operand<T> falseSlice = tf.slice(falsePositives, minIndex, tf.constant(new int[] {1}));
-    return cast(tf, tf.math.divNoNan(trueSlice, tf.math.add(trueSlice, falseSlice)), resultType);
+    return findMaxUnderGreaterThanConstraint(tf, recalls, precisions, recall, resultType);
   }
 
   /**

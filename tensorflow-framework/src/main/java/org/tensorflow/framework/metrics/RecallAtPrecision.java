@@ -119,19 +119,8 @@ public class RecallAtPrecision<T extends TNumber> extends SensitivitySpecificity
         tf.math.divNoNan(truePositives, tf.math.add(truePositives, falsePositives));
     Operand<T> recalls =
         tf.math.divNoNan(truePositives, tf.math.add(truePositives, falseNegatives));
-    Operand<TBool> isFeasible =
-        tf.math.greaterEqual(precisions, cast(tf, tf.constant(precision), getType()));
-    Where feasible = tf.where(isFeasible);
-    Operand<TBool> feasibleExists = tf.math.greater(tf.size(feasible), tf.constant(0));
 
-    Operand<T> gather = tf.expandDims(tf.gather(recalls, feasible, tf.constant(0)), tf.constant(0));
-    return cast(
-        tf,
-        tf.select(
-            feasibleExists,
-            tf.reduceMax(gather, allAxes(tf, gather)),
-            cast(tf, tf.constant(0), getType())),
-        resultType);
+    return findMaxUnderGreaterThanConstraint(tf, precisions, recalls, precision, resultType);
   }
 
   /**
