@@ -48,6 +48,7 @@ public class PrecisionTest {
       Op update = instance.updateState(tf, labels, predictions, null);
 
       for (int i = 0; i < 10; i++) {
+        System.out.println("i = " + i);
         session.run(update);
       }
 
