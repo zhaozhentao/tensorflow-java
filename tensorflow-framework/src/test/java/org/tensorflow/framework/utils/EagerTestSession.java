@@ -39,7 +39,7 @@ public class EagerTestSession extends TestSession {
   /** Create an Eager mode test session. */
   public EagerTestSession() {
     this.session = EagerSession.create();
-    this.tf = Ops.create(session).withName("test");
+    this.tf = Ops.create(session).withSubScope("test");
   }
 
   /** {@inheritDoc} */

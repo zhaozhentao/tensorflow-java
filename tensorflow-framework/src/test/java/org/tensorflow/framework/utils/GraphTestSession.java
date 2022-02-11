@@ -41,7 +41,7 @@ public class GraphTestSession extends TestSession {
   public GraphTestSession() {
     graph = new Graph();
     session = new Session(graph);
-    tf = Ops.create(graph).withName("test");
+    tf = Ops.create(graph).withSubScope("test");
   }
 
   /** {@inheritDoc} */
