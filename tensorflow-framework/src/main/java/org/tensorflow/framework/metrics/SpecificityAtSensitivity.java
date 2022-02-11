@@ -14,12 +14,9 @@ limitations under the License.
 =======================================================================*/
 package org.tensorflow.framework.metrics;
 
-import static org.tensorflow.framework.utils.CastHelper.cast;
-
 import org.tensorflow.Operand;
 import org.tensorflow.framework.metrics.impl.SensitivitySpecificityBase;
 import org.tensorflow.op.Ops;
-import org.tensorflow.types.TInt32;
 import org.tensorflow.types.family.TNumber;
 
 /**
@@ -78,7 +75,7 @@ public class SpecificityAtSensitivity<T extends TNumber> extends SensitivitySpec
   }
 
   /**
-   * Creates a PrecisionRecall metric with a name of {@link Class#getSimpleName()}.
+   * Creates a SpecificityAtSensitivity metric with a name of {@link Class#getSimpleName()}.
    *
    * @param sensitivity the sensitivity. A scalar value in range [0, 1]
    * @param numThresholds Defaults to 200. The number of thresholds to use for matching the given
@@ -94,7 +91,7 @@ public class SpecificityAtSensitivity<T extends TNumber> extends SensitivitySpec
   }
 
   /**
-   * Creates a PrecisionRecall metric.
+   * Creates a SpecificityAtSensitivity metric.
    *
    * @param name the name of the metric, if null defaults to {@link Class#getSimpleName()}
    * @param sensitivity the sensitivity. A scalar value in range [0, 1]
@@ -119,15 +116,12 @@ public class SpecificityAtSensitivity<T extends TNumber> extends SensitivitySpec
   public <U extends TNumber> Operand<U> result(Ops tf, Class<U> resultType) {
     init(tf);
 
+    Operand<T> specificities =
+        tf.math.divNoNan(trueNegatives, tf.math.add(trueNegatives, falsePositives));
     Operand<T> sensitivities =
         tf.math.divNoNan(truePositives, tf.math.add(truePositives, falseNegatives));
-    Operand<T> sub = tf.math.sub(sensitivities, cast(tf, tf.constant(sensitivity), getType()));
-    Operand<TInt32> minIndex = tf.math.argMin(tf.math.abs(sub), tf.constant(0), TInt32.class);
-    minIndex = tf.expandDims(minIndex, tf.constant(0));
 
-    Operand<T> trueSlice = tf.slice(trueNegatives, minIndex, tf.constant(new int[] {1}));
-    Operand<T> falseSlice = tf.slice(falsePositives, minIndex, tf.constant(new int[] {1}));
-    return cast(tf, tf.math.divNoNan(trueSlice, tf.math.add(trueSlice, falseSlice)), resultType);
+    return findMaxUnderGreaterThanConstraint(tf, sensitivities, specificities, sensitivity, resultType);
   }
 
   /**

@@ -70,7 +70,7 @@ public abstract class Optimizer {
    */
   protected Optimizer(Graph graph, String name) {
     this.graph = graph;
-    this.tf = Ops.create(graph).withName(name);
+    this.tf = Ops.create(graph).withSubScope(name);
     this.slots = new HashMap<>();
     this.globals = new ArrayList<>();
   }
@@ -83,7 +83,7 @@ public abstract class Optimizer {
    * @return the combined name
    */
   public static String createName(Output<? extends TType> variable, String slotName) {
-    return variable.op().name() + "-" + slotName;
+    return variable.op().name() + "_" + slotName;
   }
 
   /**
@@ -102,7 +102,7 @@ public abstract class Optimizer {
    * @return returns op that minimizes the loss by updating the listed variables
    */
   public Op minimize(Operand<?> loss) {
-    return minimize(loss, getOptimizerName() + "-minimize");
+    return minimize(loss, getOptimizerName() + "_minimize");
   }
 
   /**

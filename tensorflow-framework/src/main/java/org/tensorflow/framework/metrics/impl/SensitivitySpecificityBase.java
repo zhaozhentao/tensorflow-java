@@ -297,7 +297,7 @@ public abstract class SensitivitySpecificityBase<T extends TNumber> extends Base
       double constraintValue,
       Class<U> resultType) {
     Operand<TBool> isFeasible =
-        tf.math.greaterEqual(constraint, cast(tf, tf.constant(constraintValue), getType()));
+        tf.math.greater(constraint, cast(tf, tf.constant(constraintValue), getType()));
     Where feasible = tf.where(isFeasible);
     Operand<TBool> feasibleExists = tf.math.greater(tf.size(feasible), tf.constant(0));
 
